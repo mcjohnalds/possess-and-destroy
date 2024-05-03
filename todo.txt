@@ -1,9 +1,9 @@
-- [x] Walking.
-- [x] Walls.
-- [ ] Enemy patrol with m16.
+- [x] Walking. Walls.
+- [x] Enemy patrol with M16.
+- [x] Press E to possess nearby enemy. Possession destroys them and assumes
+  their position and rotation. UI that says "Possessing pvt renolds".
+- [ ] Raycast shoot with M1. Tracers. Bullet collides with walls.
 - [ ] Enemy can be killed with a few body shots or a single headshot.
-- [ ] Possession. UI that says "Possessing pvt renolds".
-- [ ] Shooting.
 - [ ] Enemy can witness possession.
 - [ ] Enemy can witness shooting.
 - [ ] Print messages when enemy witnesses crime e.g "<pvt renolds> a demon
@@ -46,10 +46,15 @@
 - [ ] Start menu.
 - [ ] Game over menu.
 - [ ] 3D models and textures.
+- [ ] Better tracers (HL2 tracers?).
 - [ ] Sound effects.
+- [ ] Animations.
+- [ ] Recoil.
+- [ ] Transition effect when possessing.
 - [ ] Music.
 - [ ] Particle effect.
-- [ ] Screen space shaders. (film grain?)
+- [ ] Screen space shaders. (film grain and maybe something to give a bit of a
+  fish eye effect?)
 - [ ] Test on all platforms.
 - [ ] Export to itch.io.
 - [ ] Highly skilled paratroopers. Player cannot defeat them without unfair
@@ -59,3 +64,4 @@
 - [ ] HAM radio operator. Unarmed. If killed, pratroopers cannot be called. If
   posssessed, player can call paratroopers.
 - [ ] Artillery is actually a mortar operator that player can possess.
+- [ ] Make nav agent movement more human like and avoid obstacles.

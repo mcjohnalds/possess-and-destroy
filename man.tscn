@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://dkw50wbe2l0x5"]
+
+[ext_resource type="Script" path="res://man.gd" id="1_onkye"]
+[ext_resource type="PackedScene" uid="uid://dgstnputxxomc" path="res://Man.glb" id="2_fnqcv"]
+[ext_resource type="PackedScene" uid="uid://di14cmdia7qtu" path="res://M16.glb" id="3_272mx"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_qy65m"]
+
+[node name="Man" type="CharacterBody3D"]
+script = ExtResource("1_onkye")
+
+[node name="ManMesh" parent="." instance=ExtResource("2_fnqcv")]
+
+[node name="M16" parent="." instance=ExtResource("3_272mx")]
+transform = Transform3D(0.537081, -0.473716, 0.697953, -0.133844, 0.769078, 0.624984, -0.832845, -0.429083, 0.349653, 0.225738, 1.05031, -0.277099)
+
+[node name="AimTransform" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.221069, 1.11957, -0.314546)
+
+[node name="RestTransform" type="Node3D" parent="."]
+transform = Transform3D(0.537081, -0.473716, 0.697953, -0.133844, 0.769078, 0.624984, -0.832845, -0.429083, 0.349653, 0.225738, 1.05031, -0.277099)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_qy65m")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+avoidance_enabled = true
+height = 2.0
+radius = 1.0
+max_speed = 5.0
+debug_enabled = true

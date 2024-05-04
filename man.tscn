@@ -7,11 +7,11 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_qy65m"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_cnpwg"]
-radius = 0.453674
-height = 1.82253
+radius = 0.174537
+height = 0.601335
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2vswx"]
-size = Vector3(1.90759, 3.89532, 1.4386)
+size = Vector3(0.611, 1.246, 0.46)
 
 [node name="Man" type="CharacterBody3D"]
 script = ExtResource("1_onkye")
@@ -38,17 +38,13 @@ radius = 1.0
 max_speed = 5.0
 
 [node name="HeadHitbox" type="Area3D" parent="."]
-collision_layer = 2
-collision_mask = 2
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00933516, 1.60923, 0.105053)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HeadHitbox"]
-transform = Transform3D(0.320493, 0, 0, 0, 0.320493, 0, 0, 0, 0.320493, -0.00933516, 1.60923, 0.105053)
 shape = SubResource("CapsuleShape3D_cnpwg")
 
 [node name="BodyHitbox" type="Area3D" parent="."]
-collision_layer = 2
-collision_mask = 2
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00304715, 0.760285, 0.120722)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="BodyHitbox"]
-transform = Transform3D(0.320493, 0, 0, 0, 0.320493, 0, 0, 0, 0.320493, 0.00304715, 0.760285, 0.120722)
 shape = SubResource("BoxShape3D_2vswx")

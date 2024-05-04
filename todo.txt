@@ -7,7 +7,7 @@ Todo:
 - [x] Raycast shoot with M1. Tracers. Bullet collides with walls.
 - [x] Enemy can be killed with a few body shots or a single headshot.
 - [x] Blood particle effect.
-- [ ] Enemy can witness possession and shooting. Print message when enemy
+- [x] Enemy can witness possession and shooting. Print message when enemy
   witnesses crime e.g "<pvt renolds> a demon possessed sgt walker, engaging!".
 - [ ] When enemy witnesses crime, all enemies will engage player. When an enemy
   is engaging, they will hold weapon in aim position and shoot at player.
@@ -25,6 +25,7 @@ Todo:
 
 Backlog:
 
+- [ ] Enemy can hear gunshot.
 - [ ] Enemy can witness death.
 - [ ] When player possesses enemy, player is no longer in hunted mode.
 - [ ] When player shoots gun, nearby enemies will investigate area as if it

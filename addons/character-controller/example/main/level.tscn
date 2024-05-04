@@ -555,15 +555,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.76001, 0, 0.541676)
 [node name="Pvt Smith" parent="Men" instance=ExtResource("13_rnn3k")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.95971, 7.15256e-07, 16.4773)
 
+[node name="Pvt Miller" parent="Men" instance=ExtResource("13_rnn3k")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5718, 3.75, 13.7766)
+patrol = false
+
 [node name="UI" type="Node" parent="."]
 
 [node name="Panel" type="Panel" parent="UI"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 0.5
+offset_left = -0.5
 offset_top = -53.5
-offset_right = 502.5
+offset_right = 501.5
 offset_bottom = 1.5
 grow_vertical = 0
 
@@ -588,9 +592,9 @@ vertical_alignment = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 8.0
+offset_left = 10.0
 offset_top = -53.0
-offset_right = 306.0
+offset_right = 308.0
 offset_bottom = -8.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 28
@@ -604,9 +608,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -20.0
-offset_top = -12.5
+offset_top = -22.0
 offset_right = 20.0
-offset_bottom = 10.5
+offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(20, 21)
@@ -614,6 +618,10 @@ theme_override_font_sizes/font_size = 30
 text = "×"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Messages" type="Panel" parent="UI"]
+offset_right = 1017.0
+offset_bottom = 123.0
 
 [node name="GunShotAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("16_ocj6n")

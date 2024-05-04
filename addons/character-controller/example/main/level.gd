@@ -1,9 +1,12 @@
 extends Node3D
 
+const ENEMY_FOV := 0.45 * TAU
 @export var fast_close := true
 var men: Array[Man] = []
 var player_has_gun := true
 var last_fired_at := 0.0
+var possessed_man_name := "the civilian"
+var player_is_hunted := false
 @onready var patrol: Node = $Patrol
 @onready var camera: Camera3D = $Player/Head/FirstPersonCameraReference/Camera3D
 @onready var use_label: Label = $UI/UseLabel
@@ -22,10 +25,10 @@ var last_fired_at := 0.0
 @onready var gun_shot_audio_stream_player := $GunShotAudioStreamPlayer as AudioStreamPlayer
 @onready var hitmarker_audio_stream_player := $HitmarkerAudioStreamPlayer as AudioStreamPlayer
 @onready var headshot_audio_stream_player := $HeadshotAudioStreamPlayer as AudioStreamPlayer
+@onready var messages := $UI/Messages as Control
 
 enum PhysicsLayers {
 	DEFAULT = 1 << 0,
-	SPECIAL = 1 << 1,
 }
 
 
@@ -57,7 +60,8 @@ func on_velocity_computed(safe_velocity: Vector3, man: Man) -> void:
 func actor_setup() -> void:
 	await get_tree().physics_frame
 	for man in men:
-		man.navigation_agent.set_target_position((patrol.get_child(0) as Node3D).position)
+		if man.patrol:
+			man.navigation_agent.set_target_position((patrol.get_child(0) as Node3D).position)
 
 
 func _input(event: InputEvent) -> void:
@@ -71,6 +75,7 @@ func _input(event: InputEvent) -> void:
 			Input.MOUSE_MODE_VISIBLE:
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
+
 # Capture mouse if clicked on the game, needed for HTML5
 # Called when an InputEvent hasn't been consumed by _input() or any GUI item
 func _unhandled_input(event: InputEvent) -> void:
@@ -82,23 +87,55 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	process_use()
-	if player_has_gun and Input.is_action_pressed("primary") and Time.get_ticks_msec() / 1000.0 - last_fired_at > 0.1:
+	for msg: Message in messages.get_children():
+		msg.modulate.a = lerpf(
+			1.0,
+			0.6,
+			clampf((Global.time() - msg.created_at) / 2.0, 0.0, 1.0)
+		)
+	if (
+		player_has_gun
+		and Input.is_action_pressed("primary")
+		and Global.time() - last_fired_at > 0.1
+	):
+		for man: Man in men:
+			if (
+				is_instance_valid(man)
+				and can_man_see_point(man, camera.global_position)
+				and not player_is_hunted
+			):
+				player_is_hunted = true
+				log_message(
+					"<%s> I think %s is possessed by the demon, engaging!"
+					% [man.name, possessed_man_name]
+				)
+				break
 		gun_shot_audio_stream_player.play()
 
-		last_fired_at = Time.get_ticks_msec() / 1000.0
+		last_fired_at = Global.time()
 
 		var max_spread := 0.2 * (1.0 - accuracy)
 		var dir := (
 			camera.global_basis.z
-				.rotated(camera.global_basis.x, randf_range(-max_spread, max_spread))
-				.rotated(camera.global_basis.y, randf_range(-max_spread, max_spread))
+				.rotated(
+					camera.global_basis.x,
+					randf_range(-max_spread, max_spread)
+				)
+				.rotated(
+					camera.global_basis.y,
+					randf_range(-max_spread, max_spread)
+				)
 		)
 		var end := camera.global_position + dir * -100.0
 
-		var query := PhysicsRayQueryParameters3D.create(camera.global_position, end)
+		var query := PhysicsRayQueryParameters3D.create(
+			camera.global_position,
+			end
+			)
 		var arr: Array[Variant] = []
-		for man: Man in get_node("Men").get_children():
-			arr.append(man.get_rid())
+		for man: Man in men:
+			if is_instance_valid(man):
+				arr.append(man.get_rid())
 		query.exclude = arr
 		query.collide_with_areas = true
 		var collision := get_world_3d().direct_space_state.intersect_ray(query)
@@ -172,25 +209,72 @@ func _process(delta: float) -> void:
 
 
 func process_use() -> void:
-	var query := PhysicsRayQueryParameters3D.create(camera.global_position, camera.global_position + camera.global_basis.z * -10.0)
+	var query := PhysicsRayQueryParameters3D.create(
+		camera.global_position,
+		camera.global_position + camera.global_basis.z * -10.0
+	)
 	var collision := get_world_3d().direct_space_state.intersect_ray(query)
 	if collision and collision.collider is Man:
-		var man: Man = collision.collider
+		var possessed_man: Man = collision.collider
 		if Input.is_action_just_pressed("use"):
-			player.position = man.position
+			for man: Man in men:
+				if (
+					man != possessed_man
+					and is_instance_valid(man)
+					and (
+						can_man_see_point(
+							man,
+							possessed_man.head_hitbox.global_position
+						)
+						or can_man_see_point(man, camera.global_position)
+					)
+					and not player_is_hunted
+				):
+					player_is_hunted = true
+					log_message(
+						"<%s> I saw the demon possess %s, engaging enemy!"
+						% [man.name, possessed_man.name]
+					)
+					break
+
+			possessed_man_name = possessed_man.name
+			# + 0.1 prevents player from falling beneath floor
+			player.position = possessed_man.position + 0.1 * Vector3.UP
 			player.velocity = Vector3.ZERO
-			possessing_label.text = "Possessing: " + man.name
+			possessing_label.text = "Possessing: " + possessed_man.name
 			gun.visible = true
 			player_has_gun = true
-			man.queue_free()
+			possessed_man.queue_free()
+
 		use_label.visible = true
 	else:
 		use_label.visible = false
 
 
+func can_man_see_point(man: Man, point: Vector3) -> bool:
+	var exclude: Array[Variant] = []
+	exclude.append(player.get_rid())
+	for man2: Man in men:
+		if is_instance_valid(man2):
+			exclude.append(man2.get_rid())
+			exclude.append(man2.head_hitbox.get_rid())
+			exclude.append(man2.body_hitbox.get_rid())
+
+	var v1 := -man.head_hitbox.global_basis.z
+	var v2 := point - man.head_hitbox.global_position
+	if v1.angle_to(v2) > ENEMY_FOV / 2.0:
+		return false
+	var query := PhysicsRayQueryParameters3D.create(
+		man.head_hitbox.global_position,
+		point
+	)
+	query.exclude = exclude
+	return not get_world_3d().direct_space_state.intersect_ray(query)
+
+
 func _physics_process(_delta: float) -> void:
 	for man in men:
-		if not is_instance_valid(man):
+		if not is_instance_valid(man) or not man.patrol:
 			continue
 		if man.navigation_agent.is_navigation_finished():
 			man.patrol_index += 1
@@ -201,3 +285,28 @@ func _physics_process(_delta: float) -> void:
 		man.rotation.z = 0
 		man.velocity = man.global_position.direction_to(man.navigation_agent.get_next_path_position()) * 4.0 + man.safe_velocity
 		man.move_and_slide()
+
+
+func print_hierarchy(node: Node) -> void:
+	var s := ""
+	var x: Node = node
+	while x.get_parent():
+		s += x.name + " <- "
+		x = x.get_parent()
+	s = s.substr(0, s.length() - " <- ".length())
+	print(s)
+
+
+func log_message(text: String) -> void:
+	var new_msg := Message.new()
+	new_msg.created_at = Global.time()
+	new_msg.position.x = 8.0
+	new_msg.add_theme_font_size_override("font_size", 24)
+	new_msg.text = text
+	messages.add_child(new_msg)
+	if messages.get_child_count() > 3:
+		messages.remove_child(messages.get_child(0))
+	var y := 8.0
+	for msg: Label in messages.get_children():
+		msg.position.y = y
+		y += 36.0

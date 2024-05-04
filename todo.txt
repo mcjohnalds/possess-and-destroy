@@ -57,6 +57,7 @@
   fish eye effect?)
 - [ ] Test on all platforms.
 - [ ] Export to itch.io.
+- [ ] Secret: finish game without possessing anyone
 - [ ] Highly skilled paratroopers. Player cannot defeat them without unfair
   advantage. When player kills enemy who is aware of player, or enemy witnesses
   death, then counter increases by 1. When counter exceeds 5, paratroopers are

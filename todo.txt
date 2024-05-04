@@ -77,3 +77,4 @@ Backlog:
 - [ ] Artillery is actually a mortar operator that player can possess.
 - [ ] Make nav agent movement more human like and avoid obstacles.
 - [ ] Make gun not clip through things
+- [ ] Make view kick when shooting

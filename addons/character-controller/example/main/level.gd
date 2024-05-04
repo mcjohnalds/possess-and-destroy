@@ -3,7 +3,7 @@ extends Node3D
 const ENEMY_FOV := 0.45 * TAU
 @export var fast_close := true
 var men: Array[Man] = []
-var player_has_gun := true
+var player_has_gun := false
 var last_fired_at := 0.0
 var possessed_man_name := "the civilian"
 var player_hunted := false
@@ -248,6 +248,7 @@ func process_use() -> void:
 			possessing_label.text = "Possessing: " + possessed_man.name
 			gun.visible = true
 			player_has_gun = true
+			gun.visible = player_has_gun
 			possessed_man.queue_free()
 
 		use_label.visible = true

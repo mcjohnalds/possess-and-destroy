@@ -8,7 +8,9 @@ var last_fired_at := 0.0
 var possessed_man_name := "the civilian"
 var player_hunted := false
 @onready var patrol: Node = $Patrol
-@onready var camera: Camera3D = $Player/Head/FirstPersonCameraReference/Camera3D
+@onready var camera: Camera3D = (
+	$Player/Head/FirstPersonCameraReference/Camera3D
+)
 @onready var use_label: Label = $UI/UseLabel
 @onready var possessing_label: Label = $UI/PossessingLabel
 @onready var player: FPSController3D = $Player
@@ -17,14 +19,25 @@ var player_hunted := false
 @onready var blood_impact_scene := preload("res://blood_impact.tscn")
 @onready var tracer_scene := preload("res://tracer.tscn")
 @onready var muzzle_flash := $Player/Head/M16/MuzzleFlash as Node3D
-@onready var muzzle_flash_particles := $Player/Head/M16/MuzzleFlash/GPUParticles3D as GPUParticles3D
+@onready var muzzle_flash_particles := (
+	$Player/Head/M16/MuzzleFlash/GPUParticles3D as GPUParticles3D
+)
 @onready var accuracy := 1.0
 @onready var crosshair := $UI/Crosshair as Control
 @onready var gun_original_position := gun.position
 @onready var gun_kick_velocity := Vector3.ZERO
-@onready var gun_shot_audio_stream_player := $GunShotAudioStreamPlayer as AudioStreamPlayer
-@onready var hitmarker_audio_stream_player := $HitmarkerAudioStreamPlayer as AudioStreamPlayer
-@onready var headshot_audio_stream_player := $HeadshotAudioStreamPlayer as AudioStreamPlayer
+@onready var gun_shot_audio_stream_player := (
+	$GunShotAudioStreamPlayer as AudioStreamPlayer
+)
+@onready var hitmarker_audio_stream_player := (
+	$HitmarkerAudioStreamPlayer as AudioStreamPlayer
+)
+@onready var headshot_audio_stream_player := (
+	$HeadshotAudioStreamPlayer as AudioStreamPlayer
+)
+@onready var possession_audio_stream_player := (
+	$PossessionAudioStreamPlayer as AudioStreamPlayer
+)
 @onready var messages := $UI/Messages as Control
 
 enum PhysicsLayers {
@@ -227,6 +240,7 @@ func process_use() -> void:
 					)
 					break
 
+			possession_audio_stream_player.play(0.7)
 			possessed_man_name = possessed_man.name
 			# + 0.1 prevents player from falling beneath floor
 			player.position = possessed_man.position + 0.1 * Vector3.UP

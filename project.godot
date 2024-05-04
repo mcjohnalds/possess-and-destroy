@@ -28,6 +28,10 @@ gdscript/warnings/unsafe_call_argument=1
 window/size/viewport_width=1600
 window/size/viewport_height=1200
 
+[filesystem]
+
+import/blender/enabled=false
+
 [input]
 
 move_backward={

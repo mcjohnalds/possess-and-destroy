@@ -14,14 +14,10 @@ var player_hunted := false
 @onready var use_label: Label = $UI/UseLabel
 @onready var possessing_label: Label = $UI/PossessingLabel
 @onready var player: FPSController3D = $Player
-@onready var gun: Node3D = $Player/Head/M16
+@onready var gun := $Player/Head/GunTransform/M16 as M16
 @onready var bullet_impact_scene := preload("res://bullet_impact.tscn")
 @onready var blood_impact_scene := preload("res://blood_impact.tscn")
 @onready var tracer_scene := preload("res://tracer.tscn")
-@onready var muzzle_flash := $Player/Head/M16/MuzzleFlash as Node3D
-@onready var muzzle_flash_particles := (
-	$Player/Head/M16/MuzzleFlash/GPUParticles3D as GPUParticles3D
-)
 @onready var accuracy := 1.0
 @onready var crosshair := $UI/Crosshair as Control
 @onready var gun_original_position := gun.position
@@ -59,8 +55,8 @@ func _ready() -> void:
 		man.navigation_agent.velocity_computed.connect(on_velocity_computed.bind(man))
 	call_deferred("actor_setup")
 	gun.visible = player_has_gun
-	muzzle_flash_particles.visible = false
-	muzzle_flash_particles.one_shot = true
+	gun.muzzle_flash_particles.visible = false
+	gun.muzzle_flash_particles.one_shot = true
 	player.jumped.connect(func() -> void:
 		accuracy -= 0.5
 	)
@@ -167,13 +163,13 @@ func _process(delta: float) -> void:
 			)
 			add_child(impact)
 
-		muzzle_flash_particles.visible = true
-		muzzle_flash_particles.restart()
+		gun.muzzle_flash_particles.visible = true
+		gun.muzzle_flash_particles.restart()
 
 		var tracer: Node3D = tracer_scene.instantiate()
-		tracer.position = muzzle_flash.global_position
+		tracer.position = gun.muzzle_flash.global_position
 		tracer.scale.z = (
-			muzzle_flash.global_position.distance_to(result.hit_position)
+			gun.muzzle_flash.global_position.distance_to(result.hit_position)
 		)
 
 		var tracer_particles: GPUParticles3D = (

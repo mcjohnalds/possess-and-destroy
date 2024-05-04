@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cbh0nvmp3u686"
-path.s3tc="res://.godot/imported/M16_Diffuse_palette_2.jpg-31c3fc7ef4146ab4a2f910cba71f744d.s3tc.ctex"
+uid="uid://brrwu7scadx3s"
+path.s3tc="res://.godot/imported/m_16_Diffuse_palette_2.jpg-3abaad964b8b65b5d2e40f4e7f6fbdcd.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://M16_Diffuse_palette_2.jpg"
-dest_files=["res://.godot/imported/M16_Diffuse_palette_2.jpg-31c3fc7ef4146ab4a2f910cba71f744d.s3tc.ctex"]
+source_file="res://m_16_Diffuse_palette_2.jpg"
+dest_files=["res://.godot/imported/m_16_Diffuse_palette_2.jpg-3abaad964b8b65b5d2e40f4e7f6fbdcd.s3tc.ctex"]
 
 [params]
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=45 format=3 uid="uid://c2t6smyr8xtty"]
+[gd_scene load_steps=39 format=3 uid="uid://c2t6smyr8xtty"]
 
 [ext_resource type="Script" path="res://addons/character-controller/example/main/level.gd" id="1_cikgd"]
 [ext_resource type="PackedScene" uid="uid://2oxdgu03lnbk" path="res://addons/character-controller/example/main/player.tscn" id="2_nvo2f"]
@@ -10,9 +10,8 @@
 [ext_resource type="PhysicsMaterial" uid="uid://bklf2cx3fydt3" path="res://addons/character-controller/example/main/physics/stone.tres" id="7_pqwbx"]
 [ext_resource type="PhysicsMaterial" path="res://addons/character-controller/example/main/physics/wood.tres" id="8_04xdu"]
 [ext_resource type="Material" uid="uid://c72msuxs6n2a8" path="res://addons/character-controller/example/main/materials/leaves.tres" id="8_fcbu8"]
-[ext_resource type="PackedScene" uid="uid://di14cmdia7qtu" path="res://M16.glb" id="11_418ns"]
 [ext_resource type="Material" uid="uid://ckvcdcn2iue87" path="res://addons/character-controller/example/main/materials/wood.tres" id="11_cakef"]
-[ext_resource type="Texture2D" uid="uid://dolsmonda4njl" path="res://addons/kenney_particle_pack/fire_02.png" id="12_112eo"]
+[ext_resource type="PackedScene" uid="uid://cdl0koy3r7fiq" path="res://m_16.tscn" id="11_ceth5"]
 [ext_resource type="Texture2D" uid="uid://svijnbaaeuol" path="res://addons/character-controller/example/main/textures/Free DEMO Pixel Skies Background pack by Digital Moons/demo01_PixelSky.png" id="12_olhen"]
 [ext_resource type="PackedScene" uid="uid://dkw50wbe2l0x5" path="res://man.tscn" id="13_rnn3k"]
 [ext_resource type="AudioStream" uid="uid://5nuhnh2wdjbn" path="res://gun_shot.wav" id="16_ocj6n"]
@@ -72,37 +71,6 @@ size = Vector3(14, 0.5, 4)
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_do582"]
 data = PackedVector3Array(-7, 0.25, 2, 7, 0.25, 2, -7, -0.25, 2, 7, 0.25, 2, 7, -0.25, 2, -7, -0.25, 2, 7, 0.25, -2, -7, 0.25, -2, 7, -0.25, -2, -7, 0.25, -2, -7, -0.25, -2, 7, -0.25, -2, 7, 0.25, 2, 7, 0.25, -2, 7, -0.25, 2, 7, 0.25, -2, 7, -0.25, -2, 7, -0.25, 2, -7, 0.25, -2, -7, 0.25, 2, -7, -0.25, -2, -7, 0.25, 2, -7, -0.25, 2, -7, -0.25, -2, 7, 0.25, 2, -7, 0.25, 2, 7, 0.25, -2, -7, 0.25, 2, -7, 0.25, -2, 7, 0.25, -2, -7, -0.25, 2, 7, -0.25, 2, -7, -0.25, -2, 7, -0.25, 2, 7, -0.25, -2, -7, -0.25, -2)
 
-[sub_resource type="Curve" id="Curve_lnqw3"]
-_data = [Vector2(0, 0.0334573), 0.0, 5.44344, 0, 0, Vector2(0.214634, 1), 0.0994017, 0.0994017, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="CurveTexture" id="CurveTexture_v1f1i"]
-curve = SubResource("Curve_lnqw3")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_himf2"]
-emission_shape_scale = Vector3(0.02, 0.02, 2.08165e-12)
-emission_shape = 1
-emission_sphere_radius = 1.0
-gravity = Vector3(2.08165e-12, 2.08165e-12, 2.08165e-12)
-alpha_curve = SubResource("CurveTexture_v1f1i")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jda8u"]
-transparency = 1
-blend_mode = 1
-shading_mode = 0
-vertex_color_use_as_albedo = true
-albedo_color = Color(2, 1.726, 0.738, 1)
-albedo_texture = ExtResource("12_112eo")
-uv1_scale = Vector3(2, 1.1, 1)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_bwls4"]
-material = SubResource("StandardMaterial3D_jda8u")
-top_radius = 0.3
-bottom_radius = 0.0
-height = 0.1
-cap_top = false
-cap_bottom = false
-
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_l566q"]
 panorama = ExtResource("12_olhen")
 filter = false
@@ -121,6 +89,7 @@ glow_enabled = true
 
 [node name="Level" type="Node3D"]
 script = ExtResource("1_cikgd")
+fast_close = null
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = SubResource("NavigationMesh_aq60o")
@@ -507,19 +476,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.62268e-06, 6, 13)
 
 [node name="Camera3D" type="Camera3D" parent="Player/Head/FirstPersonCameraReference" index="0"]
 
-[node name="M16" parent="Player/Head" index="3" instance=ExtResource("11_418ns")]
+[node name="GunTransform" type="Node3D" parent="Player/Head" index="3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.383, -0.395, -0.42)
 
-[node name="MuzzleFlash" type="Node3D" parent="Player/Head/M16"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.144784, -0.976012)
-
-[node name="GPUParticles3D" type="GPUParticles3D" parent="Player/Head/M16/MuzzleFlash"]
-transform = Transform3D(-1, -8.74228e-08, 3.82137e-15, 0, -4.37114e-08, -1, 8.74228e-08, -1, 4.37114e-08, 0, 0, -0.0224075)
-amount = 1
-lifetime = 0.1
-local_coords = true
-process_material = SubResource("ParticleProcessMaterial_himf2")
-draw_pass_1 = SubResource("CylinderMesh_bwls4")
+[node name="M16" parent="Player/Head/GunTransform" instance=ExtResource("11_ceth5")]
 
 [node name="Area3D" parent="." instance=ExtResource("3_ebamq")]
 transform = Transform3D(0.491574, 0, 0, 0, 1, 0, 0, 0, 0.555284, 0, -3, 5.93584)

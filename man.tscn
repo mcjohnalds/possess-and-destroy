@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://man.gd" id="1_onkye"]
 [ext_resource type="PackedScene" uid="uid://dgstnputxxomc" path="res://Man.glb" id="2_fnqcv"]
-[ext_resource type="PackedScene" uid="uid://di14cmdia7qtu" path="res://M16.glb" id="3_272mx"]
+[ext_resource type="PackedScene" uid="uid://di14cmdia7qtu" path="res://m_16.glb" id="3_272mx"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_qy65m"]
 

@@ -7,3 +7,7 @@ Rifle (CC0) model by CreativeTrio via poly.pizza.
 Kenny's Particle Pack (CC0) Godot asset by Kenny.
 
 Gun Shot sound (CC0) by Bird_man via freesound.org.
+
+Hitmarker Sound Effect (CC0) by aruscio28 via freesound.org.
+
+Crushing Kick sound (Attribution 4.0) by newlocknew via freesound.org.

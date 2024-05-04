@@ -1,0 +1,59 @@
+[gd_scene load_steps=9 format=3 uid="uid://c245xfmgnu053"]
+
+[ext_resource type="Texture2D" uid="uid://3lyybiyokess" path="res://addons/kenney_particle_pack/dirt_01.png" id="1_khoqa"]
+
+[sub_resource type="Curve" id="Curve_c7yna"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -0.158995, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_r8wg1"]
+curve = SubResource("Curve_c7yna")
+
+[sub_resource type="Curve" id="Curve_md0vb"]
+_data = [Vector2(0, 0.828996), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_gvnwn"]
+curve = SubResource("Curve_md0vb")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_gv4h5"]
+emission_shape = 1
+emission_sphere_radius = 0.05
+angle_max = 360.0
+spread = 180.0
+initial_velocity_min = 0.1
+initial_velocity_max = 0.1
+angular_velocity_min = 3.0
+angular_velocity_max = 3.0
+gravity = Vector3(2.08165e-12, 2.08165e-12, 2.08165e-12)
+damping_min = 0.5
+damping_max = 0.5
+scale_curve = SubResource("CurveTexture_gvnwn")
+alpha_curve = SubResource("CurveTexture_r8wg1")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xva6i"]
+transparency = 1
+shading_mode = 0
+specular_mode = 2
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.74, 0.1258, 0.1258, 1)
+albedo_texture = ExtResource("1_khoqa")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_hd6ww"]
+material = SubResource("StandardMaterial3D_xva6i")
+size = Vector2(0.2, 0.2)
+
+[node name="BloodImpact" type="Node3D"]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+lifetime = 0.1
+explosiveness = 0.98
+fixed_fps = 60
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_gv4h5")
+draw_pass_1 = SubResource("QuadMesh_hd6ww")

@@ -6,12 +6,12 @@ var player_has_gun := true
 var last_fired_at := 0.0
 @onready var patrol: Node = $Patrol
 @onready var camera: Camera3D = $Player/Head/FirstPersonCameraReference/Camera3D
-@onready var use_ray: RayCast3D
 @onready var use_label: Label = $UI/UseLabel
 @onready var possessing_label: Label = $UI/PossessingLabel
 @onready var player: FPSController3D = $Player
 @onready var gun: Node3D = $Player/Head/M16
 @onready var bullet_impact_scene := preload("res://bullet_impact.tscn")
+@onready var blood_impact_scene := preload("res://blood_impact.tscn")
 @onready var tracer_scene := preload("res://tracer.tscn")
 @onready var muzzle_flash := $Player/Head/M16/MuzzleFlash as Node3D
 @onready var muzzle_flash_particles := $Player/Head/M16/MuzzleFlash/GPUParticles3D as GPUParticles3D
@@ -20,6 +20,13 @@ var last_fired_at := 0.0
 @onready var gun_original_position := gun.position
 @onready var gun_kick_velocity := Vector3.ZERO
 @onready var gun_shot_audio_stream_player := $GunShotAudioStreamPlayer as AudioStreamPlayer
+@onready var hitmarker_audio_stream_player := $HitmarkerAudioStreamPlayer as AudioStreamPlayer
+@onready var headshot_audio_stream_player := $HeadshotAudioStreamPlayer as AudioStreamPlayer
+
+enum PhysicsLayers {
+	DEFAULT = 1 << 0,
+	SPECIAL = 1 << 1,
+}
 
 
 func _ready() -> void:
@@ -80,45 +87,75 @@ func _process(delta: float) -> void:
 
 		last_fired_at = Time.get_ticks_msec() / 1000.0
 
-		var dir := camera.global_basis.z
 		var max_spread := 0.2 * (1.0 - accuracy)
-		dir = dir.rotated(camera.global_basis.x, randf_range(-max_spread, max_spread))
-		dir = dir.rotated(camera.global_basis.y, randf_range(-max_spread, max_spread))
+		var dir := (
+			camera.global_basis.z
+				.rotated(camera.global_basis.x, randf_range(-max_spread, max_spread))
+				.rotated(camera.global_basis.y, randf_range(-max_spread, max_spread))
+		)
 		var end := camera.global_position + dir * -100.0
+
 		var query := PhysicsRayQueryParameters3D.create(camera.global_position, end)
+		var arr: Array[Variant] = []
+		for man: Man in get_node("Men").get_children():
+			arr.append(man.get_rid())
+		query.exclude = arr
+		query.collide_with_areas = true
 		var collision := get_world_3d().direct_space_state.intersect_ray(query)
+
+		var ray_hit := end
+		var man_hit := false
+
 		if collision:
-			end = collision.position
+			var hit: Node3D = collision.collider
+			var damage: float
+			if hit.name == "HeadHitbox":
+				damage = 1.0
+				headshot_audio_stream_player.play(4.9)
+			elif hit.name == "BodyHitbox":
+				damage = 0.2
+			ray_hit = collision.position
+
+			if damage > 0:
+				man_hit = true
+				hitmarker_audio_stream_player.play(0.1)
+				var man: Man = hit.get_parent()
+				man.health -= damage
+				if man.health <= 0.0:
+					man.queue_free()
+
+		var impact_scene := blood_impact_scene if man_hit else bullet_impact_scene
+		var impact := impact_scene.instantiate() as Node3D
+		var impact_particle_effect := impact.get_node("GPUParticles3D") as GPUParticles3D
+		impact.position = ray_hit
+		impact_particle_effect.emitting = false
+		impact_particle_effect.finished.connect(func() -> void: impact.queue_free())
+		impact_particle_effect.one_shot = true
+		impact_particle_effect.emitting = true
+		impact.scale *= clamp(camera.global_position.distance_to(ray_hit) - 1.0, 1.0, 3.0)
+		add_child(impact)
 
 		muzzle_flash_particles.visible = true
 		muzzle_flash_particles.restart()
 
 		var tracer: Node3D = tracer_scene.instantiate()
 		tracer.position = muzzle_flash.global_position
-		tracer.scale.z = muzzle_flash.global_position.distance_to(end)
+		tracer.scale.z = muzzle_flash.global_position.distance_to(ray_hit)
 
 		var tracer_particles: GPUParticles3D = tracer.get_node("GPUParticles3D")
 		tracer_particles.emitting = false
-		tracer_particles.finished.connect(func() -> void: tracer_particles.queue_free())
+		tracer_particles.finished.connect(func() -> void: tracer.queue_free())
 		tracer_particles.one_shot = true
 		tracer_particles.emitting = true
 
 		add_child(tracer)
 		tracer.look_at(end, Vector3.UP, true)
 
-		var impact: GPUParticles3D = bullet_impact_scene.instantiate()
-		impact.position = end
-		impact.emitting = false
-		impact.finished.connect(func() -> void: impact.queue_free())
-		impact.one_shot = true
-		impact.emitting = true
-		add_child(impact)
-
 		accuracy -= 0.1 - 0.1 * (1.0 - accuracy)
 
 		var gun_accel := 0.8
 		gun_kick_velocity += Vector3(randf_range(-gun_accel, gun_accel), randf_range(-gun_accel, gun_accel), gun_accel)
-	
+
 	accuracy += 1.5 * delta - accuracy * delta
 	var max_accuracy := 1.0
 	if player._direction != Vector3.ZERO:

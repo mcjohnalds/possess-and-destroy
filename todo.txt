@@ -4,9 +4,9 @@ Todo:
 - [x] Enemy patrol with M16.
 - [x] Press E to possess nearby enemy. Possession destroys them and assumes
   their position and rotation. UI that says "Possessing pvt renolds".
-- [ ] Raycast shoot with M1. Tracers. Bullet collides with walls.
-- [ ] Enemy can be killed with a few body shots or a single headshot.
-- [ ] Blood particle effect.
+- [x] Raycast shoot with M1. Tracers. Bullet collides with walls.
+- [x] Enemy can be killed with a few body shots or a single headshot.
+- [x] Blood particle effect.
 - [ ] Enemy can witness possession and shooting. Print message when enemy
   witnesses crime e.g "<pvt renolds> a demon possessed sgt walker, engaging!".
 - [ ] When enemy witnesses crime, all enemies will engage player. When an enemy

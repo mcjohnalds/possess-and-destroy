@@ -1,0 +1,55 @@
+[gd_scene load_steps=9 format=3 uid="uid://iskiu7ogu14f"]
+
+[ext_resource type="Texture2D" uid="uid://dbvbmq8sygfw0" path="res://addons/kenney_particle_pack/smoke_01.png" id="1_11q10"]
+
+[sub_resource type="Curve" id="Curve_f0ykc"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -0.158995, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_3uk6b"]
+curve = SubResource("Curve_f0ykc")
+
+[sub_resource type="Curve" id="Curve_4u86i"]
+_data = [Vector2(0, 0.828996), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_yswag"]
+curve = SubResource("Curve_4u86i")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_hgyjg"]
+emission_shape = 1
+emission_sphere_radius = 0.05
+angle_max = 360.0
+spread = 180.0
+initial_velocity_min = 0.1
+initial_velocity_max = 0.1
+angular_velocity_min = 3.0
+angular_velocity_max = 3.0
+gravity = Vector3(2.08165e-12, 2.08165e-12, 2.08165e-12)
+damping_min = 0.5
+damping_max = 0.5
+scale_curve = SubResource("CurveTexture_yswag")
+alpha_curve = SubResource("CurveTexture_3uk6b")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_54od1"]
+transparency = 1
+shading_mode = 0
+specular_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_11q10")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_0hqy7"]
+material = SubResource("StandardMaterial3D_54od1")
+size = Vector2(0.2, 0.2)
+
+[node name="BulletImpact" type="GPUParticles3D"]
+lifetime = 0.1
+explosiveness = 0.98
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_hgyjg")
+draw_pass_1 = SubResource("QuadMesh_0hqy7")

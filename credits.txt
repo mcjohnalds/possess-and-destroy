@@ -3,3 +3,7 @@ Character Controller (MIT) Godot asset by Expresso Bits.
 MAN.BODY (CC0) model by Семён Хазам via poly.pizza.
 
 Rifle (CC0) model by CreativeTrio via poly.pizza.
+
+Kenny's Particle Pack (CC0) Godot asset by Kenny.
+
+Gun Shot sound (CC0) by Bird_man via freesound.org.

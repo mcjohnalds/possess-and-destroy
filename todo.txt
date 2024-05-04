@@ -1,27 +1,35 @@
+Todo:
+
 - [x] Walking. Walls.
 - [x] Enemy patrol with M16.
 - [x] Press E to possess nearby enemy. Possession destroys them and assumes
   their position and rotation. UI that says "Possessing pvt renolds".
 - [ ] Raycast shoot with M1. Tracers. Bullet collides with walls.
 - [ ] Enemy can be killed with a few body shots or a single headshot.
-- [ ] Enemy can witness possession.
-- [ ] Enemy can witness shooting.
-- [ ] Print messages when enemy witnesses crime e.g "<pvt renolds> a demon
-  possessed sgt walker, engaging!".
-- [ ] Enemy shoots at player after witnessing crime. Shooting only happens when
-  player is in view and no wall is obstructing vision.
-- [ ] Enemy does not shoot when player is not in sight.
-- [ ] Player can die and game must restart.
-- [ ] Enemy will go to last known location of player then wander for a bit then
-  return to patrol.
-- [ ] When enemy witnesses player possessing or shooting, player will be in
-  hunted mode. When in hunted mode, nearby enemies in world will engage player.
-  Enemies who cannot see player will make their way to the last known location,
-  wander for a bit, then return to patrol.
+- [ ] Blood particle effect.
+- [ ] Enemy can witness possession and shooting. Print message when enemy
+  witnesses crime e.g "<pvt renolds> a demon possessed sgt walker, engaging!".
+- [ ] When enemy witnesses crime, all enemies will engage player. When an enemy
+  is engaging, they will hold weapon in aim position and shoot at player.
+- [ ] Enemies don't shoot when player is obstructed by wall.
+- [ ] When enemy is engaging, they move toward player slowly.
+- [ ] When enemy is engaging and loses sight of player, they will start
+  searching for player. When searching, they move quickly toward the player's
+  last known position. Last known position is shared across all enemies. When
+  enemy spots player, all enemies will engage.
+- [ ] When enemy reaches last known position of player and no enemy can see
+  player, they will begin wandering. When wandering, they will pick a random
+  nearby location to walk to. When they reach that location, they will pick a
+  new random location. When any enemy spots player, all enemies engage.
+- [ ] After 20 seconds of wandering, enemy will return to patrol.
+
+Backlog:
+
 - [ ] Enemy can witness death.
 - [ ] When player possesses enemy, player is no longer in hunted mode.
 - [ ] When player shoots gun, nearby enemies will investigate area as if it
-  were the player's last known location.
+- [ ] Player can die and game must restart. were the player's last known
+  location.
 - [ ] Melee. Instant kill. Silent. Has a cooldown to prevent being OP.
 - [ ] Commander. Patrols. Walks slow. Unarmed. Can be possessed. Prints
   messages like "<commander> enemy spotted in medical ward - all nearby units
@@ -66,3 +74,4 @@
   posssessed, player can call paratroopers.
 - [ ] Artillery is actually a mortar operator that player can possess.
 - [ ] Make nav agent movement more human like and avoid obstacles.
+- [ ] Make gun not clip through things

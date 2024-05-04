@@ -59,7 +59,8 @@ Backlog:
 - [ ] Sound effects.
 - [ ] Animations.
 - [ ] Recoil.
-- [ ] Transition effect when possessing.
+- [ ] Transition effect when possessing. Player's view should quickly slide
+  into enemy, sound should be played, and screen effect should be applied.
 - [ ] Music.
 - [ ] Particle effect.
 - [ ] Screen space shaders. (film grain and maybe something to give a bit of a

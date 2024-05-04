@@ -6,7 +6,7 @@ var men: Array[Man] = []
 var player_has_gun := true
 var last_fired_at := 0.0
 var possessed_man_name := "the civilian"
-var player_is_hunted := false
+var player_hunted := false
 @onready var patrol: Node = $Patrol
 @onready var camera: Camera3D = $Player/Head/FirstPersonCameraReference/Camera3D
 @onready var use_label: Label = $UI/UseLabel
@@ -102,9 +102,9 @@ func _process(delta: float) -> void:
 			if (
 				is_instance_valid(man)
 				and can_man_see_point(man, camera.global_position)
-				and not player_is_hunted
+				and not player_hunted
 			):
-				player_is_hunted = true
+				player_hunted = true
 				log_message(
 					"<%s> I think %s is possessed by the demon, engaging!"
 					% [man.name, possessed_man_name]
@@ -114,84 +114,74 @@ func _process(delta: float) -> void:
 
 		last_fired_at = Global.time()
 
-		var max_spread := 0.2 * (1.0 - accuracy)
-		var dir := (
-			camera.global_basis.z
-				.rotated(
-					camera.global_basis.x,
-					randf_range(-max_spread, max_spread)
-				)
-				.rotated(
-					camera.global_basis.y,
-					randf_range(-max_spread, max_spread)
-				)
-		)
-		var end := camera.global_position + dir * -100.0
+		var query := BulletRay.Query.new()
+		query.source = camera
+		query.accuracy = accuracy
+		query.men = men
+		var result := BulletRay.intersect(query)
 
-		var query := PhysicsRayQueryParameters3D.create(
-			camera.global_position,
-			end
-			)
-		var arr: Array[Variant] = []
-		for man: Man in men:
-			if is_instance_valid(man):
-				arr.append(man.get_rid())
-		query.exclude = arr
-		query.collide_with_areas = true
-		var collision := get_world_3d().direct_space_state.intersect_ray(query)
-
-		var ray_hit := end
-		var man_hit := false
-
-		if collision:
-			var hit: Node3D = collision.collider
-			var damage: float
-			if hit.name == "HeadHitbox":
+		if result.hit_man:
+			var damage := 0.2
+			if result.headshot:
 				damage = 1.0
 				headshot_audio_stream_player.play(4.9)
-			elif hit.name == "BodyHitbox":
-				damage = 0.2
-			ray_hit = collision.position
 
 			if damage > 0:
-				man_hit = true
 				hitmarker_audio_stream_player.play(0.1)
-				var man: Man = hit.get_parent()
-				man.health -= damage
-				if man.health <= 0.0:
-					man.queue_free()
+				result.hit_man.health -= damage
+				if result.hit_man.health <= 0.0:
+					result.hit_man.queue_free()
 
-		var impact_scene := blood_impact_scene if man_hit else bullet_impact_scene
-		var impact := impact_scene.instantiate() as Node3D
-		var impact_particle_effect := impact.get_node("GPUParticles3D") as GPUParticles3D
-		impact.position = ray_hit
-		impact_particle_effect.emitting = false
-		impact_particle_effect.finished.connect(func() -> void: impact.queue_free())
-		impact_particle_effect.one_shot = true
-		impact_particle_effect.emitting = true
-		impact.scale *= clamp(camera.global_position.distance_to(ray_hit) - 1.0, 1.0, 3.0)
-		add_child(impact)
+		if result.hit_anything:
+			var impact_scene := (
+				blood_impact_scene if result.hit_man else bullet_impact_scene
+			)
+			var impact := impact_scene.instantiate() as Node3D
+			var impact_particle_effect := (
+				impact.get_node("GPUParticles3D") as GPUParticles3D
+			)
+			impact.position = result.hit_position
+			impact_particle_effect.emitting = false
+			impact_particle_effect.finished.connect(
+				func() -> void: impact.queue_free()
+			)
+			impact_particle_effect.one_shot = true
+			impact_particle_effect.emitting = true
+			impact.scale *= clamp(
+				camera.global_position.distance_to(result.hit_position) - 1.0,
+				1.0,
+				3.0
+			)
+			add_child(impact)
 
 		muzzle_flash_particles.visible = true
 		muzzle_flash_particles.restart()
 
 		var tracer: Node3D = tracer_scene.instantiate()
 		tracer.position = muzzle_flash.global_position
-		tracer.scale.z = muzzle_flash.global_position.distance_to(ray_hit)
+		tracer.scale.z = (
+			muzzle_flash.global_position.distance_to(result.hit_position)
+		)
 
-		var tracer_particles: GPUParticles3D = tracer.get_node("GPUParticles3D")
+		var tracer_particles: GPUParticles3D = (
+			tracer.get_node("GPUParticles3D")
+		)
 		tracer_particles.emitting = false
 		tracer_particles.finished.connect(func() -> void: tracer.queue_free())
 		tracer_particles.one_shot = true
 		tracer_particles.emitting = true
 
 		add_child(tracer)
-		tracer.look_at(end, Vector3.UP, true)
+		tracer.look_at(result.hit_position, Vector3.UP, true)
 
 		accuracy -= 0.1 - 0.1 * (1.0 - accuracy)
 
 		var gun_accel := 0.8
-		gun_kick_velocity += Vector3(randf_range(-gun_accel, gun_accel), randf_range(-gun_accel, gun_accel), gun_accel)
+		gun_kick_velocity += Vector3(
+			randf_range(-gun_accel, gun_accel),
+			randf_range(-gun_accel, gun_accel),
+			gun_accel
+		)
 
 	accuracy += 1.5 * delta - accuracy * delta
 	var max_accuracy := 1.0
@@ -228,9 +218,9 @@ func process_use() -> void:
 						)
 						or can_man_see_point(man, camera.global_position)
 					)
-					and not player_is_hunted
+					and not player_hunted
 				):
-					player_is_hunted = true
+					player_hunted = true
 					log_message(
 						"<%s> I saw the demon possess %s, engaging enemy!"
 						% [man.name, possessed_man.name]

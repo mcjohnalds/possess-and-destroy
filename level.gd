@@ -27,6 +27,11 @@ var can_any_man_see_player_last_frame := false
 @onready var crosshair := $UI/Crosshair as Control
 @onready var nav_region: NavigationRegion3D = $NavigationRegion3D
 @onready var invisibility_overlay: Control = $UI/InvisibilityOverlay
+@onready var vignette: TextureRect = $UI/Vignette
+@onready var vignette_gradient_2d: GradientTexture2D = vignette.texture
+@onready var vignette_gradient: Gradient = (
+	vignette_gradient_2d.gradient
+)
 @onready var gun_shot_audio_stream_player := (
 	$GunShotAudioStreamPlayer as AudioStreamPlayer
 )
@@ -109,6 +114,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	process_use()
+	process_vignette()
 	for msg: Message in messages.get_children():
 		msg.modulate.a = lerpf(
 			1.0,
@@ -232,11 +238,21 @@ func process_use() -> void:
 			player.m_16.visible = true
 			player_has_gun = true
 			player.m_16.visible = player_has_gun
+			player.last_possessed_at = Global.time()
 			possessed_man.queue_free()
 
 		use_label.visible = true
 	else:
 		use_label.visible = false
+
+
+func process_vignette() -> void:
+	var d := Global.time() - player.last_possessed_at
+	var t := minf(d / 0.1, 1.0)
+	var a1 := lerpf(0.8, 0.0, t)
+	var a2 := lerpf(1.0, 0.3, t)
+	vignette_gradient.set_color(0, Color(0.0, 0.0, 0.0, a1))
+	vignette_gradient.set_color(1, Color(0.0, 0.0, 0.0, a2))
 
 
 func can_man_see_player(man: Man) -> bool:

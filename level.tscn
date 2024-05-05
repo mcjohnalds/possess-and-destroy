@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://c2t6smyr8xtty"]
+[gd_scene load_steps=43 format=3 uid="uid://c2t6smyr8xtty"]
 
 [ext_resource type="Script" path="res://level.gd" id="1_cikgd"]
 [ext_resource type="PackedScene" uid="uid://cewa4cg7jix27" path="res://player.tscn" id="2_nvo2f"]
@@ -87,6 +87,14 @@ sky = SubResource("Sky_t5ash")
 ambient_light_color = Color(1, 1, 1, 1)
 tonemap_mode = 2
 glow_enabled = true
+
+[sub_resource type="Gradient" id="Gradient_8j8fp"]
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_0jkgy"]
+gradient = SubResource("Gradient_8j8fp")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yhelo"]
 bg_color = Color(0.223529, 0.333333, 0.360784, 0.305882)
@@ -545,6 +553,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5718, 3.75, 13.7766)
 patrol = false
 
 [node name="UI" type="Node" parent="."]
+
+[node name="Vignette" type="TextureRect" parent="UI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_0jkgy")
 
 [node name="InvisibilityOverlay" type="Panel" parent="UI"]
 anchors_preset = 15

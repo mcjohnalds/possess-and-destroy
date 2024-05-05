@@ -43,8 +43,9 @@ func _ready() -> void:
 		man.navigation_agent.velocity_computed.connect(on_velocity_computed.bind(man))
 	call_deferred("actor_setup")
 	player.m_16.visible = player_has_gun
-	player.m_16.muzzle_flash_particles.visible = false
-	player.m_16.muzzle_flash_particles.one_shot = true
+	for m_16: M16 in get_tree().get_nodes_in_group("m_16s"):
+		m_16.muzzle_flash_particles.emitting = false
+		m_16.muzzle_flash_particles.one_shot = true
 	player.jumped.connect(func() -> void:
 		player.m_16.accuracy -= 0.5
 	)
@@ -126,20 +127,16 @@ func _process(delta: float) -> void:
 				if man.health <= 0.0:
 					man.queue_free()
 	for man: Man in men:
-		if not player_hunted or not is_instance_valid(man):
+		if not is_instance_valid(man):
 			continue
-		if Global.time() - man.m_16.last_fired_at <= 0.1:
-			continue
-		var ray_query := PhysicsRayQueryParameters3D.create(
-			man.head_hitbox.global_position,
-			player.camera.global_position,
+		var fired_recently := Global.time() - man.m_16.last_fired_at <= 0.1
+		var can_fire := (
+			player_hunted
+			and not fired_recently
+			and can_man_see_point(man, player.camera.global_position)
 		)
-		var exclude: Array[Variant] = []
-		exclude.append(player.get_rid())
-		ray_query.exclude = exclude
-		ray_query.collide_with_areas = true
-		if not get_world_3d().direct_space_state.intersect_ray(ray_query):
-			exclude = []
+		if can_fire:
+			var exclude: Array[Variant] = []
 			for man_2: Man in men:
 				if is_instance_valid(man_2):
 					exclude.append(man_2.head_hitbox.get_rid())
@@ -243,47 +240,85 @@ func can_man_see_point(man: Man, point: Vector3) -> bool:
 
 
 func _physics_process(delta: float) -> void:
-	_physics_process_player(delta)
+	physics_process_player(delta)
+
+	var can_any_man_see_player := false
 	for man in men:
 		if not is_instance_valid(man):
 			continue
-		var has_nav_target := false
-		var look_at_pos := Vector3.ZERO
-		var has_look_at_target := false
+		if can_man_see_point(man, player.camera.global_position):
+			can_any_man_see_player = true
+			player.last_known_position = player.global_position
+			break
+
+	for man in men:
+		if not is_instance_valid(man):
+			continue
+
+		# Misc man calculations
+		var updated_recently := Global.time() - man.nav_last_updated_at < 3.0
+		var nav_finished := man.navigation_agent.is_navigation_finished()
+		var next_path_pos := man.navigation_agent.get_next_path_position()
+		var has_nav_target := (
+			player_hunted and updated_recently and not nav_finished
+			or man.patrol and not nav_finished
+		)
+		var next_patrol_index := (
+			not player_hunted and man.patrol and nav_finished
+		)
+		var aim_at_player := player_hunted and can_any_man_see_player
+
+		# Calculate look pos
+		var has_look_at_pos := false
+		var look_at_pos: Vector3
 		if player_hunted:
-			has_look_at_target = true
-			look_at_pos = player.position
-			if Global.time() - man.nav_last_updated_at > 3.0:
-				man.nav_last_updated_at = Global.time()
-				man.navigation_agent.set_target_position(
-					player.global_position
-				)
-				continue
-			elif man.navigation_agent.distance_to_target() > 4.0:
-				has_nav_target = true
-		elif man.patrol:
-			has_nav_target = true
-			has_look_at_target = true
-			look_at_pos = man.navigation_agent.get_next_path_position()
-			if man.navigation_agent.is_navigation_finished():
-				man.patrol_index += 1
-				man.navigation_agent.set_target_position(
-					(
-						patrol.get_child(
-							man.patrol_index % patrol.get_child_count()
-						) as Node3D
-					).position
-				)
-				continue
-		if has_look_at_target:
-			man.look_at(look_at_pos, Vector3.UP)
-			man.rotation.x = 0
-			man.rotation.z = 0
-			if player_hunted:
-				man.m_16.look_at(player.camera.global_position, Vector3.UP)
+			has_look_at_pos = true
+			if can_any_man_see_player:
+				look_at_pos = player.position
+			else:
+				look_at_pos = player.last_known_position
+		elif man.patrol and not nav_finished:
+			has_look_at_pos = true
+			look_at_pos = next_path_pos
+
+		# Calculate new nav target
+		var has_new_nav_target := false
+		var new_nav_target: Vector3
+		if player_hunted:
+			if not updated_recently:
+				has_new_nav_target = true
+				if can_any_man_see_player:
+					new_nav_target = player.global_position
+				else:
+					new_nav_target = player.last_known_position
+		elif man.patrol and nav_finished:
+			has_new_nav_target = true
+			var patrol_node: Node3D = patrol.get_child(man.patrol_index)
+			new_nav_target = patrol_node.position
+
+		# Calculate velocity
+		var velocity := man.safe_velocity 
 		if has_nav_target:
-			man.velocity = man.global_position.direction_to(man.navigation_agent.get_next_path_position()) * 4.0 + man.safe_velocity
-			man.move_and_slide()
+			var dir := man.global_position.direction_to(
+				man.navigation_agent.get_next_path_position()
+			)
+			velocity += dir * 4.0
+
+		# Update man state
+		if next_patrol_index:
+			man.patrol_index += 1
+			man.patrol_index = man.patrol_index % patrol.get_child_count()
+		if has_new_nav_target:
+			man.navigation_agent.set_target_position(new_nav_target)
+			man.nav_last_updated_at = Global.time()
+		if has_look_at_pos:
+			man.look_at(look_at_pos, Vector3.UP)
+		man.rotation.x = 0
+		man.rotation.z = 0
+		if aim_at_player:
+			man.m_16.look_at(player.global_position, Vector3.UP)
+		man.velocity = velocity
+		man.move_and_slide()
 
 
 func print_hierarchy(node: Node) -> void:
@@ -311,7 +346,7 @@ func log_message(text: String) -> void:
 		y += 36.0
 
 
-func _physics_process_player(delta: float) -> void:
+func physics_process_player(delta: float) -> void:
 	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		if Input.is_action_just_pressed("move_fly_mode"):
 			player.fly_ability.set_active(not player.fly_ability.is_actived())
@@ -406,7 +441,7 @@ func fire_m_16(
 			)
 		add_child(impact)
 
-	m_16.muzzle_flash_particles.visible = true
+	m_16.muzzle_flash_particles.emitting = true
 	m_16.muzzle_flash_particles.restart()
 
 	var tracer: Node3D = tracer_scene.instantiate()

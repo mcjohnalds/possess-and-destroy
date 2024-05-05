@@ -9,10 +9,10 @@ Todo:
 - [x] Blood particle effect.
 - [x] Enemy can witness possession and shooting. Print message when enemy
   witnesses crime e.g "<pvt renolds> a demon possessed sgt walker, engaging!".
-- [ ] When enemy witnesses crime, all enemies will engage player. When an enemy
+- [x] When enemy witnesses crime, all enemies will engage player. When an enemy
   is engaging, they will hold weapon in aim position and shoot at player.
-- [ ] Enemies don't shoot when player is obstructed by wall.
-- [ ] When enemy is engaging, they move toward player slowly.
+- [x] Enemies don't shoot when player is obstructed by wall.
+- [x] When enemy is engaging, they move toward player slowly.
 - [ ] When enemy is engaging and loses sight of player, they will start
   searching for player. When searching, they move quickly toward the player's
   last known position. Last known position is shared across all enemies. When

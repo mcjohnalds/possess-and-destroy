@@ -43,7 +43,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.144784, -0.976012)
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="MuzzleFlash"]
 transform = Transform3D(-3.0395, -2.65722e-07, 1.16151e-14, 0, -1.32861e-07, -3.0395, 2.65722e-07, -3.0395, 1.32861e-07, 0, 0, -0.0224075)
-visible = false
 amount = 1
 lifetime = 0.1
 local_coords = true

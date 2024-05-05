@@ -23,10 +23,15 @@ var can_any_man_see_player_last_frame := false
 @onready var bullet_impact_scene := preload("res://bullet_impact.tscn")
 @onready var blood_impact_scene := preload("res://blood_impact.tscn")
 @onready var tracer_scene := preload("res://tracer.tscn")
+@onready var almost_invisible := preload("res://almost_invisible.tres")
 @onready var crosshair := $UI/Crosshair as Control
 @onready var nav_region: NavigationRegion3D = $NavigationRegion3D
+@onready var invisibility_overlay: Control = $UI/InvisibilityOverlay
 @onready var gun_shot_audio_stream_player := (
 	$GunShotAudioStreamPlayer as AudioStreamPlayer
+)
+@onready var invisibility_audio_stream_player := (
+	$InvisibilityAudioStreamPlayer as AudioStreamPlayer
 )
 @onready var hitmarker_audio_stream_player := (
 	$HitmarkerAudioStreamPlayer as AudioStreamPlayer
@@ -59,6 +64,7 @@ func _ready() -> void:
 	)
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	player.setup()
+	invisibility_overlay.visible = false
 
 
 func on_velocity_computed(safe_velocity: Vector3, man: Man) -> void:
@@ -87,7 +93,11 @@ func _input(event: InputEvent) -> void:
 	var key := event as InputEventKey
 	if key and key.keycode == KEY_I and key.pressed:
 		player.invisible = not player.invisible
-
+		invisibility_overlay.visible = player.invisible
+		player.m_16.mesh.set_surface_override_material(
+			0, almost_invisible if player.invisible else null
+		)
+		invisibility_audio_stream_player.play(0.9)
 
 # Capture mouse if clicked on the game, needed for HTML5
 func _unhandled_input(event: InputEvent) -> void:
@@ -132,7 +142,7 @@ func _process(delta: float) -> void:
 				var damage := 0.2
 				if hit == man.head_hitbox:
 					damage = 1.0
-					headshot_audio_stream_player.play(4.9)
+					headshot_audio_stream_player.play(0.085)
 				hitmarker_audio_stream_player.play(0.1)
 				man.health -= damage
 				if man.health <= 0.0:
@@ -213,7 +223,7 @@ func process_use() -> void:
 					)
 					break
 
-			possession_audio_stream_player.play(0.7)
+			possession_audio_stream_player.play(4.9)
 			possessed_man_name = possessed_man.name
 			# + 0.1 prevents player from falling beneath floor
 			player.position = possessed_man.position + 0.1 * Vector3.UP

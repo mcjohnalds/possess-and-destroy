@@ -8,3 +8,6 @@ var accuracy := 1.0
 @onready var muzzle_flash_particles := (
 	$MuzzleFlash/GPUParticles3D as GPUParticles3D
 )
+@onready var mesh: MeshInstance3D = (
+	find_children("*", "MeshInstance3D", true, false)[0]
+)

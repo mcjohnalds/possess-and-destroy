@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://c2t6smyr8xtty"]
+[gd_scene load_steps=41 format=3 uid="uid://c2t6smyr8xtty"]
 
 [ext_resource type="Script" path="res://level.gd" id="1_cikgd"]
 [ext_resource type="PackedScene" uid="uid://cewa4cg7jix27" path="res://player.tscn" id="2_nvo2f"]
@@ -13,6 +13,7 @@
 [ext_resource type="Material" uid="uid://ckvcdcn2iue87" path="res://addons/character-controller/example/main/materials/wood.tres" id="11_cakef"]
 [ext_resource type="Texture2D" uid="uid://svijnbaaeuol" path="res://addons/character-controller/example/main/textures/Free DEMO Pixel Skies Background pack by Digital Moons/demo01_PixelSky.png" id="12_olhen"]
 [ext_resource type="PackedScene" uid="uid://dkw50wbe2l0x5" path="res://man.tscn" id="13_rnn3k"]
+[ext_resource type="AudioStream" uid="uid://dviwyfg3xgfoj" path="res://shield_bash_impact.ogg" id="16_l21hj"]
 [ext_resource type="AudioStream" uid="uid://5nuhnh2wdjbn" path="res://gun_shot.wav" id="16_ocj6n"]
 [ext_resource type="AudioStream" uid="uid://bnd132vcoxlw2" path="res://hitmarker.mp3" id="17_vgiwo"]
 [ext_resource type="AudioStream" uid="uid://c1bq65sbkv3hg" path="res://crushing_kick.wav" id="18_4esmo"]
@@ -86,6 +87,9 @@ sky = SubResource("Sky_t5ash")
 ambient_light_color = Color(1, 1, 1, 1)
 tonemap_mode = 2
 glow_enabled = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yhelo"]
+bg_color = Color(0.223529, 0.333333, 0.360784, 0.305882)
 
 [node name="Level" type="Node3D"]
 script = ExtResource("1_cikgd")
@@ -532,17 +536,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.9238, 0, 2.78047)
 
 [node name="Pvt Renolds" parent="Men" instance=ExtResource("13_rnn3k")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.76001, 0, 0.541676)
-patrol = true
 
 [node name="Pvt Smith" parent="Men" instance=ExtResource("13_rnn3k")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.95971, 7.15256e-07, 16.4773)
-patrol = true
 
 [node name="Pvt Miller" parent="Men" instance=ExtResource("13_rnn3k")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5718, 3.75, 13.7766)
 patrol = false
 
 [node name="UI" type="Node" parent="."]
+
+[node name="InvisibilityOverlay" type="Panel" parent="UI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_yhelo")
 
 [node name="Panel" type="Panel" parent="UI"]
 anchors_preset = 2
@@ -613,10 +623,13 @@ stream = ExtResource("16_ocj6n")
 stream = ExtResource("17_vgiwo")
 
 [node name="HeadshotAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("18_4esmo")
+stream = ExtResource("16_l21hj")
+
+[node name="InvisibilityAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("19_cbexm")
 
 [node name="PossessionAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("19_cbexm")
+stream = ExtResource("18_4esmo")
 
 [node name="DamageAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("18_v0jvo")

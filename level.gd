@@ -5,6 +5,7 @@ var men: Array[Man] = []
 var player_has_gun := false
 var possessed_man_name := "the civilian"
 var player_hunted := false
+var any_enemy_approached_last_known_position := false
 @onready var patrol: Node = $Patrol
 @onready var use_label: Label = $UI/UseLabel
 @onready var possessing_label: Label = $UI/PossessingLabel
@@ -13,6 +14,7 @@ var player_hunted := false
 @onready var blood_impact_scene := preload("res://blood_impact.tscn")
 @onready var tracer_scene := preload("res://tracer.tscn")
 @onready var crosshair := $UI/Crosshair as Control
+@onready var nav_region: NavigationRegion3D = $NavigationRegion3D
 @onready var gun_shot_audio_stream_player := (
 	$GunShotAudioStreamPlayer as AudioStreamPlayer
 )
@@ -76,6 +78,9 @@ func _input(event: InputEvent) -> void:
 				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 			Input.MOUSE_MODE_VISIBLE:
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	var key := event as InputEventKey
+	if key and key.keycode == KEY_I and key.pressed:
+		player.invisible = not player.invisible
 
 
 # Capture mouse if clicked on the game, needed for HTML5
@@ -102,7 +107,7 @@ func _process(delta: float) -> void:
 		for man: Man in men:
 			if (
 				is_instance_valid(man)
-				and can_man_see_point(man, player.camera.global_position)
+				and can_man_see_player(man)
 				and not player_hunted
 			):
 				hunt_player()
@@ -133,7 +138,7 @@ func _process(delta: float) -> void:
 		var can_fire := (
 			player_hunted
 			and not fired_recently
-			and can_man_see_point(man, player.camera.global_position)
+			and can_man_see_player(man)
 		)
 		if can_fire:
 			var exclude: Array[Variant] = []
@@ -191,7 +196,7 @@ func process_use() -> void:
 							man,
 							possessed_man.head_hitbox.global_position
 						)
-						or can_man_see_point(man, player.camera.global_position)
+						or can_man_see_player(man)
 					)
 					and not player_hunted
 				):
@@ -216,6 +221,13 @@ func process_use() -> void:
 		use_label.visible = true
 	else:
 		use_label.visible = false
+
+
+func can_man_see_player(man: Man) -> bool:
+	return (
+		not player.invisible
+		and can_man_see_point(man, player.camera.global_position)
+	)
 
 
 func can_man_see_point(man: Man, point: Vector3) -> bool:
@@ -246,65 +258,105 @@ func _physics_process(delta: float) -> void:
 	for man in men:
 		if not is_instance_valid(man):
 			continue
-		if can_man_see_point(man, player.camera.global_position):
+		if can_man_see_player(man):
 			can_any_man_see_player = true
 			player.last_known_position = player.global_position
+			any_enemy_approached_last_known_position = false
 			break
 
 	for man in men:
 		if not is_instance_valid(man):
 			continue
 
-		# Misc man calculations
-		var updated_recently := Global.time() - man.nav_last_updated_at < 3.0
+		# --- Calculations, no state or side-effects ---
 		var nav_finished := man.navigation_agent.is_navigation_finished()
 		var next_path_pos := man.navigation_agent.get_next_path_position()
-		var has_nav_target := (
-			player_hunted and updated_recently and not nav_finished
-			or man.patrol and not nav_finished
+		var aim_at_player := player_hunted and can_any_man_see_player
+		var man_pos := man.global_position
+		var search_duration := Global.time() - man.nav_last_updated_at
+		var max_search_duration := lerpf(
+			5.0, 10.0, hash_int_to_random_float(man.get_index())
 		)
+
 		var next_patrol_index := (
 			not player_hunted and man.patrol and nav_finished
 		)
-		var aim_at_player := player_hunted and can_any_man_see_player
 
-		# Calculate look pos
+		var searching := player_hunted and not can_any_man_see_player
+
+		var approaching_last_known_position := (
+			searching
+			and not any_enemy_approached_last_known_position
+		)
+
+		var finished_approaching_last_known_position := (
+			approaching_last_known_position
+			and (nav_finished or search_duration > 20.0)
+		)
+
+		var pausing_before_picking_new_search_pos := (
+			searching
+			and search_duration > max_search_duration / 2.0
+			and search_duration < max_search_duration
+			and not approaching_last_known_position
+		)
+
+		var pick_new_search_pos := (
+			searching
+			and not pausing_before_picking_new_search_pos
+			and search_duration > max_search_duration
+		)
+
+		var random_dist := 10.0
+		var random_search_pos := man_pos + Vector3(
+			(1 if randi() % 2 == 0 else -1) * random_dist,
+			(1 if randi() % 2 == 0 else -1) * random_dist,
+			(1 if randi() % 2 == 0 else -1) * random_dist,
+		)
+
+		var has_new_nav_target := false
+		var new_nav_target: Vector3
+		if search_duration > 1.0:
+			if searching:
+				if pick_new_search_pos:
+					if any_enemy_approached_last_known_position:
+						has_new_nav_target = true
+						new_nav_target = random_search_pos
+					else:
+						has_new_nav_target = true
+						new_nav_target = player.last_known_position
+			elif player_hunted:
+				has_new_nav_target = true
+				new_nav_target = player.global_position
+			elif man.patrol and nav_finished:
+				has_new_nav_target = true
+				var patrol_node: Node3D = patrol.get_child(man.patrol_index)
+				new_nav_target = patrol_node.position
+
+		var has_nav_target := (
+			not has_new_nav_target
+			and not nav_finished
+			and not pausing_before_picking_new_search_pos
+			and (man.patrol or player_hunted)
+		)
+
 		var has_look_at_pos := false
 		var look_at_pos: Vector3
-		if player_hunted:
+		if player_hunted and can_any_man_see_player:
 			has_look_at_pos = true
-			if can_any_man_see_player:
-				look_at_pos = player.position
-			else:
-				look_at_pos = player.last_known_position
-		elif man.patrol and not nav_finished:
+			look_at_pos = player.global_position
+		elif has_nav_target:
 			has_look_at_pos = true
 			look_at_pos = next_path_pos
 
-		# Calculate new nav target
-		var has_new_nav_target := false
-		var new_nav_target: Vector3
-		if player_hunted:
-			if not updated_recently:
-				has_new_nav_target = true
-				if can_any_man_see_player:
-					new_nav_target = player.global_position
-				else:
-					new_nav_target = player.last_known_position
-		elif man.patrol and nav_finished:
-			has_new_nav_target = true
-			var patrol_node: Node3D = patrol.get_child(man.patrol_index)
-			new_nav_target = patrol_node.position
-
-		# Calculate velocity
 		var velocity := man.safe_velocity 
 		if has_nav_target:
-			var dir := man.global_position.direction_to(
-				man.navigation_agent.get_next_path_position()
-			)
+			var dir := man.global_position.direction_to(next_path_pos)
 			velocity += dir * 4.0
 
-		# Update man state
+		# --- Side effects ---
+		if finished_approaching_last_known_position:
+			any_enemy_approached_last_known_position = true
 		if next_patrol_index:
 			man.patrol_index += 1
 			man.patrol_index = man.patrol_index % patrol.get_child_count()
@@ -317,6 +369,10 @@ func _physics_process(delta: float) -> void:
 		man.rotation.z = 0
 		if aim_at_player:
 			man.m_16.look_at(player.global_position, Vector3.UP)
+		else:
+			man.m_16.rotation.x = 0
+			man.m_16.rotation.y = 0
+			man.m_16.rotation.z = 0
 		man.velocity = velocity
 		man.move_and_slide()
 
@@ -471,3 +527,10 @@ func fire_m_16(
 	)
 
 	return collision.collider if collision else null
+
+
+func hash_int_to_random_float(value: int) -> float:
+    # Linear congruential generator (LCG)
+	var s := value * 1103515245 + 12345
+	s = s % 2147483647
+	return float(s) / 2147483647.0

@@ -12,12 +12,12 @@ Todo:
 - [x] When enemy witnesses crime, all enemies will engage player. When an enemy
   is engaging, they will hold weapon in aim position and shoot at player.
 - [x] Enemies don't shoot when player is obstructed by wall.
-- [x] When enemy is engaging, they move toward player slowly.
-- [ ] When enemy is engaging and loses sight of player, they will start
-  searching for player. When searching, they move quickly toward the player's
-  last known position. Last known position is shared across all enemies. When
-  enemy spots player, all enemies will engage.
-- [ ] When enemy reaches last known position of player and no enemy can see
+- [x] When enemy is engaging, they move toward player.
+- [x] When enemy is engaging and loses sight of player, they will start
+  searching for player. When searching, they move toward the player's last
+  known position. Last known position is shared across all enemies. When enemy
+  spots player, all enemies will engage.
+- [x] When enemy reaches last known position of player and no enemy can see
   player, they will begin wandering. When wandering, they will pick a random
   nearby location to walk to. When they reach that location, they will pick a
   new random location. When any enemy spots player, all enemies engage.
@@ -80,3 +80,5 @@ Backlog:
 - [ ] Make view kick when shooting
 - [ ] Make enemies detect, aim, and hit both player head and body, especially
   important if player crouches underneath something.
+- [ ] Enemy footsteps
+- [ ] Vary man speed depending on action.

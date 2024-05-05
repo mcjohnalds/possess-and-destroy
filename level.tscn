@@ -532,9 +532,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.9238, 0, 2.78047)
 
 [node name="Pvt Renolds" parent="Men" instance=ExtResource("13_rnn3k")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.76001, 0, 0.541676)
+patrol = true
 
 [node name="Pvt Smith" parent="Men" instance=ExtResource("13_rnn3k")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.95971, 7.15256e-07, 16.4773)
+patrol = true
 
 [node name="Pvt Miller" parent="Men" instance=ExtResource("13_rnn3k")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5718, 3.75, 13.7766)

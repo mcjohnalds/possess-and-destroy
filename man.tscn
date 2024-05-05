@@ -15,7 +15,6 @@ size = Vector3(0.611, 1.246, 0.46)
 
 [node name="Man" type="CharacterBody3D"]
 script = ExtResource("1_acryy")
-patrol = null
 
 [node name="ManMesh" parent="." instance=ExtResource("2_fnqcv")]
 

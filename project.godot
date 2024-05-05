@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="possess-and-destroy"
-run/main_scene="res://addons/character-controller/example/main/level.tscn"
+run/main_scene="res://level.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://icon.svg"
 

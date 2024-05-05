@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3 uid="uid://cewa4cg7jix27"]
+
+[ext_resource type="PackedScene" uid="uid://8oy3xm2sff8" path="res://addons/character-controller/fps/fps_controller_3d.tscn" id="1_fbpun"]
+[ext_resource type="Script" path="res://player.gd" id="2_8r0nc"]
+[ext_resource type="PackedScene" uid="uid://cdl0koy3r7fiq" path="res://m_16.tscn" id="3_djd35"]
+[ext_resource type="PackedScene" path="res://addons/character-controller/example/main/audios/player_audios.tscn" id="4_ux8kv"]
+
+[node name="Player" instance=ExtResource("1_fbpun")]
+script = ExtResource("2_8r0nc")
+
+[node name="Camera3D" type="Camera3D" parent="Head/FirstPersonCameraReference" index="0"]
+
+[node name="GunTransform" type="Node3D" parent="Head" index="3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.383, -0.395, -0.42)
+
+[node name="M16" parent="Head/GunTransform" index="0" instance=ExtResource("3_djd35")]
+
+[node name="Player Audios" parent="." index="9" instance=ExtResource("4_ux8kv")]

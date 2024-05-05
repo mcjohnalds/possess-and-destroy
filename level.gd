@@ -1,7 +1,6 @@
 extends Node3D
 
 const ENEMY_FOV := 0.45 * TAU
-@export var fast_close := true
 var men: Array[Man] = []
 var player_has_gun := false
 var last_fired_at := 0.0
@@ -42,12 +41,6 @@ enum PhysicsLayers {
 
 
 func _ready() -> void:
-	if !OS.is_debug_build():
-		fast_close = false
-	if fast_close:
-		print("** Fast Close enabled in the 'level.gd' script **")
-		print("** 'Esc' to close 'Shift + F1' to release mouse **")
-	set_process_input(fast_close)
 	men.assign($Men.get_children())
 	for man in men:
 		man.navigation_agent.path_desired_distance = 0.5
@@ -60,6 +53,8 @@ func _ready() -> void:
 	player.jumped.connect(func() -> void:
 		accuracy -= 0.5
 	)
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	player.setup()
 
 
 func on_velocity_computed(safe_velocity: Vector3, man: Man) -> void:
@@ -74,9 +69,11 @@ func actor_setup() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
+	if OS.is_debug_build() and event.is_action_pressed("ui_cancel"):
 		get_tree().quit() # Quits the game
-	
+	var motion := event as InputEventMouseMotion
+	if motion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		player.rotate_head(motion.relative)
 	if event.is_action_pressed("change_mouse_input"):
 		match Input.get_mouse_mode():
 			Input.MOUSE_MODE_CAPTURED:
@@ -86,7 +83,6 @@ func _input(event: InputEvent) -> void:
 
 
 # Capture mouse if clicked on the game, needed for HTML5
-# Called when an InputEvent hasn't been consumed by _input() or any GUI item
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var m := event as InputEventMouseButton
@@ -273,7 +269,8 @@ func can_man_see_point(man: Man, point: Vector3) -> bool:
 	return not get_world_3d().direct_space_state.intersect_ray(query)
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	_physics_process_player(delta)
 	for man in men:
 		if not is_instance_valid(man) or not man.patrol:
 			continue
@@ -311,3 +308,26 @@ func log_message(text: String) -> void:
 	for msg: Label in messages.get_children():
 		msg.position.y = y
 		y += 36.0
+
+
+func _physics_process_player(delta: float) -> void:
+	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		if Input.is_action_just_pressed("move_fly_mode"):
+			player.fly_ability.set_active(not player.fly_ability.is_actived())
+		var input_axis := Input.get_vector(
+			"move_left",
+			"move_right",
+			"move_backward",
+			"move_forward"
+		)
+		player.move(
+			delta,
+			input_axis,
+			Input.is_action_just_pressed("move_jump"),
+			Input.is_action_pressed("move_crouch"),
+			Input.is_action_pressed("move_sprint"),
+			Input.is_action_pressed("move_jump"),
+			Input.is_action_pressed("move_jump")
+		)
+	else:
+		player.move(delta)

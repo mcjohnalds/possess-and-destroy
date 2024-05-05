@@ -47,9 +47,7 @@ particles_anim_loop = false
 material = SubResource("StandardMaterial3D_54od1")
 size = Vector2(0.2, 0.2)
 
-[node name="BulletImpact" type="Node3D"]
-
-[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+[node name="BulletImpact" type="GPUParticles3D"]
 lifetime = 0.1
 explosiveness = 0.98
 fixed_fps = 60

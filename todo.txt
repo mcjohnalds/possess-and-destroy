@@ -78,3 +78,5 @@ Backlog:
 - [ ] Make nav agent movement more human like and avoid obstacles.
 - [ ] Make gun not clip through things
 - [ ] Make view kick when shooting
+- [ ] Make enemies detect, aim, and hit both player head and body, especially
+  important if player crouches underneath something.

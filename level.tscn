@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://c2t6smyr8xtty"]
+[gd_scene load_steps=39 format=3 uid="uid://c2t6smyr8xtty"]
 
 [ext_resource type="Script" path="res://level.gd" id="1_cikgd"]
 [ext_resource type="PackedScene" uid="uid://cewa4cg7jix27" path="res://player.tscn" id="2_nvo2f"]
@@ -16,6 +16,7 @@
 [ext_resource type="AudioStream" uid="uid://5nuhnh2wdjbn" path="res://gun_shot.wav" id="16_ocj6n"]
 [ext_resource type="AudioStream" uid="uid://bnd132vcoxlw2" path="res://hitmarker.mp3" id="17_vgiwo"]
 [ext_resource type="AudioStream" uid="uid://c1bq65sbkv3hg" path="res://crushing_kick.wav" id="18_4esmo"]
+[ext_resource type="AudioStream" uid="uid://k7ew6ptw76r6" path="res://punch.ogg" id="18_v0jvo"]
 [ext_resource type="AudioStream" uid="uid://bu0jr3pw0lrp2" path="res://jetbike_flypast.ogg" id="19_cbexm"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_aq60o"]
@@ -586,3 +587,6 @@ stream = ExtResource("18_4esmo")
 
 [node name="PossessionAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("19_cbexm")
+
+[node name="DamageAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("18_v0jvo")

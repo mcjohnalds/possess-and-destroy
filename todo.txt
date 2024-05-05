@@ -21,7 +21,7 @@ Todo:
   player, they will begin wandering. When wandering, they will pick a random
   nearby location to walk to. When they reach that location, they will pick a
   new random location. When any enemy spots player, all enemies engage.
-- [ ] After 20 seconds of wandering, enemy will return to patrol.
+- [x] After 20 seconds of wandering, enemy will return to patrol.
 
 Backlog:
 

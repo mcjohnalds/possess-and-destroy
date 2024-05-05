@@ -1,11 +1,21 @@
 extends Node3D
 
+enum PhysicsLayers {
+	DEFAULT = 1 << 0,
+}
+
+enum AiTeamState {
+	PATROLLING, ENGAGING, APPROACHING_LAST_KNOWN_POSITION, SEARCHING_RANDOMLY
+}
+
 const ENEMY_FOV := 0.45 * TAU
 var men: Array[Man] = []
 var player_has_gun := false
 var possessed_man_name := "the civilian"
-var player_hunted := false
+var player_identity_compromised := false
 var any_enemy_approached_last_known_position := false
+var ai_team_state_last_frame := AiTeamState.PATROLLING
+var can_any_man_see_player_last_frame := false
 @onready var patrol: Node = $Patrol
 @onready var use_label: Label = $UI/UseLabel
 @onready var possessing_label: Label = $UI/PossessingLabel
@@ -31,10 +41,6 @@ var any_enemy_approached_last_known_position := false
 	$DamageAudioStreamPlayer as AudioStreamPlayer
 )
 @onready var messages := $UI/Messages as Control
-
-enum PhysicsLayers {
-	DEFAULT = 1 << 0,
-}
 
 
 func _ready() -> void:
@@ -108,7 +114,7 @@ func _process(delta: float) -> void:
 			if (
 				is_instance_valid(man)
 				and can_man_see_player(man)
-				and not player_hunted
+				and not player_identity_compromised
 			):
 				hunt_player()
 				log_message(
@@ -136,7 +142,7 @@ func _process(delta: float) -> void:
 			continue
 		var fired_recently := Global.time() - man.m_16.last_fired_at <= 0.1
 		var can_fire := (
-			player_hunted
+			player_identity_compromised
 			and not fired_recently
 			and can_man_see_player(man)
 		)
@@ -198,7 +204,7 @@ func process_use() -> void:
 						)
 						or can_man_see_player(man)
 					)
-					and not player_hunted
+					and not player_identity_compromised
 				):
 					hunt_player()
 					log_message(
@@ -254,35 +260,107 @@ func can_man_see_point(man: Man, point: Vector3) -> bool:
 func _physics_process(delta: float) -> void:
 	physics_process_player(delta)
 
+	# --- Calculations, no state or side-effects ---
+
 	var can_any_man_see_player := false
 	for man in men:
 		if not is_instance_valid(man):
 			continue
 		if can_man_see_player(man):
 			can_any_man_see_player = true
-			player.last_known_position = player.global_position
-			any_enemy_approached_last_known_position = false
 			break
+
+	var player_hunted := (
+		player_identity_compromised
+		and Global.time() - player.last_seen_at < 20.0
+	)
+	var searching := player_hunted and not can_any_man_see_player
+
+	var spotted_this_frame := (
+		can_any_man_see_player and not can_any_man_see_player_last_frame 
+	)
+
+	var valid_men_names: Array[String] = []
+	for man: Man in men:
+		if is_instance_valid(man):
+			valid_men_names.append(man.name)
+
+	var random_man_name: String
+	if valid_men_names.size() > 0:
+		random_man_name = valid_men_names.pick_random()
+
+	# TODO: use this var in the logic
+	var ai_team_state: AiTeamState
+	if player_hunted and can_any_man_see_player:
+		ai_team_state = AiTeamState.ENGAGING
+	elif searching:
+		if any_enemy_approached_last_known_position:
+			ai_team_state = AiTeamState.SEARCHING_RANDOMLY
+		else:
+			ai_team_state = AiTeamState.APPROACHING_LAST_KNOWN_POSITION
+	else:
+		ai_team_state = AiTeamState.PATROLLING
+
+	var began_engaging_player_this_frame_due_to_spotting := (
+		ai_team_state_last_frame != AiTeamState.ENGAGING
+		and ai_team_state == AiTeamState.ENGAGING
+		and spotted_this_frame
+	)
+
+	var began_approaching_last_known_position_this_frame := (
+		ai_team_state_last_frame != AiTeamState.APPROACHING_LAST_KNOWN_POSITION
+		and ai_team_state == AiTeamState.APPROACHING_LAST_KNOWN_POSITION
+	)
+
+	var began_searching_randomly_for_player_this_frame := (
+		ai_team_state_last_frame != AiTeamState.SEARCHING_RANDOMLY
+		and ai_team_state == AiTeamState.SEARCHING_RANDOMLY
+	)
+
+	var stopped_hunting_player_this_frame := (
+		ai_team_state_last_frame != AiTeamState.PATROLLING
+		and ai_team_state == AiTeamState.PATROLLING
+	)
+
+	var message: String
+	if random_man_name:
+		if began_engaging_player_this_frame_due_to_spotting:
+			message = (
+				"<%s> Demon spotted, engaging!"
+					% random_man_name
+			)
+		if began_approaching_last_known_position_this_frame:
+			message = (
+				"<%s> Lost eyes on the demon, approaching last known position"
+				% random_man_name
+			)
+		if began_searching_randomly_for_player_this_frame:
+			message = (
+				"<%s> Searching area for the demon"
+				% random_man_name
+			)
+		if stopped_hunting_player_this_frame:
+			message = (
+				"<%s> Can't find the demon, returning to patrol"
+				% random_man_name
+			)
 
 	for man in men:
 		if not is_instance_valid(man):
 			continue
 
-		# --- Calculations, no state or side-effects ---
 		var nav_finished := man.navigation_agent.is_navigation_finished()
 		var next_path_pos := man.navigation_agent.get_next_path_position()
-		var aim_at_player := player_hunted and can_any_man_see_player
+		var aim_at_player := player_identity_compromised and can_any_man_see_player
 		var man_pos := man.global_position
 		var search_duration := Global.time() - man.nav_last_updated_at
 		var max_search_duration := lerpf(
 			5.0, 10.0, hash_int_to_random_float(man.get_index())
 		)
 
-		var next_patrol_index := (
-			not player_hunted and man.patrol and nav_finished
-		)
+		var patrolling := not player_hunted and man.patrol
 
-		var searching := player_hunted and not can_any_man_see_player
+		var next_patrol_node := patrolling and nav_finished
 
 		var approaching_last_known_position := (
 			searching
@@ -328,7 +406,7 @@ func _physics_process(delta: float) -> void:
 			elif player_hunted:
 				has_new_nav_target = true
 				new_nav_target = player.global_position
-			elif man.patrol and nav_finished:
+			elif next_patrol_node:
 				has_new_nav_target = true
 				var patrol_node: Node3D = patrol.get_child(man.patrol_index)
 				new_nav_target = patrol_node.position
@@ -337,7 +415,7 @@ func _physics_process(delta: float) -> void:
 			not has_new_nav_target
 			and not nav_finished
 			and not pausing_before_picking_new_search_pos
-			and (man.patrol or player_hunted)
+			and (patrolling or player_hunted)
 		)
 
 		var has_look_at_pos := false
@@ -357,7 +435,7 @@ func _physics_process(delta: float) -> void:
 		# --- Side effects ---
 		if finished_approaching_last_known_position:
 			any_enemy_approached_last_known_position = true
-		if next_patrol_index:
+		if next_patrol_node:
 			man.patrol_index += 1
 			man.patrol_index = man.patrol_index % patrol.get_child_count()
 		if has_new_nav_target:
@@ -375,6 +453,16 @@ func _physics_process(delta: float) -> void:
 			man.m_16.rotation.z = 0
 		man.velocity = velocity
 		man.move_and_slide()
+
+	if can_any_man_see_player:
+		player.last_known_position = player.global_position
+		player.last_seen_at = Global.time()
+		any_enemy_approached_last_known_position = false
+
+	if message:
+		log_message(message)
+	ai_team_state_last_frame = ai_team_state
+	can_any_man_see_player_last_frame = can_any_man_see_player
 
 
 func print_hierarchy(node: Node) -> void:
@@ -426,7 +514,7 @@ func physics_process_player(delta: float) -> void:
 
 
 func hunt_player() -> void:
-	player_hunted = true
+	player_identity_compromised = true
 	for man: Man in men:
 		if is_instance_valid(man):
 			man.m_16.reparent(man.aim_transform, false)

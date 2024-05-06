@@ -23,11 +23,29 @@ Todo:
   new random location. When any enemy spots player, all enemies engage.
 - [x] After 20 seconds of wandering, enemy will return to patrol.
 - [x] Add invisibility indicator
+- [x] Enemy death animation.
+- [ ] Can only possess from behind.
+- [ ] Identity compromised status displayed on screen.
+- [ ] Possessing an enemy makes the player's identity no longer compromised,
+  unless witnessed.
+- [ ] Enemy can hear gunshot and possession. When enemy hears sound, they will
+  face location for a moment then approach location then return to their
+  previous activity.
+- [ ] Invisibility drains health. Possession regains health. Health is
+  displayed in UI.
+- [ ] Some enemies follow other enemies when they patrol.
 
 Backlog:
 
-- [ ] Enemy can hear gunshot.
-- [ ] Enemy can witness death.
+- [ ] Ammo
+  - [ ] Ammo is finite. Must possess to get more ammo.
+  - [ ] Enemy drops ammo on death.
+- [ ] Slow spotting
+  - [ ] Spotting is not instant. Spotting is faster when player is closer or
+    enemies are hunting. A UI control displays spotting level.
+  - [ ] When enemy is spotting player, they pause what they are doing and stare
+    at the player.
+- [ ] Enemies turn and accelerate slowly.
 - [ ] When player possesses enemy, player is no longer in hunted mode.
 - [ ] When player shoots gun, nearby enemies will investigate area as if it
 - [ ] Player can die and game must restart. were the player's last known

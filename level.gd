@@ -9,13 +9,13 @@ enum AiTeamState {
 }
 
 const ENEMY_FOV := 0.45 * TAU
-var men: Array[Man] = []
 var player_has_gun := false
 var possessed_man_name := "the civilian"
 var player_identity_compromised := false
 var any_enemy_approached_last_known_position := false
 var ai_team_state_last_frame := AiTeamState.PATROLLING
 var can_any_man_see_player_last_frame := false
+@onready var men: Node = $Men
 @onready var patrol: Node = $Patrol
 @onready var use_label: Label = $UI/UseLabel
 @onready var possessing_label: Label = $UI/PossessingLabel
@@ -54,8 +54,7 @@ var can_any_man_see_player_last_frame := false
 
 
 func _ready() -> void:
-	men.assign($Men.get_children())
-	for man in men:
+	for man: Man in men.get_children():
 		man.navigation_agent.path_desired_distance = 0.5
 		man.navigation_agent.target_desired_distance = 0.5
 		man.navigation_agent.velocity_computed.connect(on_velocity_computed.bind(man))
@@ -78,7 +77,7 @@ func on_velocity_computed(safe_velocity: Vector3, man: Man) -> void:
 
 func actor_setup() -> void:
 	await get_tree().physics_frame
-	for man in men:
+	for man: Man in men.get_children():
 		if man.patrol:
 			man.navigation_agent.set_target_position((patrol.get_child(0) as Node3D).position)
 
@@ -121,14 +120,94 @@ func _process(delta: float) -> void:
 			0.6,
 			clampf((Global.time() - msg.created_at) / 2.0, 0.0, 1.0)
 		)
+	process_player_shooting()
+	process_man_shooting()
+	process_m_16s(delta)
+
+
+func process_use() -> void:
+	# --- Calculations, no side-effects --- #
+
+	var query := PhysicsRayQueryParameters3D.create(
+		player.camera.global_position,
+		player.camera.global_position + player.camera.global_basis.z * -10.0
+	)
+
+	var collision := get_world_3d().direct_space_state.intersect_ray(query)
+
+	var targetted_man: Man
+	if collision and collision.collider is Man:
+		var man: Man = collision.collider
+		if man and man.alive:
+			targetted_man = collision.collider
+
+	var possessed := false
+	if targetted_man and Input.is_action_just_pressed("use"):
+		possessed = true
+
+	var possession_witness: Man
+	if possessed:
+		for man: Man in men.get_children():
+			if (
+				is_instance_valid(man)
+				and man != targetted_man
+				and man.alive
+				and (
+					can_man_see_point(
+						man,
+						targetted_man.head_hitbox.global_position
+					)
+					or can_man_see_player(man)
+				)
+				and not player_identity_compromised
+			):
+				possession_witness = man
+				break
+
+	# --- Side effects ---
+
+	use_label.visible = targetted_man != null
+
+	if possessed:
+		possession_audio_stream_player.play(4.9)
+		possessed_man_name = targetted_man.name
+		# + 0.1 prevents player from falling beneath floor
+		player.position = targetted_man.position + 0.1 * Vector3.UP
+		player.velocity = Vector3.ZERO
+		possessing_label.text = "Possessing: " + targetted_man.name
+		player.m_16.visible = true
+		player_has_gun = true
+		player.m_16.visible = player_has_gun
+		player.last_possessed_at = Global.time()
+		targetted_man.queue_free()
+
+	if possession_witness:
+		hunt_player()
+		log_message(
+			"<%s> I saw the demon possess %s, engaging enemy!"
+			% [possession_witness.name, targetted_man.name]
+		)
+
+
+func process_vignette() -> void:
+	var d := Global.time() - player.last_possessed_at
+	var t := minf(d / 0.1, 1.0)
+	var a1 := lerpf(0.8, 0.0, t)
+	var a2 := lerpf(1.0, 0.3, t)
+	vignette_gradient.set_color(0, Color(0.0, 0.0, 0.0, a1))
+	vignette_gradient.set_color(1, Color(0.0, 0.0, 0.0, a2))
+
+
+func process_player_shooting() -> void:
 	if (
 		player_has_gun
 		and Input.is_action_pressed("primary")
 		and Global.time() - player.m_16.last_fired_at > 0.1
 	):
-		for man: Man in men:
+		for man: Man in men.get_children():
 			if (
 				is_instance_valid(man)
+				and man.alive
 				and can_man_see_player(man)
 				and not player_identity_compromised
 			):
@@ -144,7 +223,7 @@ func _process(delta: float) -> void:
 		)
 		if hit:
 			var man := hit.get_parent() as Man
-			if man:
+			if man and man.alive:
 				var damage := 0.2
 				if hit == man.head_hitbox:
 					damage = 1.0
@@ -152,9 +231,18 @@ func _process(delta: float) -> void:
 				hitmarker_audio_stream_player.play(0.1)
 				man.health -= damage
 				if man.health <= 0.0:
-					man.queue_free()
-	for man: Man in men:
-		if not is_instance_valid(man):
+					man.alive = false
+					man.died_at = Global.time()
+					man.collision_layer = 0
+					man.collision_mask = 0
+
+
+func process_man_shooting() -> void:
+	for man: Man in men.get_children():
+		if not is_instance_valid(man) or not man.alive:
+			continue
+		if not man.alive and Global.time() - man.died_at > 5.0:
+			man.queue_free()
 			continue
 		var fired_recently := Global.time() - man.m_16.last_fired_at <= 0.1
 		var can_fire := (
@@ -164,7 +252,7 @@ func _process(delta: float) -> void:
 		)
 		if can_fire:
 			var exclude: Array[Variant] = []
-			for man_2: Man in men:
+			for man_2: Man in men.get_children():
 				if is_instance_valid(man_2):
 					exclude.append(man_2.head_hitbox.get_rid())
 					exclude.append(man_2.body_hitbox.get_rid())
@@ -176,6 +264,8 @@ func _process(delta: float) -> void:
 				damage_audio_stream_player.play()
 			man.m_16.last_fired_at = Global.time()
 
+
+func process_m_16s(delta: float) -> void:
 	for m_16: M16 in get_tree().get_nodes_in_group("m_16s"):
 		if not is_instance_valid(m_16):
 			continue
@@ -200,61 +290,6 @@ func _process(delta: float) -> void:
 		m_16.kick_velocity -= m_16.kick_velocity * delta * 40.0
 
 
-func process_use() -> void:
-	var query := PhysicsRayQueryParameters3D.create(
-		player.camera.global_position,
-		player.camera.global_position + player.camera.global_basis.z * -10.0
-	)
-	var collision := get_world_3d().direct_space_state.intersect_ray(query)
-	if collision and collision.collider is Man:
-		var possessed_man: Man = collision.collider
-		if Input.is_action_just_pressed("use"):
-			for man: Man in men:
-				if (
-					man != possessed_man
-					and is_instance_valid(man)
-					and (
-						can_man_see_point(
-							man,
-							possessed_man.head_hitbox.global_position
-						)
-						or can_man_see_player(man)
-					)
-					and not player_identity_compromised
-				):
-					hunt_player()
-					log_message(
-						"<%s> I saw the demon possess %s, engaging enemy!"
-						% [man.name, possessed_man.name]
-					)
-					break
-
-			possession_audio_stream_player.play(4.9)
-			possessed_man_name = possessed_man.name
-			# + 0.1 prevents player from falling beneath floor
-			player.position = possessed_man.position + 0.1 * Vector3.UP
-			player.velocity = Vector3.ZERO
-			possessing_label.text = "Possessing: " + possessed_man.name
-			player.m_16.visible = true
-			player_has_gun = true
-			player.m_16.visible = player_has_gun
-			player.last_possessed_at = Global.time()
-			possessed_man.queue_free()
-
-		use_label.visible = true
-	else:
-		use_label.visible = false
-
-
-func process_vignette() -> void:
-	var d := Global.time() - player.last_possessed_at
-	var t := minf(d / 0.1, 1.0)
-	var a1 := lerpf(0.8, 0.0, t)
-	var a2 := lerpf(1.0, 0.3, t)
-	vignette_gradient.set_color(0, Color(0.0, 0.0, 0.0, a1))
-	vignette_gradient.set_color(1, Color(0.0, 0.0, 0.0, a2))
-
-
 func can_man_see_player(man: Man) -> bool:
 	return (
 		not player.invisible
@@ -265,7 +300,7 @@ func can_man_see_player(man: Man) -> bool:
 func can_man_see_point(man: Man, point: Vector3) -> bool:
 	var exclude: Array[Variant] = []
 	exclude.append(player.get_rid())
-	for man2: Man in men:
+	for man2: Man in men.get_children():
 		if is_instance_valid(man2):
 			exclude.append(man2.get_rid())
 			exclude.append(man2.head_hitbox.get_rid())
@@ -285,14 +320,15 @@ func can_man_see_point(man: Man, point: Vector3) -> bool:
 
 func _physics_process(delta: float) -> void:
 	physics_process_player(delta)
+	physics_process_man(delta)
 
+
+func physics_process_man(delta: float) -> void:
 	# --- Calculations, no state or side-effects ---
 
 	var can_any_man_see_player := false
-	for man in men:
-		if not is_instance_valid(man):
-			continue
-		if can_man_see_player(man):
+	for man: Man in men.get_children():
+		if is_instance_valid(man) and man.alive and can_man_see_player(man):
 			can_any_man_see_player = true
 			break
 
@@ -300,6 +336,7 @@ func _physics_process(delta: float) -> void:
 		player_identity_compromised
 		and Global.time() - player.last_seen_at < 20.0
 	)
+
 	var searching := player_hunted and not can_any_man_see_player
 
 	var spotted_this_frame := (
@@ -307,15 +344,15 @@ func _physics_process(delta: float) -> void:
 	)
 
 	var valid_men_names: Array[String] = []
-	for man: Man in men:
-		if is_instance_valid(man):
+	for man: Man in men.get_children():
+		if is_instance_valid(man) and man.alive:
 			valid_men_names.append(man.name)
 
 	var random_man_name: String
 	if valid_men_names.size() > 0:
 		random_man_name = valid_men_names.pick_random()
 
-	# TODO: use this var in the logic
+	# TODO: use this var to simplify logic
 	var ai_team_state: AiTeamState
 	if player_hunted and can_any_man_see_player:
 		ai_team_state = AiTeamState.ENGAGING
@@ -371,15 +408,20 @@ func _physics_process(delta: float) -> void:
 				% random_man_name
 			)
 
-	for man in men:
+	for man: Man in men.get_children():
 		if not is_instance_valid(man):
 			continue
 
 		var nav_finished := man.navigation_agent.is_navigation_finished()
+
 		var next_path_pos := man.navigation_agent.get_next_path_position()
+
 		var aim_at_player := player_identity_compromised and can_any_man_see_player
+
 		var man_pos := man.global_position
+
 		var search_duration := Global.time() - man.nav_last_updated_at
+
 		var max_search_duration := lerpf(
 			5.0, 10.0, hash_int_to_random_float(man.get_index())
 		)
@@ -420,7 +462,7 @@ func _physics_process(delta: float) -> void:
 
 		var has_new_nav_target := false
 		var new_nav_target: Vector3
-		if search_duration > 1.0:
+		if search_duration > 3.0:
 			if searching:
 				if pick_new_search_pos:
 					if any_enemy_approached_last_known_position:
@@ -453,30 +495,36 @@ func _physics_process(delta: float) -> void:
 			has_look_at_pos = true
 			look_at_pos = next_path_pos
 
-		var velocity := man.safe_velocity 
-		if has_nav_target:
-			var dir := man.global_position.direction_to(next_path_pos)
-			velocity += dir * 4.0
+		var velocity := Vector3(0.0, man.velocity.y - 9.8 * delta, 0.0)
+		if man.alive:
+			velocity += Vector3(man.safe_velocity.x, 0.0, man.safe_velocity.z)
+			if has_nav_target:
+				var dir := man.global_position.direction_to(next_path_pos)
+				velocity += dir * 4.0
+		if man.is_on_floor():
+			velocity.y = 0.0
 
 		# --- Side effects ---
-		if finished_approaching_last_known_position:
-			any_enemy_approached_last_known_position = true
-		if next_patrol_node:
-			man.patrol_index += 1
-			man.patrol_index = man.patrol_index % patrol.get_child_count()
-		if has_new_nav_target:
-			man.navigation_agent.set_target_position(new_nav_target)
-			man.nav_last_updated_at = Global.time()
-		if has_look_at_pos:
-			man.look_at(look_at_pos, Vector3.UP)
-		man.rotation.x = 0
-		man.rotation.z = 0
-		if aim_at_player:
-			man.m_16.look_at(player.global_position, Vector3.UP)
-		else:
-			man.m_16.rotation.x = 0
-			man.m_16.rotation.y = 0
-			man.m_16.rotation.z = 0
+
+		if man.alive:
+			if finished_approaching_last_known_position:
+				any_enemy_approached_last_known_position = true
+			if next_patrol_node:
+				man.patrol_index += 1
+				man.patrol_index = man.patrol_index % patrol.get_child_count()
+			if has_new_nav_target:
+				man.navigation_agent.set_target_position(new_nav_target)
+				man.nav_last_updated_at = Global.time()
+			if has_look_at_pos:
+				man.look_at(look_at_pos, Vector3.UP)
+			man.rotation.x = 0
+			man.rotation.z = 0
+			if aim_at_player:
+				man.m_16.look_at(player.global_position, Vector3.UP)
+			else:
+				man.m_16.rotation.x = 0
+				man.m_16.rotation.y = 0
+				man.m_16.rotation.z = 0
 		man.velocity = velocity
 		man.move_and_slide()
 
@@ -541,8 +589,8 @@ func physics_process_player(delta: float) -> void:
 
 func hunt_player() -> void:
 	player_identity_compromised = true
-	for man: Man in men:
-		if is_instance_valid(man):
+	for man: Man in men.get_children():
+		if is_instance_valid(man) and man.alive:
 			man.m_16.reparent(man.aim_transform, false)
 
 
@@ -571,7 +619,7 @@ func fire_m_16(
 
 	# TODO: use physics layers instead of ray_exclude list to simplify logic
 	ray_exclude = Array(ray_exclude)
-	for man: Man in men:
+	for man: Man in men.get_children():
 		if is_instance_valid(man):
 			ray_exclude.append(man.get_rid())
 	ray_query.exclude = ray_exclude

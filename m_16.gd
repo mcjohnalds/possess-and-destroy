@@ -11,3 +11,6 @@ var accuracy := 1.0
 @onready var mesh: MeshInstance3D = (
 	find_children("*", "MeshInstance3D", true, false)[0]
 )
+@onready var gun_shot_audio_stream_player: AudioStreamPlayer3D = (
+	$GunShotAudioStreamPlayer
+)

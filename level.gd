@@ -116,13 +116,14 @@ func _input(event: InputEvent) -> void:
 			Input.MOUSE_MODE_VISIBLE:
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	var key := event as InputEventKey
-	if key and key.keycode == KEY_I and key.pressed:
+	if key and key.keycode == KEY_F and key.pressed:
 		player.invisible = not player.invisible
 		invisibility_overlay.visible = player.invisible
 		player.m_16.mesh.set_surface_override_material(
 			0, almost_invisible if player.invisible else null
 		)
 		invisibility_audio_stream_player.play(0.9)
+
 
 # Capture mouse if clicked on the game, needed for HTML5
 func _unhandled_input(event: InputEvent) -> void:
@@ -245,19 +246,6 @@ func process_player_shooting() -> void:
 		and Input.is_action_pressed("primary")
 		and Global.time() - player.m_16.last_fired_at > 0.1
 	):
-		for man: Man in men.get_children():
-			if (
-				is_instance_valid(man)
-				and man.alive
-				and can_man_see_player(man)
-				and not player_identity_compromised
-			):
-				hunt_player()
-				log_message(
-					"<%s> I think %s is possessed by the demon, engaging!"
-					% [man.name, possessed_man_name]
-				)
-				break
 		gun_shot_audio_stream_player.play()
 		var hit := fire_m_16(
 			player.m_16, player.camera.global_transform, [], true
@@ -307,6 +295,7 @@ func process_man_shooting() -> void:
 			if hit and hit == player:
 				damage_audio_stream_player.play()
 			man.m_16.last_fired_at = Global.time()
+			man.m_16.gun_shot_audio_stream_player.play()
 
 
 func process_m_16s(delta: float) -> void:
@@ -375,6 +364,21 @@ func physics_process_man(delta: float) -> void:
 		if is_instance_valid(man) and man.alive and can_man_see_player(man):
 			can_any_man_see_player = true
 
+	var player_shooting_witnessed_this_frame := false
+	var name_of_player_shooting_witness: String
+	for man: Man in men.get_children():
+		if (
+			is_instance_valid(man)
+			and man.alive
+			and can_man_see_player(man)
+			and Global.time() - suspicious_sound_heard_at < 3.0
+			and player.last_possessed_at < suspicious_sound_heard_at
+			and not player_identity_compromised
+		):
+			print(1)
+			player_shooting_witnessed_this_frame = true
+			name_of_player_shooting_witness = man.name
+
 	var spotted_this_frame := (
 		can_any_man_see_player and not can_any_man_see_player_last_frame 
 	)
@@ -418,6 +422,7 @@ func physics_process_man(delta: float) -> void:
 			and (
 				spotted_this_frame or Global.time() - player.last_seen_at < 4.0
 			)
+			or player_shooting_witnessed_this_frame
 		else AiTeamState.INVESTIGATING_SUSPICIOUS_SOUND if
 			Global.time() - suspicious_sound_heard_at < 20.0
 			and not suspicious_sound_was_visited_last_frame
@@ -493,8 +498,13 @@ func physics_process_man(delta: float) -> void:
 			)
 		if began_investigating_suspicious_sound_this_frame:
 			message = (
-				"<%s> I heard a suspisious sound, investigating"
+				"<%s> I heard a suspicious sound, investigating"
 				% random_man_name
+			)
+		if player_shooting_witnessed_this_frame:
+			message = (
+				"<%s> I think %s is possessed by the demon, engaging!"
+				% [name_of_player_shooting_witness, possessed_man_name]
 			)
 
 	for man: Man in men.get_children():
@@ -661,6 +671,9 @@ func physics_process_man(delta: float) -> void:
 		# man.safe_velocity = Vector3.ZERO
 		man.move_and_slide()
 		man.last_ai_state = ai_state
+
+	if player_shooting_witnessed_this_frame:
+		hunt_player()
 
 	if can_any_man_see_player:
 		player.last_known_position = player.global_position

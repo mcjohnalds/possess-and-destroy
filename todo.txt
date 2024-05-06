@@ -29,16 +29,16 @@ Todo:
   unless witnessed.
 - [x] Enemy can hear gunshot. When enemy hears sound, they will face location
   for a moment then approach location then return to their previous activity.
-- [ ] Invisibility drains health. Possession regains health. Health is
-  displayed in UI.
+- [x] Player identity will be compromised if he is spotted within 2 seconds of
+  shooting
 - [ ] Some enemies follow other enemies when they patrol.
 - [ ] Slow spotting
   - [ ] Spotting is not instant. Spotting is faster when player is closer or
     enemies are hunting. A UI control displays spotting level.
   - [ ] When enemy is spotting player, they pause what they are doing and stare
     at the player.
-- [ ] Player identity will be compromised if he is spotted within 2 seconds of
-  shooting
+- [ ] Invisibility drains health. Possession regains health. Health is
+  displayed in UI.
 
 Backlog:
 
@@ -101,3 +101,5 @@ Backlog:
   important if player crouches underneath something.
 - [ ] Enemy footsteps
 - [ ] Vary man speed depending on action.
+- [ ] Bug: enemies will aim at player after player has possessed enemy due to
+  last known position logic

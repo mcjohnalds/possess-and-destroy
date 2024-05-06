@@ -73,7 +73,7 @@ shape = SubResource("BoxShape3D_rurke")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0109863, -0.406303, -0.0296067)
 shape = SubResource("BoxShape3D_si0t8")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="DebugMesh" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.115423)
 visible = false
 mesh = SubResource("CapsuleMesh_ne3mb")

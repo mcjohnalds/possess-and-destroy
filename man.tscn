@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dkw50wbe2l0x5"]
+[gd_scene load_steps=11 format=3 uid="uid://dkw50wbe2l0x5"]
 
 [ext_resource type="Script" path="res://man.gd" id="1_acryy"]
 [ext_resource type="PackedScene" uid="uid://dgstnputxxomc" path="res://Man.glb" id="2_fnqcv"]
@@ -11,7 +11,18 @@ radius = 0.174537
 height = 0.601335
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2vswx"]
-size = Vector3(0.611, 1.246, 0.46)
+size = Vector3(0.504883, 0.0795891, 0.306519)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lj8xu"]
+size = Vector3(0.617676, 0.403564, 0.457764)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rurke"]
+size = Vector3(0.459961, 0.403564, 0.435059)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_si0t8"]
+size = Vector3(0.395996, 0.263092, 0.379883)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_ne3mb"]
 
 [node name="Man" type="CharacterBody3D"]
 script = ExtResource("1_acryy")
@@ -34,8 +45,9 @@ shape = SubResource("CapsuleShape3D_qy65m")
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 avoidance_enabled = true
 height = 2.0
-radius = 1.0
+radius = 0.6
 max_speed = 5.0
+debug_enabled = true
 
 [node name="HeadHitbox" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00933516, 1.60923, 0.105053)
@@ -46,5 +58,23 @@ shape = SubResource("CapsuleShape3D_cnpwg")
 [node name="BodyHitbox" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00304715, 0.760285, 0.120722)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="BodyHitbox"]
+[node name="CollisionShape3D1" type="CollisionShape3D" parent="BodyHitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.579945, 0.024353)
 shape = SubResource("BoxShape3D_2vswx")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="BodyHitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0144043, 0.330082, -0.0159912)
+shape = SubResource("BoxShape3D_lj8xu")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="BodyHitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0733423, -0.0186204)
+shape = SubResource("BoxShape3D_rurke")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="BodyHitbox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0109863, -0.406303, -0.0296067)
+shape = SubResource("BoxShape3D_si0t8")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.115423)
+visible = false
+mesh = SubResource("CapsuleMesh_ne3mb")

@@ -1,3 +1,4 @@
+class_name Level
 extends Node3D
 
 enum PhysicsLayers {
@@ -5,14 +6,28 @@ enum PhysicsLayers {
 }
 
 enum AiTeamState {
-	PATROLLING, ENGAGING, APPROACHING_LAST_KNOWN_POSITION, SEARCHING_RANDOMLY
+	PATROLLING,
+	ENGAGING,
+	APPROACHING_LAST_KNOWN_POSITION,
+	SEARCHING_RANDOMLY,
+}
+
+enum AiManState {
+	MOVING_TO_PATROL_POSITION,
+	PATHING_TO_PATROL_POSITION,
+	MOVING_TO_ENGAGE_POSITION,
+	PATHING_TO_ENGAGE_POSITION,
+	MOVING_TO_LAST_KNOWN_POSITION,
+	PATHING_TO_LAST_KNOWN_POSITION,
+	MOVING_TO_RANDOM_SEARCH_POSITION,
+	PATHING_TO_RANDOM_SEARCH_POSITION,
+	PAUSING,
 }
 
 const ENEMY_FOV := 0.45 * TAU
 var player_has_gun := false
 var possessed_man_name := "the civilian"
 var player_identity_compromised := false
-var any_enemy_approached_last_known_position := false
 var ai_team_state_last_frame := AiTeamState.PATROLLING
 var can_any_man_see_player_last_frame := false
 @onready var men: Node = $Men
@@ -112,6 +127,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	# print(AiTeamState.keys()[ai_team_state_last_frame])
+	# print(AiManState.keys()[(men.get_children()[0] as Man).last_ai_state])
 	process_use()
 	process_vignette()
 	for msg: Message in messages.get_children():
@@ -196,6 +213,8 @@ func process_use() -> void:
 		player.m_16.visible = player_has_gun
 		player.last_possessed_at = Global.time()
 		targetted_man.queue_free()
+		if not possession_witness:
+			player_identity_compromised = false
 
 	if possession_witness:
 		hunt_player()
@@ -348,13 +367,6 @@ func physics_process_man(delta: float) -> void:
 			can_any_man_see_player = true
 			break
 
-	var player_hunted := (
-		player_identity_compromised
-		and Global.time() - player.last_seen_at < 20.0
-	)
-
-	var searching := player_hunted and not can_any_man_see_player
-
 	var spotted_this_frame := (
 		can_any_man_see_player and not can_any_man_see_player_last_frame 
 	)
@@ -368,17 +380,35 @@ func physics_process_man(delta: float) -> void:
 	if valid_men_names.size() > 0:
 		random_man_name = valid_men_names.pick_random()
 
-	# TODO: use this var to simplify logic
-	var ai_team_state: AiTeamState
-	if player_hunted and can_any_man_see_player:
-		ai_team_state = AiTeamState.ENGAGING
-	elif searching:
-		if any_enemy_approached_last_known_position:
-			ai_team_state = AiTeamState.SEARCHING_RANDOMLY
-		else:
-			ai_team_state = AiTeamState.APPROACHING_LAST_KNOWN_POSITION
-	else:
-		ai_team_state = AiTeamState.PATROLLING
+	var any_nav_finished := false
+	for man: Man in men.get_children():
+		if man.navigation_agent.is_navigation_finished():
+			any_nav_finished = true
+
+	var max_team_search_duration_exceeded := (
+		Global.time() - player.last_seen_at > 20.0
+	)
+
+	var ai_team_state := (
+		AiTeamState.ENGAGING
+			if
+				player_identity_compromised
+				and Global.time() - player.last_seen_at < 2.0
+		else AiTeamState.SEARCHING_RANDOMLY
+			if
+				ai_team_state_last_frame == AiTeamState.SEARCHING_RANDOMLY
+				and not max_team_search_duration_exceeded
+				or ai_team_state_last_frame
+					== AiTeamState.APPROACHING_LAST_KNOWN_POSITION
+				and any_nav_finished
+		else AiTeamState.APPROACHING_LAST_KNOWN_POSITION
+			if
+				ai_team_state_last_frame
+					== AiTeamState.APPROACHING_LAST_KNOWN_POSITION
+				and not max_team_search_duration_exceeded
+				or ai_team_state_last_frame == AiTeamState.ENGAGING
+		else AiTeamState.PATROLLING
+	)
 
 	var began_engaging_player_this_frame_due_to_spotting := (
 		ai_team_state_last_frame != AiTeamState.ENGAGING
@@ -432,41 +462,57 @@ func physics_process_man(delta: float) -> void:
 
 		var next_path_pos := man.navigation_agent.get_next_path_position()
 
-		var aim_at_player := player_identity_compromised and can_any_man_see_player
-
 		var man_pos := man.global_position
 
 		var search_duration := Global.time() - man.nav_last_updated_at
 
-		var max_search_duration := lerpf(
+		var random_search_duration := lerpf(
 			5.0, 10.0, hash_int_to_random_float(man.get_index())
 		)
 
-		var patrolling := not player_hunted and man.patrol
+		var pathing_cooldown := search_duration < 3.0
 
-		var next_patrol_node := patrolling and nav_finished
-
-		var approaching_last_known_position := (
-			searching
-			and not any_enemy_approached_last_known_position
-		)
-
-		var finished_approaching_last_known_position := (
-			approaching_last_known_position
-			and (nav_finished or search_duration > 20.0)
-		)
-
-		var pausing_before_picking_new_search_pos := (
-			searching
-			and search_duration > max_search_duration / 2.0
-			and search_duration < max_search_duration
-			and not approaching_last_known_position
-		)
-
-		var pick_new_search_pos := (
-			searching
-			and not pausing_before_picking_new_search_pos
-			and search_duration > max_search_duration
+		var ai_state := (
+			AiManState.MOVING_TO_ENGAGE_POSITION
+				if
+					man.alive
+					and ai_team_state == AiTeamState.ENGAGING
+					and pathing_cooldown
+			else AiManState.PATHING_TO_ENGAGE_POSITION
+				if
+					man.alive
+					and ai_team_state == AiTeamState.ENGAGING
+			else AiManState.MOVING_TO_RANDOM_SEARCH_POSITION
+				if
+					man.alive
+					and ai_team_state == AiTeamState.SEARCHING_RANDOMLY
+					and not nav_finished
+					and search_duration < random_search_duration
+			else AiManState.PATHING_TO_RANDOM_SEARCH_POSITION
+				if
+					man.alive
+					and ai_team_state == AiTeamState.SEARCHING_RANDOMLY
+					and not pathing_cooldown
+			else AiManState.MOVING_TO_LAST_KNOWN_POSITION
+				if
+					man.alive
+					and ai_team_state
+						== AiTeamState.APPROACHING_LAST_KNOWN_POSITION
+					and not nav_finished
+			else AiManState.MOVING_TO_PATROL_POSITION
+				if
+					man.alive
+					and man.patrol
+					and ai_team_state == AiTeamState.PATROLLING
+					and not nav_finished
+					and search_duration < 20.0
+			else AiManState.PATHING_TO_PATROL_POSITION
+				if
+					man.alive
+					and man.patrol
+					and ai_team_state == AiTeamState.PATROLLING
+					and not pathing_cooldown
+			else AiManState.PAUSING
 		)
 
 		var random_dist := 10.0
@@ -476,40 +522,56 @@ func physics_process_man(delta: float) -> void:
 			(1 if randi() % 2 == 0 else -1) * random_dist,
 		)
 
+
 		var has_new_nav_target := false
 		var new_nav_target: Vector3
-		if search_duration > 3.0:
-			if searching:
-				if pick_new_search_pos:
-					if any_enemy_approached_last_known_position:
-						has_new_nav_target = true
-						new_nav_target = random_search_pos
-					else:
-						has_new_nav_target = true
-						new_nav_target = player.last_known_position
-			elif player_hunted:
-				has_new_nav_target = true
-				new_nav_target = player.global_position
-			elif next_patrol_node:
+		var has_look_at_target := false
+		var look_at_target: Vector3
+		var has_nav_target := false
+		var has_aim_target := false
+
+		match ai_state:
+			AiManState.MOVING_TO_PATROL_POSITION:
+				has_nav_target = true
+				has_look_at_target = true
+				look_at_target = next_path_pos
+			AiManState.PATHING_TO_PATROL_POSITION:
 				has_new_nav_target = true
 				var patrol_node: Node3D = patrol.get_child(man.patrol_index)
 				new_nav_target = patrol_node.position
+			AiManState.MOVING_TO_ENGAGE_POSITION:
+				has_nav_target = true
+				has_look_at_target = true
+				look_at_target = player.last_known_position
+				has_aim_target = true
+			AiManState.PATHING_TO_ENGAGE_POSITION:
+				has_new_nav_target = true
+				new_nav_target = player.last_known_position
+				has_look_at_target = true
+				look_at_target = player.last_known_position
+				has_aim_target = true
+			AiManState.MOVING_TO_LAST_KNOWN_POSITION:
+				has_nav_target = true
+				has_look_at_target = true
+				look_at_target = next_path_pos
+			AiManState.PATHING_TO_LAST_KNOWN_POSITION:
+				has_new_nav_target = true
+				new_nav_target = player.last_known_position
+			AiManState.MOVING_TO_RANDOM_SEARCH_POSITION:
+				has_nav_target = true
+				has_look_at_target = true
+				look_at_target = next_path_pos
+			AiManState.PATHING_TO_RANDOM_SEARCH_POSITION:
+				has_new_nav_target = true
+				new_nav_target = random_search_pos
+			AiManState.PAUSING:
+				pass
 
-		var has_nav_target := (
-			not has_new_nav_target
-			and not nav_finished
-			and not pausing_before_picking_new_search_pos
-			and (patrolling or player_hunted)
+		var next_patrol_index := (
+			(man.patrol_index + 1) % patrol.get_child_count()
+				if ai_state == AiManState.PATHING_TO_PATROL_POSITION
+			else man.patrol_index
 		)
-
-		var has_look_at_pos := false
-		var look_at_pos: Vector3
-		if player_hunted and can_any_man_see_player:
-			has_look_at_pos = true
-			look_at_pos = player.global_position
-		elif has_nav_target:
-			has_look_at_pos = true
-			look_at_pos = next_path_pos
 
 		var velocity := Vector3(0.0, man.velocity.y - 9.8 * delta, 0.0)
 		if man.alive:
@@ -522,32 +584,28 @@ func physics_process_man(delta: float) -> void:
 
 		# --- Side effects ---
 
-		if man.alive:
-			if finished_approaching_last_known_position:
-				any_enemy_approached_last_known_position = true
-			if next_patrol_node:
-				man.patrol_index += 1
-				man.patrol_index = man.patrol_index % patrol.get_child_count()
-			if has_new_nav_target:
-				man.navigation_agent.set_target_position(new_nav_target)
-				man.nav_last_updated_at = Global.time()
-			if has_look_at_pos:
-				man.look_at(look_at_pos, Vector3.UP)
-			man.rotation.x = 0
-			man.rotation.z = 0
-			if aim_at_player:
-				man.m_16.look_at(player.global_position, Vector3.UP)
-			else:
-				man.m_16.rotation.x = 0
-				man.m_16.rotation.y = 0
-				man.m_16.rotation.z = 0
+		man.patrol_index = next_patrol_index
+		if has_new_nav_target:
+			man.navigation_agent.set_target_position(new_nav_target)
+			man.nav_last_updated_at = Global.time()
+		if has_look_at_target:
+			man.look_at(look_at_target, Vector3.UP)
+		man.rotation.x = 0
+		man.rotation.z = 0
+		if has_aim_target:
+			man.m_16.look_at(player.last_known_position, Vector3.UP)
+		else:
+			man.m_16.rotation.x = 0
+			man.m_16.rotation.y = 0
+			man.m_16.rotation.z = 0
 		man.velocity = velocity
+		# man.safe_velocity = Vector3.ZERO
 		man.move_and_slide()
+		man.last_ai_state = ai_state
 
 	if can_any_man_see_player:
 		player.last_known_position = player.global_position
 		player.last_seen_at = Global.time()
-		any_enemy_approached_last_known_position = false
 
 	if message:
 		log_message(message)

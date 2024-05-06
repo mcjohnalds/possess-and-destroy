@@ -8,6 +8,7 @@ var health := 1.0
 var nav_last_updated_at := -10000.0
 var alive := true
 var died_at := 0.0
+var last_ai_state: Level.AiManState
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var head_hitbox: Area3D = $HeadHitbox
 @onready var body_hitbox: Area3D = $BodyHitbox

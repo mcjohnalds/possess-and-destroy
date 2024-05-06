@@ -141,8 +141,24 @@ func process_use() -> void:
 		if man and man.alive:
 			targetted_man = collision.collider
 
+
+	var target_to_player_dir: Vector3
+	if targetted_man:
+		target_to_player_dir = (
+			targetted_man.global_position.direction_to(player.global_position)
+		)
+
+	var targetted_man_rear_dir: Vector3
+	if targetted_man:
+		targetted_man_rear_dir = targetted_man.global_basis.z
+
+	var behind_target := (
+		targetted_man
+		and target_to_player_dir.angle_to(targetted_man_rear_dir) < TAU * 0.23
+	)
+
 	var possessed := false
-	if targetted_man and Input.is_action_just_pressed("use"):
+	if behind_target and Input.is_action_just_pressed("use"):
 		possessed = true
 
 	var possession_witness: Man
@@ -166,7 +182,7 @@ func process_use() -> void:
 
 	# --- Side effects ---
 
-	use_label.visible = targetted_man != null
+	use_label.visible = behind_target
 
 	if possessed:
 		possession_audio_stream_player.play(4.9)

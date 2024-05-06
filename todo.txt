@@ -27,9 +27,8 @@ Todo:
 - [x] Can only possess from behind.
 - [x] Possessing an enemy makes the player's identity no longer compromised,
   unless witnessed.
-- [ ] Enemy can hear gunshot and possession. When enemy hears sound, they will
-  face location for a moment then approach location then return to their
-  previous activity.
+- [x] Enemy can hear gunshot. When enemy hears sound, they will face location
+  for a moment then approach location then return to their previous activity.
 - [ ] Invisibility drains health. Possession regains health. Health is
   displayed in UI.
 - [ ] Some enemies follow other enemies when they patrol.
@@ -38,6 +37,8 @@ Todo:
     enemies are hunting. A UI control displays spotting level.
   - [ ] When enemy is spotting player, they pause what they are doing and stare
     at the player.
+- [ ] Player identity will be compromised if he is spotted within 2 seconds of
+  shooting
 
 Backlog:
 

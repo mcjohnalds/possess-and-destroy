@@ -10,6 +10,7 @@ enum AiTeamState {
 	ENGAGING,
 	APPROACHING_LAST_KNOWN_POSITION,
 	SEARCHING_RANDOMLY,
+	INVESTIGATING_SUSPICIOUS_SOUND,
 }
 
 enum AiManState {
@@ -21,15 +22,20 @@ enum AiManState {
 	PATHING_TO_LAST_KNOWN_POSITION,
 	MOVING_TO_RANDOM_SEARCH_POSITION,
 	PATHING_TO_RANDOM_SEARCH_POSITION,
+	MOVING_TO_SUSPICIOUS_SOUND_POSITION,
+	PATHING_TO_SUSPICIOUS_SOUND_POSITION,
 	PAUSING,
 }
 
-const ENEMY_FOV := 0.45 * TAU
+const ENEMY_FOV := 0.42 * TAU
 var player_has_gun := false
 var possessed_man_name := "the civilian"
 var player_identity_compromised := false
 var ai_team_state_last_frame := AiTeamState.PATROLLING
 var can_any_man_see_player_last_frame := false
+var suspicious_sound_position: Vector3
+var suspicious_sound_heard_at := -10000.0
+var suspicious_sound_has_been_investigated := true
 @onready var men: Node = $Men
 @onready var patrol: Node = $Patrol
 @onready var use_label: Label = $UI/UseLabel
@@ -270,6 +276,9 @@ func process_player_shooting() -> void:
 					man.died_at = Global.time()
 					man.collision_layer = 0
 					man.collision_mask = 0
+		suspicious_sound_position = player.global_position
+		suspicious_sound_heard_at = Global.time()
+		suspicious_sound_has_been_investigated  = false
 
 
 func process_man_shooting() -> void:
@@ -365,7 +374,6 @@ func physics_process_man(delta: float) -> void:
 	for man: Man in men.get_children():
 		if is_instance_valid(man) and man.alive and can_man_see_player(man):
 			can_any_man_see_player = true
-			break
 
 	var spotted_this_frame := (
 		can_any_man_see_player and not can_any_man_see_player_last_frame 
@@ -380,33 +388,53 @@ func physics_process_man(delta: float) -> void:
 	if valid_men_names.size() > 0:
 		random_man_name = valid_men_names.pick_random()
 
-	var any_nav_finished := false
-	for man: Man in men.get_children():
-		if man.navigation_agent.is_navigation_finished():
-			any_nav_finished = true
-
 	var max_team_search_duration_exceeded := (
-		Global.time() - player.last_seen_at > 20.0
+		Global.time() - suspicious_sound_heard_at > 20.0
+		and (
+			not player_identity_compromised
+			or Global.time() - player.last_seen_at > 20.0
+		)
 	)
 
+	var last_known_position_has_been_visited_last_frame := false
+	for man: Man in men.get_children():
+		if (
+			man.last_ai_state == AiManState.MOVING_TO_LAST_KNOWN_POSITION
+			and man.navigation_agent.is_navigation_finished()
+		):
+			last_known_position_has_been_visited_last_frame = true
+
+	var suspicious_sound_was_visited_last_frame := false
+	for man: Man in men.get_children():
+		if (
+			man.last_ai_state == AiManState.MOVING_TO_SUSPICIOUS_SOUND_POSITION
+			and man.navigation_agent.is_navigation_finished()
+		):
+			suspicious_sound_was_visited_last_frame = true
+
 	var ai_team_state := (
-		AiTeamState.ENGAGING
-			if
-				player_identity_compromised
-				and Global.time() - player.last_seen_at < 2.0
-		else AiTeamState.SEARCHING_RANDOMLY
-			if
-				ai_team_state_last_frame == AiTeamState.SEARCHING_RANDOMLY
-				and not max_team_search_duration_exceeded
-				or ai_team_state_last_frame
-					== AiTeamState.APPROACHING_LAST_KNOWN_POSITION
-				and any_nav_finished
-		else AiTeamState.APPROACHING_LAST_KNOWN_POSITION
-			if
-				ai_team_state_last_frame
-					== AiTeamState.APPROACHING_LAST_KNOWN_POSITION
-				and not max_team_search_duration_exceeded
-				or ai_team_state_last_frame == AiTeamState.ENGAGING
+		AiTeamState.ENGAGING if
+			player_identity_compromised
+			and (
+				spotted_this_frame or Global.time() - player.last_seen_at < 4.0
+			)
+		else AiTeamState.INVESTIGATING_SUSPICIOUS_SOUND if
+			Global.time() - suspicious_sound_heard_at < 20.0
+			and not suspicious_sound_was_visited_last_frame
+			and not suspicious_sound_has_been_investigated
+		else AiTeamState.SEARCHING_RANDOMLY if
+			ai_team_state_last_frame == AiTeamState.SEARCHING_RANDOMLY
+			and not max_team_search_duration_exceeded
+			or ai_team_state_last_frame
+				== AiTeamState.APPROACHING_LAST_KNOWN_POSITION
+			and last_known_position_has_been_visited_last_frame
+			or ai_team_state_last_frame
+				== AiTeamState.INVESTIGATING_SUSPICIOUS_SOUND
+		else AiTeamState.APPROACHING_LAST_KNOWN_POSITION if
+			ai_team_state_last_frame
+				== AiTeamState.APPROACHING_LAST_KNOWN_POSITION
+			and not max_team_search_duration_exceeded
+			or ai_team_state_last_frame == AiTeamState.ENGAGING
 		else AiTeamState.PATROLLING
 	)
 
@@ -431,6 +459,16 @@ func physics_process_man(delta: float) -> void:
 		and ai_team_state == AiTeamState.PATROLLING
 	)
 
+	var began_investigating_suspicious_sound_this_frame := (
+		ai_team_state_last_frame != AiTeamState.INVESTIGATING_SUSPICIOUS_SOUND
+		and ai_team_state == AiTeamState.INVESTIGATING_SUSPICIOUS_SOUND
+	)
+
+	var stopped_investigating_suspicious_sound_this_frame := (
+		ai_team_state_last_frame == AiTeamState.INVESTIGATING_SUSPICIOUS_SOUND
+		and ai_team_state != AiTeamState.INVESTIGATING_SUSPICIOUS_SOUND
+	)
+
 	var message: String
 	if random_man_name:
 		if began_engaging_player_this_frame_due_to_spotting:
@@ -453,6 +491,11 @@ func physics_process_man(delta: float) -> void:
 				"<%s> Can't find the demon, returning to patrol"
 				% random_man_name
 			)
+		if began_investigating_suspicious_sound_this_frame:
+			message = (
+				"<%s> I heard a suspisious sound, investigating"
+				% random_man_name
+			)
 
 	for man: Man in men.get_children():
 		if not is_instance_valid(man):
@@ -473,45 +516,54 @@ func physics_process_man(delta: float) -> void:
 		var pathing_cooldown := search_duration < 3.0
 
 		var ai_state := (
-			AiManState.MOVING_TO_ENGAGE_POSITION
-				if
-					man.alive
-					and ai_team_state == AiTeamState.ENGAGING
-					and pathing_cooldown
-			else AiManState.PATHING_TO_ENGAGE_POSITION
-				if
-					man.alive
-					and ai_team_state == AiTeamState.ENGAGING
-			else AiManState.MOVING_TO_RANDOM_SEARCH_POSITION
-				if
-					man.alive
-					and ai_team_state == AiTeamState.SEARCHING_RANDOMLY
-					and not nav_finished
-					and search_duration < random_search_duration
-			else AiManState.PATHING_TO_RANDOM_SEARCH_POSITION
-				if
-					man.alive
-					and ai_team_state == AiTeamState.SEARCHING_RANDOMLY
-					and not pathing_cooldown
-			else AiManState.MOVING_TO_LAST_KNOWN_POSITION
-				if
-					man.alive
-					and ai_team_state
-						== AiTeamState.APPROACHING_LAST_KNOWN_POSITION
-					and not nav_finished
-			else AiManState.MOVING_TO_PATROL_POSITION
-				if
-					man.alive
-					and man.patrol
-					and ai_team_state == AiTeamState.PATROLLING
-					and not nav_finished
-					and search_duration < 20.0
-			else AiManState.PATHING_TO_PATROL_POSITION
-				if
-					man.alive
-					and man.patrol
-					and ai_team_state == AiTeamState.PATROLLING
-					and not pathing_cooldown
+			AiManState.MOVING_TO_ENGAGE_POSITION if
+				man.alive
+				and ai_team_state == AiTeamState.ENGAGING
+				and pathing_cooldown
+			else AiManState.PATHING_TO_ENGAGE_POSITION if
+				man.alive
+				and ai_team_state == AiTeamState.ENGAGING
+			else AiManState.MOVING_TO_SUSPICIOUS_SOUND_POSITION if
+				man.alive
+				and ai_team_state
+					== AiTeamState.INVESTIGATING_SUSPICIOUS_SOUND
+				and ai_team_state_last_frame
+					== AiTeamState.INVESTIGATING_SUSPICIOUS_SOUND
+				and not nav_finished
+				and search_duration < 20.0
+			else AiManState.PATHING_TO_SUSPICIOUS_SOUND_POSITION if
+				man.alive
+				and began_investigating_suspicious_sound_this_frame
+			else AiManState.MOVING_TO_RANDOM_SEARCH_POSITION if
+				man.alive
+				and ai_team_state == AiTeamState.SEARCHING_RANDOMLY
+				and not nav_finished
+				and search_duration < random_search_duration
+			else AiManState.PATHING_TO_RANDOM_SEARCH_POSITION if
+				man.alive
+				and ai_team_state == AiTeamState.SEARCHING_RANDOMLY
+				and not pathing_cooldown
+			else AiManState.MOVING_TO_LAST_KNOWN_POSITION if
+				man.alive
+				and ai_team_state
+					== AiTeamState.APPROACHING_LAST_KNOWN_POSITION
+				and not nav_finished
+				and search_duration < 20.0
+			else AiManState.PATHING_TO_RANDOM_SEARCH_POSITION if
+				man.alive
+				and ai_team_state
+					== AiTeamState.APPROACHING_LAST_KNOWN_POSITION
+			else AiManState.MOVING_TO_PATROL_POSITION if
+				man.alive
+				and man.patrol
+				and ai_team_state == AiTeamState.PATROLLING
+				and not nav_finished
+				and search_duration < 20.0
+			else AiManState.PATHING_TO_PATROL_POSITION if
+				man.alive
+				and man.patrol
+				and ai_team_state == AiTeamState.PATROLLING
+				and not pathing_cooldown
 			else AiManState.PAUSING
 		)
 
@@ -553,7 +605,7 @@ func physics_process_man(delta: float) -> void:
 			AiManState.MOVING_TO_LAST_KNOWN_POSITION:
 				has_nav_target = true
 				has_look_at_target = true
-				look_at_target = next_path_pos
+				look_at_target = player.last_known_position
 			AiManState.PATHING_TO_LAST_KNOWN_POSITION:
 				has_new_nav_target = true
 				new_nav_target = player.last_known_position
@@ -564,6 +616,13 @@ func physics_process_man(delta: float) -> void:
 			AiManState.PATHING_TO_RANDOM_SEARCH_POSITION:
 				has_new_nav_target = true
 				new_nav_target = random_search_pos
+			AiManState.MOVING_TO_SUSPICIOUS_SOUND_POSITION:
+				has_nav_target = true
+				has_look_at_target = true
+				look_at_target = suspicious_sound_position
+			AiManState.PATHING_TO_SUSPICIOUS_SOUND_POSITION:
+				has_new_nav_target = true
+				new_nav_target = suspicious_sound_position
 			AiManState.PAUSING:
 				pass
 
@@ -606,6 +665,12 @@ func physics_process_man(delta: float) -> void:
 	if can_any_man_see_player:
 		player.last_known_position = player.global_position
 		player.last_seen_at = Global.time()
+
+	if (
+		stopped_investigating_suspicious_sound_this_frame
+		or ai_team_state == AiTeamState.ENGAGING
+	):
+		suspicious_sound_has_been_investigated = true
 
 	if message:
 		log_message(message)

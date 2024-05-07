@@ -31,9 +31,9 @@ Todo:
   for a moment then approach location then return to their previous activity.
 - [x] Player identity will be compromised if he is spotted within 2 seconds of
   shooting
-- [ ] Sniper rifle.
+- [x] Sniper rifle.
   - [x] Add sniper rifle enemy.
-  - [ ] Sniper rifle enemy does move closer to player when engaging.
+  - [x] Sniper rifle enemy doesn't move closer to player when engaging.
 - [ ] Shotgun.
   - [ ] Add shotgun enemy.
   - [ ] Shotgun enemy runs faster.

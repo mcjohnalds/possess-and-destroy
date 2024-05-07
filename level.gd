@@ -25,6 +25,7 @@ enum AiManState {
 	MOVING_TO_SUSPICIOUS_SOUND_POSITION,
 	PATHING_TO_SUSPICIOUS_SOUND_POSITION,
 	PAUSING,
+	ENGAGING_PLAYER_WHILE_STANDING_STILL,
 }
 
 enum GunType { M16, SNIPER_RIFLE }
@@ -568,6 +569,8 @@ func physics_process_man(delta: float) -> void:
 
 		var search_duration := Global.time() - man.nav_last_updated_at
 
+		var can_see_player := can_man_see_player(man)
+
 		var random_search_duration := lerpf(
 			5.0, 10.0, hash_int_to_random_float(man.get_index())
 		)
@@ -579,7 +582,18 @@ func physics_process_man(delta: float) -> void:
 				man.alive
 				and ai_team_state == AiTeamState.ENGAGING
 				and pathing_cooldown
+				and (
+					man.gun_type == GunType.M16
+					or not can_see_player
+				)
 			else AiManState.PATHING_TO_ENGAGE_POSITION if
+				man.alive
+				and ai_team_state == AiTeamState.ENGAGING
+				and (
+					man.gun_type == GunType.M16
+					or not can_see_player
+				)
+			else AiManState.ENGAGING_PLAYER_WHILE_STANDING_STILL if
 				man.alive
 				and ai_team_state == AiTeamState.ENGAGING
 			else AiManState.MOVING_TO_SUSPICIOUS_SOUND_POSITION if
@@ -682,6 +696,10 @@ func physics_process_man(delta: float) -> void:
 			AiManState.PATHING_TO_SUSPICIOUS_SOUND_POSITION:
 				has_new_nav_target = true
 				new_nav_target = suspicious_sound_position
+			AiManState.ENGAGING_PLAYER_WHILE_STANDING_STILL:
+				has_look_at_target = true
+				look_at_target = player.last_known_position
+				has_aim_target = true
 			AiManState.PAUSING:
 				pass
 

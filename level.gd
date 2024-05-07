@@ -762,7 +762,7 @@ func physics_process_man(delta: float) -> void:
 			man.navigation_agent.set_target_position(new_nav_target)
 			man.nav_last_updated_at = Global.time()
 		if has_look_at_target:
-			man.look_at(look_at_target, Vector3.UP)
+			Global.safe_look_at(man, look_at_target)
 		man.rotation.x = 0
 		man.rotation.z = 0
 		if has_aim_target:

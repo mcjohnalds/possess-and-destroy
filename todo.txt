@@ -39,7 +39,7 @@ Todo:
   - [x] Add shotgun enemy.
   - [x] Shotgun enemy runs faster.
 - [x] Enemies walk slowly when not engaging
-- [ ] Enemies take time to aim, especially the sniper
+- [ ] Enemies take time to aim, especially the sniper.
 - [ ] Plyaer is compromised if enemies see him toggle invisibility.
 - [ ] Invisibility drains health. Possession regains health. Health is
   displayed in UI.

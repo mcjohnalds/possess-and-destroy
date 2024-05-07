@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://c0s64h5k05m0f"]
+
+[ext_resource type="PackedScene" uid="uid://dgstnputxxomc" path="res://Man.glb" id="1_48yo5"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_urmhp"]
+resource_local_to_scene = true
+resource_name = "Shirt"
+
+[node name="ManMesh" instance=ExtResource("1_48yo5")]
+
+[node name="Body" parent="." index="1"]
+surface_material_override/1 = SubResource("StandardMaterial3D_urmhp")

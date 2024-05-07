@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://dkw50wbe2l0x5"]
 
 [ext_resource type="Script" path="res://man.gd" id="1_acryy"]
-[ext_resource type="PackedScene" uid="uid://dgstnputxxomc" path="res://Man.glb" id="2_fnqcv"]
+[ext_resource type="PackedScene" uid="uid://c0s64h5k05m0f" path="res://man_mesh.tscn" id="2_d56af"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_qy65m"]
 
@@ -26,7 +26,7 @@ size = Vector3(0.395996, 0.263092, 0.379883)
 [node name="Man" type="CharacterBody3D"]
 script = ExtResource("1_acryy")
 
-[node name="ManMesh" parent="." instance=ExtResource("2_fnqcv")]
+[node name="Mesh" parent="." instance=ExtResource("2_d56af")]
 
 [node name="AimTransform" type="Node3D" parent="."]
 transform = Transform3D(0.993634, -0.0997612, 0.0523294, 0.100002, 0.994985, -0.00199956, -0.0518675, 0.00721986, 0.998628, 0.221069, 1.11957, -0.314546)

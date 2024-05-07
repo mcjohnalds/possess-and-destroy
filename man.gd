@@ -12,11 +12,16 @@ extends CharacterBody3D
 		gun_type = value
 		if not is_node_ready():
 			return
+		var mat: StandardMaterial3D = (
+			body_mesh.get_surface_override_material(1)
+		)
 		match value:
 			Level.GunType.M16:
 				gun = m_16_scene.instantiate()
+				mat.albedo_color = Color("b59e67", 1.0)
 			Level.GunType.SNIPER_RIFLE:
 				gun = sniper_rifle_scene.instantiate()
+				mat.albedo_color = Color("6777b5", 1.0)
 
 
 var patrol_index := 0
@@ -49,6 +54,7 @@ var gun: Gun:
 @onready var nav_collider: CollisionShape3D = $NavCollider
 @onready var m_16_scene := preload("res://m_16.tscn")
 @onready var sniper_rifle_scene := preload("res://sniper_rifle.tscn")
+@onready var body_mesh: MeshInstance3D = $Mesh/Body
 
 
 func _ready() -> void:

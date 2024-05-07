@@ -9,7 +9,7 @@
 _data = [Vector2(0, 0.0334573), 0.0, 5.44344, 0, 0, Vector2(0.214634, 1), 0.0994017, 0.0994017, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="CurveTexture" id="CurveTexture_ugw5b"]
+[sub_resource type="CurveTexture" id="CurveTexture_f3ibc"]
 curve = SubResource("Curve_1uv1q")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ji6gs"]
@@ -17,9 +17,9 @@ emission_shape_scale = Vector3(0.02, 0.02, 2.08165e-12)
 emission_shape = 1
 emission_sphere_radius = 1.0
 gravity = Vector3(2.08165e-12, 2.08165e-12, 2.08165e-12)
-alpha_curve = SubResource("CurveTexture_ugw5b")
+alpha_curve = SubResource("CurveTexture_f3ibc")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_or2qy"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w03ra"]
 transparency = 1
 blend_mode = 1
 shading_mode = 0
@@ -32,7 +32,7 @@ uv1_triplanar = true
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_56qo4"]
 lightmap_size_hint = Vector2i(11, 7)
-material = SubResource("StandardMaterial3D_or2qy")
+material = SubResource("StandardMaterial3D_w03ra")
 top_radius = 0.3
 bottom_radius = 0.0
 height = 0.1
@@ -47,7 +47,7 @@ gun_type = 1
 transform = Transform3D(0.846471, 0, 0, 0, 0.354581, 0, 0, 0, 0.846471, 0, 0.144784, -1.57319)
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="MuzzleFlash"]
-transform = Transform3D(-3.0395, -2.65722e-07, 1.16151e-14, 0, -1.32861e-07, -3.0395, 2.65722e-07, -3.0395, 1.32861e-07, 0, 0, -0.0224075)
+transform = Transform3D(-3.0395, -2.65722e-07, 1.16151e-14, 0, -1.32861e-07, -3.0395, 2.65722e-07, -3.0395, 1.32861e-07, 0.0125512, 0.00700033, -0.0237932)
 emitting = false
 amount = 1
 lifetime = 0.1

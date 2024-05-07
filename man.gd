@@ -22,6 +22,9 @@ extends CharacterBody3D
 			Level.GunType.SNIPER_RIFLE:
 				gun = sniper_rifle_scene.instantiate()
 				mat.albedo_color = Color("6777b5", 1.0)
+			Level.GunType.SHOTGUN:
+				gun = shotgun_scene.instantiate()
+				mat.albedo_color = Color("b56767", 1.0)
 
 
 var patrol_index := 0
@@ -54,6 +57,7 @@ var gun: Gun:
 @onready var nav_collider: CollisionShape3D = $NavCollider
 @onready var m_16_scene := preload("res://m_16.tscn")
 @onready var sniper_rifle_scene := preload("res://sniper_rifle.tscn")
+@onready var shotgun_scene := preload("res://shotgun.tscn")
 @onready var body_mesh: MeshInstance3D = $Mesh/Body
 
 

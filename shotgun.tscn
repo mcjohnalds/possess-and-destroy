@@ -1,0 +1,65 @@
+[gd_scene load_steps=10 format=3 uid="uid://b18din3kidcn6"]
+
+[ext_resource type="Script" path="res://gun.gd" id="1_fx2vr"]
+[ext_resource type="Texture2D" uid="uid://d3aft8v1l17k3" path="res://addons/kenney_particle_pack/fire_01.png" id="2_66tqi"]
+[ext_resource type="PackedScene" uid="uid://bcmkfsug1jy84" path="res://mossberg.glb" id="3_rwd5k"]
+[ext_resource type="AudioStream" uid="uid://df58mhmh01t0a" path="res://shotgun.ogg" id="4_qlmf2"]
+
+[sub_resource type="Curve" id="Curve_kg1db"]
+_data = [Vector2(0, 0.0334573), 0.0, 5.44344, 0, 0, Vector2(0.214634, 1), 0.0994017, 0.0994017, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_n4btb"]
+curve = SubResource("Curve_kg1db")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xf3xw"]
+emission_shape_scale = Vector3(0.02, 0.02, 2.08165e-12)
+emission_shape = 1
+emission_sphere_radius = 1.0
+gravity = Vector3(2.08165e-12, 2.08165e-12, 2.08165e-12)
+alpha_curve = SubResource("CurveTexture_n4btb")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bjjrn"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(2, 1.726, 0.738, 1)
+albedo_texture = ExtResource("2_66tqi")
+uv1_scale = Vector3(-2.12, -1.166, -1.06)
+uv1_offset = Vector3(0.53, 2.08165e-12, -0.52)
+uv1_triplanar = true
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jgmv2"]
+lightmap_size_hint = Vector2i(11, 7)
+material = SubResource("StandardMaterial3D_bjjrn")
+top_radius = 0.3
+bottom_radius = 0.0
+height = 0.1
+cap_top = false
+cap_bottom = false
+
+[node name="Shotgun" type="Node3D" groups=["guns"]]
+script = ExtResource("1_fx2vr")
+gun_type = 2
+
+[node name="MuzzleFlash" type="Node3D" parent="."]
+transform = Transform3D(0.846471, 0, 0, 0, 0.354581, 0, 0, 0, 0.846471, 0, 0.113549, -1.08716)
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="MuzzleFlash"]
+transform = Transform3D(-3.0395, -2.65722e-07, 1.16151e-14, 0, -1.32861e-07, -3.0395, 2.65722e-07, -3.0395, 1.32861e-07, 0.0144249, -0.0157925, -0.154447)
+emitting = false
+amount = 1
+lifetime = 0.1
+one_shot = true
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_xf3xw")
+draw_pass_1 = SubResource("CylinderMesh_jgmv2")
+
+[node name="Model" parent="." instance=ExtResource("3_rwd5k")]
+transform = Transform3D(-1.07253e-08, 0, 0.245365, 0, 0.245365, 0, -0.245365, 0, -1.07253e-08, 0, -0.133952, -0.341593)
+
+[node name="GunShotAudioStreamPlayer" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.113549, -1.08716)
+stream = ExtResource("4_qlmf2")
+volume_db = -8.0

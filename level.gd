@@ -28,7 +28,13 @@ enum AiManState {
 	ENGAGING_PLAYER_WHILE_STANDING_STILL,
 }
 
-enum GunType { M16, SNIPER_RIFLE }
+enum GunType { M16, SNIPER_RIFLE, SHOTGUN }
+
+
+class BulletHit:
+	var collider: Node3D
+	var position: Vector3
+
 
 const ENEMY_FOV := 0.42 * TAU
 var possessed_man_name := "the civilian"
@@ -49,6 +55,7 @@ var suspicious_sound_has_been_investigated := true
 @onready var almost_invisible := preload("res://almost_invisible.tres")
 @onready var m_16_scene := preload("res://m_16.tscn")
 @onready var sniper_rifle_scene := preload("res://sniper_rifle.tscn")
+@onready var shotgun_scene := preload("res://shotgun.tscn")
 @onready var crosshair := $UI/Crosshair as Control
 @onready var nav_region: NavigationRegion3D = $NavigationRegion3D
 @onready var invisibility_overlay: Control = $UI/InvisibilityOverlay
@@ -62,6 +69,9 @@ var suspicious_sound_has_been_investigated := true
 )
 @onready var sniper_rifle_audio_stream_player := (
 	$SniperRifleAudioStreamPlayer as AudioStreamPlayer
+)
+@onready var shotgun_audio_stream_player := (
+	$ShotgunAudioStreamPlayer as AudioStreamPlayer
 )
 @onready var invisibility_audio_stream_player := (
 	$InvisibilityAudioStreamPlayer as AudioStreamPlayer
@@ -255,8 +265,11 @@ func process_use() -> void:
 			player.gun.queue_free()
 			player.gun_transform.remove_child(player.gun)
 		var gun_scene := (
-			m_16_scene if targetted_man.gun_type == GunType.M16
+			m_16_scene
+				if targetted_man.gun_type == GunType.M16
 			else sniper_rifle_scene
+				if targetted_man.gun_type == GunType.SNIPER_RIFLE
+			else shotgun_scene
 		)
 		player.gun = gun_scene.instantiate()
 		player.gun_transform.add_child(player.gun)
@@ -291,23 +304,30 @@ func process_player_shooting() -> void:
 			> get_gun_cooldown(player.gun)
 	):
 		get_gun_audio_stream_player(player.gun).play()
-		var hit := fire_gun(
+		var hits := fire_gun(
 			player.gun, player.camera.global_transform, [], true
 		)
-		if hit:
-			var man := hit.get_parent() as Man
+		var hit_man := false
+		var headshot := false
+		for hit in hits:
+			var man := hit.collider.get_parent() as Man
 			if man and man.alive:
-				var damage := get_gun_damage(player.gun)
-				if hit == man.head_hitbox:
-					damage = damage * 5.0
-					headshot_audio_stream_player.play(0.085)
-				hitmarker_audio_stream_player.play(0.1)
+				hit_man = true
+				if hit.collider == man.head_hitbox:
+					headshot = true
+				var distance := (player.gun.muzzle_flash.global_position
+					.distance_to(hit.position))
+				var damage := get_gun_damage(player.gun, distance, headshot)
 				man.health -= damage
 				if man.health <= 0.0:
 					man.alive = false
 					man.died_at = Global.time()
 					man.collision_layer = 0
 					man.collision_mask = 0
+		if hit_man:
+			hitmarker_audio_stream_player.play(0.1)
+		if headshot:
+			headshot_audio_stream_player.play(0.085)
 		suspicious_sound_position = player.global_position
 		suspicious_sound_heard_at = Global.time()
 		suspicious_sound_has_been_investigated  = false
@@ -335,11 +355,13 @@ func process_man_shooting() -> void:
 					exclude.append(man_2.head_hitbox.get_rid())
 					exclude.append(man_2.body_hitbox.get_rid())
 
-			var hit := fire_gun(
+			var hits := fire_gun(
 				man.gun, man.gun.global_transform, exclude, false
 			)
-			if hit and hit == player:
-				damage_audio_stream_player.play()
+			for hit in hits:
+				if hit.collider == player:
+					damage_audio_stream_player.play()
+					break
 			man.gun.last_fired_at = Global.time()
 			man.gun.gun_shot_audio_stream_player.play()
 
@@ -575,24 +597,33 @@ func physics_process_man(delta: float) -> void:
 			5.0, 10.0, hash_int_to_random_float(man.get_index())
 		)
 
-		var pathing_cooldown := search_duration < 3.0
+		var pathing_cooldown_duration := (
+			0.5 if man.gun_type == GunType.SHOTGUN else 3.0)
+
+		var pathing_cooldown := search_duration < pathing_cooldown_duration
+
+		var distance_to_player := man.global_position.distance_to(
+			player.last_known_position)
+
+		var need_to_move_closer_to_engage := (
+			man.gun_type == GunType.SHOTGUN
+			or man.gun_type == GunType.SNIPER_RIFLE and not can_see_player
+			or man.gun_type == GunType.M16 and (
+				not can_see_player
+				or distance_to_player > 10.0
+			)
+		)
 
 		var ai_state := (
 			AiManState.MOVING_TO_ENGAGE_POSITION if
 				man.alive
 				and ai_team_state == AiTeamState.ENGAGING
+				and need_to_move_closer_to_engage
 				and pathing_cooldown
-				and (
-					man.gun_type == GunType.M16
-					or not can_see_player
-				)
 			else AiManState.PATHING_TO_ENGAGE_POSITION if
 				man.alive
 				and ai_team_state == AiTeamState.ENGAGING
-				and (
-					man.gun_type == GunType.M16
-					or not can_see_player
-				)
+				and need_to_move_closer_to_engage
 			else AiManState.ENGAGING_PLAYER_WHILE_STANDING_STILL if
 				man.alive
 				and ai_team_state == AiTeamState.ENGAGING
@@ -709,12 +740,14 @@ func physics_process_man(delta: float) -> void:
 			else man.patrol_index
 		)
 
+		var speed := 7.0 if man.gun_type == GunType.SHOTGUN else 4.0
+
 		var velocity := Vector3(0.0, man.velocity.y - 9.8 * delta, 0.0)
 		if man.alive:
 			velocity += Vector3(man.safe_velocity.x, 0.0, man.safe_velocity.z)
 			if has_nav_target:
 				var dir := man.global_position.direction_to(next_path_pos)
-				velocity += dir * 4.0
+				velocity += dir * speed
 		if man.is_on_floor():
 			velocity.y = 0.0
 
@@ -820,85 +853,94 @@ func fire_gun(
 	source: Transform3D,
 	ray_exclude: Array[Variant],
 	scale_impact_with_distance: bool
-) -> Node3D:
+) -> Array[BulletHit]:
+	var hits: Array[BulletHit] = []
+
 	gun.last_fired_at = Global.time()
 
-	var hit_man: Man
-	var hit_anything := false
-	var hit_player := false
+	for i in get_gun_pellets(gun):
+		var hit_man: Man
+		var hit_anything := false
+		var hit_player := false
 
-	var max_spread := 0.2 * (1.0 - gun.accuracy)
-	var dir := (
-		source.basis.z
-			.rotated(source.basis.x, randf_range(-max_spread, max_spread))
-			.rotated(source.basis.y, randf_range(-max_spread, max_spread))
-	)
-
-	var ray_query := PhysicsRayQueryParameters3D.new()
-	ray_query.from = source.origin
-	ray_query.to = source.origin + dir * -1000.0
-
-	# TODO: use physics layers instead of ray_exclude list to simplify logic
-	ray_exclude = Array(ray_exclude)
-	for man: Man in men.get_children():
-		if is_instance_valid(man):
-			ray_exclude.append(man.get_rid())
-	ray_query.exclude = ray_exclude
-	ray_query.collide_with_areas = true
-	var collision := get_world_3d().direct_space_state.intersect_ray(ray_query)
-
-	var hit_position := ray_query.to
-
-	if collision:
-		hit_anything = true
-		hit_position = collision.position
-		var hit: Node3D = collision.collider
-		if hit.get_parent() is Man:
-			hit_man = hit.get_parent() as Man
-		elif hit == player:
-			hit_player = true
-
-	if hit_anything and not hit_player:
-		var impact_scene := (
-			blood_impact_scene if hit_man else bullet_impact_scene
+		var max_spread := get_gun_max_spread(gun)
+		var dir := (
+			source.basis.z
+				.rotated(source.basis.x, randf_range(-max_spread, max_spread))
+				.rotated(source.basis.y, randf_range(-max_spread, max_spread))
 		)
-		var impact := impact_scene.instantiate() as GPUParticles3D
-		impact.position = hit_position
-		impact.emitting = false
-		impact.finished.connect(
-			func() -> void: impact.queue_free()
-		)
-		impact.one_shot = true
-		impact.emitting = true
-		if scale_impact_with_distance:
-			impact.scale *= clamp(
-				gun.muzzle_flash.global_position.distance_to(
-					hit_position
-				) - 1.0,
-				1.0,
-				3.0
+
+		var ray_query := PhysicsRayQueryParameters3D.new()
+		ray_query.from = source.origin
+		ray_query.to = source.origin + dir * -1000.0
+
+		# TODO: use physics layers instead of ray_exclude list to simplify logic
+		ray_exclude = Array(ray_exclude)
+		for man: Man in men.get_children():
+			if is_instance_valid(man):
+				ray_exclude.append(man.get_rid())
+		ray_query.exclude = ray_exclude
+		ray_query.collide_with_areas = true
+		var collision := get_world_3d().direct_space_state.intersect_ray(ray_query)
+
+		var hit_position := ray_query.to
+
+		if collision:
+			hit_anything = true
+			hit_position = collision.position
+			var hit: Node3D = collision.collider
+			if hit.get_parent() is Man:
+				hit_man = hit.get_parent() as Man
+			elif hit == player:
+				hit_player = true
+
+		if hit_anything and not hit_player:
+			var impact_scene := (
+				blood_impact_scene if hit_man else bullet_impact_scene
 			)
-		add_child(impact)
+			var impact := impact_scene.instantiate() as GPUParticles3D
+			impact.position = hit_position
+			impact.emitting = false
+			impact.finished.connect(
+				func() -> void: impact.queue_free()
+			)
+			impact.one_shot = true
+			impact.emitting = true
+			if scale_impact_with_distance:
+				impact.scale *= clamp(
+					gun.muzzle_flash.global_position.distance_to(
+						hit_position
+					) - 1.0,
+					1.0,
+					3.0
+				)
+			add_child(impact)
 
-	gun.muzzle_flash_particles.emitting = true
-	gun.muzzle_flash_particles.restart()
+		gun.muzzle_flash_particles.emitting = true
+		gun.muzzle_flash_particles.restart()
 
-	var tracer: Node3D = tracer_scene.instantiate()
-	tracer.position = gun.muzzle_flash.global_position
-	tracer.scale.z = (
-		gun.muzzle_flash.global_position.distance_to(hit_position)
-	)
+		if i % 2 == 0:
+			var tracer: Node3D = tracer_scene.instantiate()
+			tracer.position = gun.muzzle_flash.global_position
+			tracer.scale.z = (
+				gun.muzzle_flash.global_position.distance_to(hit_position)
+			)
 
-	var tracer_particles: GPUParticles3D = (
-		tracer.get_node("GPUParticles3D")
-	)
-	tracer_particles.emitting = false
-	tracer_particles.finished.connect(func() -> void: tracer.queue_free())
-	tracer_particles.one_shot = true
-	tracer_particles.emitting = true
+			var tracer_particles: GPUParticles3D = (
+				tracer.get_node("GPUParticles3D")
+			)
+			tracer_particles.emitting = false
+			tracer_particles.finished.connect(func() -> void: tracer.queue_free())
+			tracer_particles.one_shot = true
+			tracer_particles.emitting = true
 
-	add_child(tracer)
-	tracer.look_at(hit_position, Vector3.UP, true)
+			add_child(tracer)
+			tracer.look_at(hit_position, Vector3.UP, true)
+		if collision:
+			var hit := BulletHit.new()
+			hit.collider = collision.collider
+			hit.position = collision.position
+			hits.append(hit)
 
 	gun.accuracy -= 0.1 - 0.1 * (1.0 - gun.accuracy)
 
@@ -909,7 +951,7 @@ func fire_gun(
 		gun_accel
 	)
 
-	return collision.collider if collision else null
+	return hits
 
 
 func hash_int_to_random_float(value: int) -> float:
@@ -925,16 +967,22 @@ func get_gun_cooldown(gun: Gun) -> float:
 			return 0.1
 		Level.GunType.SNIPER_RIFLE:
 			return 2.3
+		Level.GunType.SHOTGUN:
+			return 1.18
 	push_error("Unhandled state")
 	return 1.0
 
 
-func get_gun_damage(gun: Gun) -> float:
+func get_gun_damage(gun: Gun, distance: float, headshot: bool) -> float:
 	match gun.gun_type:
 		Level.GunType.M16:
-			return 0.2
+			return 1.0 if headshot else 0.1
 		Level.GunType.SNIPER_RIFLE:
-			return 2.0
+			return 1.0
+		Level.GunType.SHOTGUN:
+			var l := 0.05
+			var u := 0.2
+			return clampf(remap(distance, 10.0, 20.0, u, l), l, u)
 	push_error("Unhandled state")
 	return 1.0
 
@@ -945,5 +993,31 @@ func get_gun_audio_stream_player(gun: Gun) -> AudioStreamPlayer:
 			return m_16_audio_stream_player
 		Level.GunType.SNIPER_RIFLE:
 			return sniper_rifle_audio_stream_player
+		Level.GunType.SHOTGUN:
+			return shotgun_audio_stream_player
 	push_error("Unhandled state")
 	return null
+
+
+func get_gun_max_spread(gun: Gun) -> float:
+	match gun.gun_type:
+		Level.GunType.M16:
+			return 0.2 * (1.0 - gun.accuracy)
+		Level.GunType.SNIPER_RIFLE:
+			return 0.0
+		Level.GunType.SHOTGUN:
+			return 0.06
+	push_error("Unhandled state")
+	return 1.0
+
+
+func get_gun_pellets(gun: Gun) -> int:
+	match gun.gun_type:
+		Level.GunType.M16:
+			return 1
+		Level.GunType.SNIPER_RIFLE:
+			return 1
+		Level.GunType.SHOTGUN:
+			return 14
+	push_error("Unhandled state")
+	return 1

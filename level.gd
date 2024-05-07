@@ -740,7 +740,11 @@ func physics_process_man(delta: float) -> void:
 			else man.patrol_index
 		)
 
-		var speed := 7.0 if man.gun_type == GunType.SHOTGUN else 4.0
+		var speed := (
+			2.0 if ai_team_state != AiTeamState.ENGAGING
+			else 7.0 if man.gun_type == GunType.SHOTGUN
+			else 4.0
+		)
 
 		var velocity := Vector3(0.0, man.velocity.y - 9.8 * delta, 0.0)
 		if man.alive:

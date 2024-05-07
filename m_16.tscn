@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://cdl0koy3r7fiq"]
 
-[ext_resource type="Script" path="res://m_16.gd" id="1_bbsbd"]
+[ext_resource type="Script" path="res://gun.gd" id="1_tfeoc"]
 [ext_resource type="Texture2D" uid="uid://dolsmonda4njl" path="res://addons/kenney_particle_pack/fire_02.png" id="1_xjp86"]
 [ext_resource type="PackedScene" uid="uid://di14cmdia7qtu" path="res://m_16.glb" id="2_bw0wy"]
 [ext_resource type="AudioStream" uid="uid://5nuhnh2wdjbn" path="res://gun_shot.wav" id="4_cuppa"]
@@ -36,22 +36,25 @@ height = 0.1
 cap_top = false
 cap_bottom = false
 
-[node name="M16" type="Node3D" groups=["m_16s"]]
-script = ExtResource("1_bbsbd")
+[node name="M16" type="Node3D" groups=["guns"]]
+script = ExtResource("1_tfeoc")
 
 [node name="MuzzleFlash" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.144784, -0.976012)
+transform = Transform3D(0.557019, 0, 0, 0, 0.557019, 0, 0, 0, 0.557019, 0, 0.144784, -0.976012)
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="MuzzleFlash"]
 transform = Transform3D(-3.0395, -2.65722e-07, 1.16151e-14, 0, -1.32861e-07, -3.0395, 2.65722e-07, -3.0395, 1.32861e-07, 0, 0, -0.0224075)
+emitting = false
 amount = 1
 lifetime = 0.1
+one_shot = true
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_2hb5m")
 draw_pass_1 = SubResource("CylinderMesh_ygmdk")
 
-[node name="Mesh" parent="." instance=ExtResource("2_bw0wy")]
+[node name="Model" parent="." instance=ExtResource("2_bw0wy")]
 
 [node name="GunShotAudioStreamPlayer" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.144784, -0.976012)
 stream = ExtResource("4_cuppa")
-volume_db = -5.0
+volume_db = -8.0

@@ -1,8 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://dkw50wbe2l0x5"]
+[gd_scene load_steps=10 format=3 uid="uid://dkw50wbe2l0x5"]
 
 [ext_resource type="Script" path="res://man.gd" id="1_acryy"]
 [ext_resource type="PackedScene" uid="uid://dgstnputxxomc" path="res://Man.glb" id="2_fnqcv"]
-[ext_resource type="PackedScene" uid="uid://cdl0koy3r7fiq" path="res://m_16.tscn" id="3_hg7sh"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_qy65m"]
 
@@ -34,9 +33,6 @@ transform = Transform3D(0.993634, -0.0997612, 0.0523294, 0.100002, 0.994985, -0.
 
 [node name="RestTransform" type="Node3D" parent="."]
 transform = Transform3D(0.537081, -0.473716, 0.697953, -0.133844, 0.769078, 0.624984, -0.832845, -0.429083, 0.349653, 0.167609, 1.05031, -0.145627)
-
-[node name="M16" parent="RestTransform" instance=ExtResource("3_hg7sh")]
-unique_name_in_owner = true
 
 [node name="NavCollider" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.115423)

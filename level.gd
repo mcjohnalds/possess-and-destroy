@@ -27,8 +27,9 @@ enum AiManState {
 	PAUSING,
 }
 
+enum GunType { M16, SNIPER_RIFLE }
+
 const ENEMY_FOV := 0.42 * TAU
-var player_has_gun := false
 var possessed_man_name := "the civilian"
 var player_identity_compromised := false
 var ai_team_state_last_frame := AiTeamState.PATROLLING
@@ -45,6 +46,8 @@ var suspicious_sound_has_been_investigated := true
 @onready var blood_impact_scene := preload("res://blood_impact.tscn")
 @onready var tracer_scene := preload("res://tracer.tscn")
 @onready var almost_invisible := preload("res://almost_invisible.tres")
+@onready var m_16_scene := preload("res://m_16.tscn")
+@onready var sniper_rifle_scene := preload("res://sniper_rifle.tscn")
 @onready var crosshair := $UI/Crosshair as Control
 @onready var nav_region: NavigationRegion3D = $NavigationRegion3D
 @onready var invisibility_overlay: Control = $UI/InvisibilityOverlay
@@ -53,8 +56,11 @@ var suspicious_sound_has_been_investigated := true
 @onready var vignette_gradient: Gradient = (
 	vignette_gradient_2d.gradient
 )
-@onready var gun_shot_audio_stream_player := (
-	$GunShotAudioStreamPlayer as AudioStreamPlayer
+@onready var m_16_audio_stream_player := (
+	$M16AudioStreamPlayer as AudioStreamPlayer
+)
+@onready var sniper_rifle_audio_stream_player := (
+	$SniperRifleAudioStreamPlayer as AudioStreamPlayer
 )
 @onready var invisibility_audio_stream_player := (
 	$InvisibilityAudioStreamPlayer as AudioStreamPlayer
@@ -80,12 +86,12 @@ func _ready() -> void:
 		man.navigation_agent.target_desired_distance = 0.5
 		man.navigation_agent.velocity_computed.connect(on_velocity_computed.bind(man))
 	call_deferred("actor_setup")
-	player.m_16.visible = player_has_gun
-	for m_16: M16 in get_tree().get_nodes_in_group("m_16s"):
-		m_16.muzzle_flash_particles.emitting = false
-		m_16.muzzle_flash_particles.one_shot = true
+	for gun: Gun in get_tree().get_nodes_in_group("guns"):
+		gun.muzzle_flash_particles.emitting = false
+		gun.muzzle_flash_particles.one_shot = true
 	player.jumped.connect(func() -> void:
-		player.m_16.accuracy -= 0.5
+		if player.gun:
+			player.gun.accuracy -= 0.5
 	)
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	player.setup()
@@ -119,10 +125,36 @@ func _input(event: InputEvent) -> void:
 	if key and key.keycode == KEY_F and key.pressed:
 		player.invisible = not player.invisible
 		invisibility_overlay.visible = player.invisible
-		player.m_16.mesh.set_surface_override_material(
-			0, almost_invisible if player.invisible else null
-		)
-		invisibility_audio_stream_player.play(0.9)
+		if player.gun:
+			if player.invisible:
+				make_player_gun_invisible()
+			else:
+				make_player_gun_visible()
+			invisibility_audio_stream_player.play(0.9)
+
+
+func make_player_gun_invisible() -> void:
+	for n: Node in player.gun.model.find_children(
+		"*", "MeshInstance3D", true, false
+	):
+		var mesh := n as MeshInstance3D
+		if mesh:
+			for i in mesh.get_surface_override_material_count():
+				mesh.set_surface_override_material(i, almost_invisible)
+		else:
+			push_error("Invalid state")
+
+
+func make_player_gun_visible() -> void:
+	for n: Node in player.gun.model.find_children(
+		"*", "MeshInstance3D", true, false
+	):
+		var mesh := n as MeshInstance3D
+		if mesh:
+			for i in mesh.get_surface_override_material_count():
+				mesh.set_surface_override_material(i, null)
+		else:
+			push_error("Invalid state")
 
 
 # Capture mouse if clicked on the game, needed for HTML5
@@ -146,7 +178,7 @@ func _process(delta: float) -> void:
 		)
 	process_player_shooting()
 	process_man_shooting()
-	process_m_16s(delta)
+	process_guns(delta)
 
 
 func process_use() -> void:
@@ -215,11 +247,21 @@ func process_use() -> void:
 		player.position = targetted_man.position + 0.1 * Vector3.UP
 		player.velocity = Vector3.ZERO
 		possessing_label.text = "Possessing: " + targetted_man.name
-		player.m_16.visible = true
-		player_has_gun = true
-		player.m_16.visible = player_has_gun
 		player.last_possessed_at = Global.time()
 		targetted_man.queue_free()
+
+		if player.gun:
+			player.gun.queue_free()
+			player.gun_transform.remove_child(player.gun)
+		var gun_scene := (
+			m_16_scene if targetted_man.gun_type == GunType.M16
+			else sniper_rifle_scene
+		)
+		player.gun = gun_scene.instantiate()
+		player.gun_transform.add_child(player.gun)
+		if player.invisible:
+			make_player_gun_invisible()
+
 		if not possession_witness:
 			player_identity_compromised = false
 
@@ -242,20 +284,21 @@ func process_vignette() -> void:
 
 func process_player_shooting() -> void:
 	if (
-		player_has_gun
+		player.gun
 		and Input.is_action_pressed("primary")
-		and Global.time() - player.m_16.last_fired_at > 0.1
+		and Global.time() - player.gun.last_fired_at
+			> get_gun_cooldown(player.gun)
 	):
-		gun_shot_audio_stream_player.play()
-		var hit := fire_m_16(
-			player.m_16, player.camera.global_transform, [], true
+		get_gun_audio_stream_player(player.gun).play()
+		var hit := fire_gun(
+			player.gun, player.camera.global_transform, [], true
 		)
 		if hit:
 			var man := hit.get_parent() as Man
 			if man and man.alive:
-				var damage := 0.2
+				var damage := get_gun_damage(player.gun)
 				if hit == man.head_hitbox:
-					damage = 1.0
+					damage = damage * 5.0
 					headshot_audio_stream_player.play(0.085)
 				hitmarker_audio_stream_player.play(0.1)
 				man.health -= damage
@@ -276,7 +319,9 @@ func process_man_shooting() -> void:
 		if not man.alive and Global.time() - man.died_at > 5.0:
 			man.queue_free()
 			continue
-		var fired_recently := Global.time() - man.m_16.last_fired_at <= 0.1
+		var fired_recently := (
+			Global.time() - man.gun.last_fired_at <= get_gun_cooldown(man.gun)
+		)
 		var can_fire := (
 			player_identity_compromised
 			and not fired_recently
@@ -289,21 +334,21 @@ func process_man_shooting() -> void:
 					exclude.append(man_2.head_hitbox.get_rid())
 					exclude.append(man_2.body_hitbox.get_rid())
 
-			var hit := fire_m_16(
-				man.m_16, man.m_16.global_transform, exclude, false
+			var hit := fire_gun(
+				man.gun, man.gun.global_transform, exclude, false
 			)
 			if hit and hit == player:
 				damage_audio_stream_player.play()
-			man.m_16.last_fired_at = Global.time()
-			man.m_16.gun_shot_audio_stream_player.play()
+			man.gun.last_fired_at = Global.time()
+			man.gun.gun_shot_audio_stream_player.play()
 
 
-func process_m_16s(delta: float) -> void:
-	for m_16: M16 in get_tree().get_nodes_in_group("m_16s"):
-		if not is_instance_valid(m_16):
+func process_guns(delta: float) -> void:
+	for gun: Gun in get_tree().get_nodes_in_group("guns"):
+		if not is_instance_valid(gun):
 			continue
-		m_16.accuracy += 1.5 * delta - m_16.accuracy * delta
-		m_16.accuracy = clampf(m_16.accuracy, 0.0, 1.0)
+		gun.accuracy += 1.5 * delta - gun.accuracy * delta
+		gun.accuracy = clampf(gun.accuracy, 0.0, 1.0)
 
 	# Player movement innaccuracy
 	var max_accuracy := 1.0
@@ -311,16 +356,21 @@ func process_m_16s(delta: float) -> void:
 		max_accuracy = 0.9
 	if player.sprint_ability._active:
 		max_accuracy = 0.6
-	player.m_16.accuracy = clampf(player.m_16.accuracy, 0.0, max_accuracy)
-	crosshair.scale = Vector2(1.0, 1.0) * (1.0 + 3.0 * (1.0 - player.m_16.accuracy))
+	if player.gun:
+		player.gun.accuracy = clampf(
+			player.gun.accuracy, 0.0, max_accuracy
+		)
+		crosshair.scale = (
+			Vector2(1.0, 1.0) * (1.0 + 3.0 * (1.0 - player.gun.accuracy))
+		)
 
-	for m_16: M16 in get_tree().get_nodes_in_group("m_16s"):
-		if not is_instance_valid(m_16):
+	for gun: Gun in get_tree().get_nodes_in_group("guns"):
+		if not is_instance_valid(gun):
 			continue
-		var reset_velocity := -m_16.position * m_16.accuracy * 5.0
-		var velocity := m_16.kick_velocity + reset_velocity
-		m_16.position += velocity * delta
-		m_16.kick_velocity -= m_16.kick_velocity * delta * 40.0
+		var reset_velocity := -gun.position * gun.accuracy * 5.0
+		var velocity := gun.kick_velocity + reset_velocity
+		gun.position += velocity * delta
+		gun.kick_velocity -= gun.kick_velocity * delta * 40.0
 
 
 func can_man_see_player(man: Man) -> bool:
@@ -375,7 +425,6 @@ func physics_process_man(delta: float) -> void:
 			and player.last_possessed_at < suspicious_sound_heard_at
 			and not player_identity_compromised
 		):
-			print(1)
 			player_shooting_witnessed_this_frame = true
 			name_of_player_shooting_witness = man.name
 
@@ -662,11 +711,11 @@ func physics_process_man(delta: float) -> void:
 		man.rotation.x = 0
 		man.rotation.z = 0
 		if has_aim_target:
-			man.m_16.look_at(player.last_known_position, Vector3.UP)
+			man.gun.look_at(player.last_known_position, Vector3.UP)
 		else:
-			man.m_16.rotation.x = 0
-			man.m_16.rotation.y = 0
-			man.m_16.rotation.z = 0
+			man.gun.rotation.x = 0
+			man.gun.rotation.y = 0
+			man.gun.rotation.z = 0
 		man.velocity = velocity
 		# man.safe_velocity = Vector3.ZERO
 		man.move_and_slide()
@@ -709,7 +758,9 @@ func log_message(text: String) -> void:
 	new_msg.text = text
 	messages.add_child(new_msg)
 	if messages.get_child_count() > 3:
-		messages.remove_child(messages.get_child(0))
+		var c := messages.get_child(0)
+		c.queue_free()
+		messages.remove_child(c)
 	var y := 8.0
 	for msg: Label in messages.get_children():
 		msg.position.y = y
@@ -743,22 +794,22 @@ func hunt_player() -> void:
 	player_identity_compromised = true
 	for man: Man in men.get_children():
 		if is_instance_valid(man) and man.alive:
-			man.m_16.reparent(man.aim_transform, false)
+			man.gun.reparent(man.aim_transform, false)
 
 
-func fire_m_16(
-	m_16: M16,
+func fire_gun(
+	gun: Gun,
 	source: Transform3D,
 	ray_exclude: Array[Variant],
 	scale_impact_with_distance: bool
 ) -> Node3D:
-	m_16.last_fired_at = Global.time()
+	gun.last_fired_at = Global.time()
 
 	var hit_man: Man
 	var hit_anything := false
 	var hit_player := false
 
-	var max_spread := 0.2 * (1.0 - m_16.accuracy)
+	var max_spread := 0.2 * (1.0 - gun.accuracy)
 	var dir := (
 		source.basis.z
 			.rotated(source.basis.x, randf_range(-max_spread, max_spread))
@@ -803,7 +854,7 @@ func fire_m_16(
 		impact.emitting = true
 		if scale_impact_with_distance:
 			impact.scale *= clamp(
-				m_16.muzzle_flash.global_position.distance_to(
+				gun.muzzle_flash.global_position.distance_to(
 					hit_position
 				) - 1.0,
 				1.0,
@@ -811,13 +862,13 @@ func fire_m_16(
 			)
 		add_child(impact)
 
-	m_16.muzzle_flash_particles.emitting = true
-	m_16.muzzle_flash_particles.restart()
+	gun.muzzle_flash_particles.emitting = true
+	gun.muzzle_flash_particles.restart()
 
 	var tracer: Node3D = tracer_scene.instantiate()
-	tracer.position = m_16.muzzle_flash.global_position
+	tracer.position = gun.muzzle_flash.global_position
 	tracer.scale.z = (
-		m_16.muzzle_flash.global_position.distance_to(hit_position)
+		gun.muzzle_flash.global_position.distance_to(hit_position)
 	)
 
 	var tracer_particles: GPUParticles3D = (
@@ -831,10 +882,10 @@ func fire_m_16(
 	add_child(tracer)
 	tracer.look_at(hit_position, Vector3.UP, true)
 
-	m_16.accuracy -= 0.1 - 0.1 * (1.0 - m_16.accuracy)
+	gun.accuracy -= 0.1 - 0.1 * (1.0 - gun.accuracy)
 
 	var gun_accel := 0.8
-	m_16.kick_velocity += Vector3(
+	gun.kick_velocity += Vector3(
 		randf_range(-gun_accel, gun_accel),
 		randf_range(-gun_accel, gun_accel),
 		gun_accel
@@ -844,7 +895,37 @@ func fire_m_16(
 
 
 func hash_int_to_random_float(value: int) -> float:
-    # Linear congruential generator (LCG)
+	# Linear congruential generator (LCG)
 	var s := value * 1103515245 + 12345
 	s = s % 2147483647
 	return float(s) / 2147483647.0
+
+
+func get_gun_cooldown(gun: Gun) -> float:
+	match gun.gun_type:
+		Level.GunType.M16:
+			return 0.1
+		Level.GunType.SNIPER_RIFLE:
+			return 2.3
+	push_error("Unhandled state")
+	return 1.0
+
+
+func get_gun_damage(gun: Gun) -> float:
+	match gun.gun_type:
+		Level.GunType.M16:
+			return 0.2
+		Level.GunType.SNIPER_RIFLE:
+			return 2.0
+	push_error("Unhandled state")
+	return 1.0
+
+
+func get_gun_audio_stream_player(gun: Gun) -> AudioStreamPlayer:
+	match gun.gun_type:
+		Level.GunType.M16:
+			return m_16_audio_stream_player
+		Level.GunType.SNIPER_RIFLE:
+			return sniper_rifle_audio_stream_player
+	push_error("Unhandled state")
+	return null

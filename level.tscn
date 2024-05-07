@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=3 uid="uid://c2t6smyr8xtty"]
+[gd_scene load_steps=44 format=3 uid="uid://c2t6smyr8xtty"]
 
 [ext_resource type="Script" path="res://level.gd" id="1_cikgd"]
 [ext_resource type="PackedScene" uid="uid://cewa4cg7jix27" path="res://player.tscn" id="2_nvo2f"]
@@ -13,6 +13,7 @@
 [ext_resource type="Material" uid="uid://ckvcdcn2iue87" path="res://addons/character-controller/example/main/materials/wood.tres" id="11_cakef"]
 [ext_resource type="Texture2D" uid="uid://svijnbaaeuol" path="res://addons/character-controller/example/main/textures/Free DEMO Pixel Skies Background pack by Digital Moons/demo01_PixelSky.png" id="12_olhen"]
 [ext_resource type="PackedScene" uid="uid://dkw50wbe2l0x5" path="res://man.tscn" id="13_rnn3k"]
+[ext_resource type="AudioStream" uid="uid://dehmr3owlvppj" path="res://sniper_rifle_shot.ogg" id="15_7ymsj"]
 [ext_resource type="AudioStream" uid="uid://dviwyfg3xgfoj" path="res://shield_bash_impact.ogg" id="16_l21hj"]
 [ext_resource type="AudioStream" uid="uid://5nuhnh2wdjbn" path="res://gun_shot.wav" id="16_ocj6n"]
 [ext_resource type="AudioStream" uid="uid://bnd132vcoxlw2" path="res://hitmarker.mp3" id="17_vgiwo"]
@@ -554,6 +555,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.95971, 7.15256e-07, 16.4773
 [node name="Pvt Miller" parent="Men" instance=ExtResource("13_rnn3k")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5718, 5.33561, 13.7766)
 patrol = false
+gun_type = 1
 
 [node name="UI" type="Node" parent="."]
 
@@ -635,8 +637,11 @@ vertical_alignment = 1
 offset_right = 1017.0
 offset_bottom = 123.0
 
-[node name="GunShotAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+[node name="M16AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("16_ocj6n")
+
+[node name="SniperRifleAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("15_7ymsj")
 
 [node name="HitmarkerAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("17_vgiwo")

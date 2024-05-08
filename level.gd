@@ -712,7 +712,11 @@ func physics_process_man(delta: float) -> void:
 			AiManState.MOVING_TO_LAST_KNOWN_POSITION:
 				has_nav_target = true
 				has_look_at_target = true
-				look_at_target = player.last_known_position
+				look_at_target = (
+					player.last_known_position
+						if can_man_look_at(man, player.last_known_position)
+						else next_path_pos
+				)
 			AiManState.PATHING_TO_LAST_KNOWN_POSITION:
 				has_new_nav_target = true
 				new_nav_target = player.last_known_position
@@ -727,6 +731,11 @@ func physics_process_man(delta: float) -> void:
 				has_nav_target = true
 				has_look_at_target = true
 				look_at_target = suspicious_sound_position
+				look_at_target = (
+					suspicious_sound_position
+						if can_man_look_at(man, suspicious_sound_position)
+						else next_path_pos
+				)
 			AiManState.PATHING_TO_SUSPICIOUS_SOUND_POSITION:
 				has_new_nav_target = true
 				new_nav_target = suspicious_sound_position
@@ -1050,3 +1059,22 @@ static func safe_look_at(node: Node3D, target: Vector3) -> void:
 		if node.global_position != target and abs(up.dot(direction)) != 1:
 			node.look_at(target, up)
 			break
+
+
+func can_man_look_at(man: Man, point: Vector3) -> bool:
+	var exclude: Array[Variant] = []
+	exclude.append(player.get_rid())
+	for man2: Man in men.get_children():
+		if is_instance_valid(man2):
+			exclude.append(man2.get_rid())
+			exclude.append(man2.head_hitbox.get_rid())
+			exclude.append(man2.body_hitbox.get_rid())
+
+	var query := PhysicsRayQueryParameters3D.new()
+	query.from = man.head_hitbox.global_position
+	query.to = point
+	query.exclude = exclude
+
+	var collision := get_world_3d().direct_space_state.intersect_ray(query)
+
+	return collision.is_empty()

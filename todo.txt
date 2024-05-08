@@ -40,7 +40,7 @@ Todo:
   - [x] Shotgun enemy runs faster.
 - [x] Enemies walk slowly when not engaging
 - [x] Stationary, patrol, and fixed modes.
-- [ ] When approaching last known position or suspiscious gunshot sound, they
+- [x] When approaching last known position or suspiscious gunshot sound, they
   aim at that position if the position if its view is unobstructed, else they
   aim to their next nav point.
 - [ ] Enemies take time to aim, especially the sniper.

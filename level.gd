@@ -87,7 +87,7 @@ func actor_setup() -> void:
 	for man: Man in men.get_children():
 		if man.mode == Man.Mode.Patrol:
 			man.navigation_agent.set_target_position(
-				(patrol.get_child(0) as Node3D).position
+				(patrol.get_child(0) as Node3D).global_position
 			)
 
 
@@ -148,6 +148,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	player.health_label.text = "%s%%" % ceilf(player.health * 100.0)
 	process_use()
 	process_zoom()
 	process_vignette()
@@ -224,8 +225,12 @@ func process_use() -> void:
 	if possessed:
 		player.possession_audio_stream_player.play(4.9)
 		possessed_man_name = targetted_man.name
-		# + 0.1 prevents player from falling beneath floor
-		player.position = targetted_man.position + 0.1 * Vector3.UP
+		player.global_position = (
+			# + player height / 2 because player origin is different to enemy
+			# origin
+			targetted_man.global_position
+				+ player.capsule.height / 2.0 * Vector3.UP
+		)
 		player.velocity = Vector3.ZERO
 		player.possessing_label.text = "Possessing: " + targetted_man.name
 		player.last_possessed_at = Level.get_ticks_sec()
@@ -327,12 +332,19 @@ func process_man_shooting() -> void:
 					exclude.append(man_2.body_hitbox.get_rid())
 
 			var hits := fire_gun(
-				man.gun, man.gun.global_transform, exclude, false
+				man.gun, man.gun.muzzle_flash.global_transform, exclude, false
 			)
+			var hit_player := false
 			for hit in hits:
 				if hit.collider == player:
-					player.damage_audio_stream_player.play()
-					break
+					hit_player = true
+					var headshot := false
+					var distance := (man.gun.muzzle_flash.global_position
+						.distance_to(hit.position))
+					var damage := get_gun_damage(man.gun, distance, headshot)
+					player.health -= damage
+			if hit_player:
+				player.damage_audio_stream_player.play()
 			man.gun.last_fired_at = Level.get_ticks_sec()
 			man.gun.gun_shot_audio_stream_player.play()
 
@@ -392,6 +404,8 @@ func can_man_see_point(man: Man, point: Vector3) -> bool:
 		point
 	)
 	query.exclude = exclude
+	# Need hit from inside since enemy weapon might poke into player
+	query.hit_from_inside = true
 	return not get_world_3d().direct_space_state.intersect_ray(query)
 
 
@@ -690,7 +704,7 @@ func physics_process_man(delta: float) -> void:
 			AiManState.PATHING_TO_PATROL_POSITION:
 				has_new_nav_target = true
 				var patrol_node: Node3D = patrol.get_child(man.patrol_index)
-				new_nav_target = patrol_node.position
+				new_nav_target = patrol_node.global_position
 			AiManState.MOVING_TO_INITIAL_POSITION:
 				has_nav_target = true
 				has_look_at_target = true
@@ -895,9 +909,15 @@ func fire_gun(
 
 		var max_spread := get_gun_max_spread(gun)
 		var dir := (
-			source.basis.z
-				.rotated(source.basis.x, randf_range(-max_spread, max_spread))
-				.rotated(source.basis.y, randf_range(-max_spread, max_spread))
+			source.basis.z.normalized()
+				.rotated(
+					source.basis.x.normalized(),
+					randf_range(-max_spread, max_spread)
+				)
+				.rotated(
+					source.basis.y.normalized(),
+					randf_range(-max_spread, max_spread)
+				)
 		)
 
 		var ray_query := PhysicsRayQueryParameters3D.new()
@@ -929,7 +949,6 @@ func fire_gun(
 				blood_impact_scene if hit_man else bullet_impact_scene
 			)
 			var impact := impact_scene.instantiate() as GPUParticles3D
-			impact.position = hit_position
 			impact.emitting = false
 			impact.finished.connect(
 				func() -> void: impact.queue_free()
@@ -945,13 +964,13 @@ func fire_gun(
 					3.0
 				)
 			add_child(impact)
+			impact.global_position = hit_position
 
 		gun.muzzle_flash_particles.emitting = true
 		gun.muzzle_flash_particles.restart()
 
 		if i % 2 == 0:
 			var tracer: Node3D = tracer_scene.instantiate()
-			tracer.position = gun.muzzle_flash.global_position
 			tracer.scale.z = (
 				gun.muzzle_flash.global_position.distance_to(hit_position)
 			)
@@ -965,6 +984,7 @@ func fire_gun(
 			tracer_particles.emitting = true
 
 			add_child(tracer)
+			tracer.global_position = gun.muzzle_flash.global_position
 			tracer.look_at(hit_position, Vector3.UP, true)
 		if collision:
 			var hit := BulletHit.new()

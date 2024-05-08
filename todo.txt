@@ -44,7 +44,8 @@ Todo:
   aim at that position if the position if its view is unobstructed, else they
   aim to their next nav point.
 - [x] Can zoom with sniper.
-- [ ] Player has health bar.
+- [x] Player has health bar.
+- [ ] Fix bug where enemy does no damage when right up in player face
 - [ ] Player is compromised if enemies see him toggle invisibility.
 - [ ] Touching an enemy will end invisiblity.
 - [ ] Possessing or shooting deactivates invisibility.
@@ -52,6 +53,8 @@ Todo:
   invisibility subtracts 100% from invisibility. Killing regains 50%.
   Invisibility lasts 30 seconds.
 - [ ] Enemies take time to aim, especially the sniper.
+- [ ] Player can die.
+- [ ] Make screen flash red when hit.
 
 Backlog:
 

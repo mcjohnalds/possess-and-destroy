@@ -51,17 +51,30 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_yhelo")
 
-[node name="Panel" type="Panel" parent="HUD" index="2"]
+[node name="HealthPanel" type="Panel" parent="HUD" index="2"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = -0.5
-offset_top = -53.5
+offset_top = -109.0
 offset_right = 501.5
-offset_bottom = 1.5
+offset_bottom = -54.0
 grow_vertical = 0
 
-[node name="UseLabel" type="Label" parent="HUD" index="3"]
+[node name="HealthLabel" type="Label" parent="HUD" index="3"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -107.0
+offset_right = 308.0
+offset_bottom = -62.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 28
+text = "Health: 30%"
+vertical_alignment = 2
+
+[node name="UseLabel" type="Label" parent="HUD" index="4"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -78,7 +91,17 @@ text = "Press E to possess"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PossessingLabel" type="Label" parent="HUD" index="4"]
+[node name="PossessingPanel" type="Panel" parent="HUD" index="5"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -0.5
+offset_top = -53.5
+offset_right = 501.5
+offset_bottom = 1.5
+grow_vertical = 0
+
+[node name="PossessingLabel" type="Label" parent="HUD" index="6"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -91,7 +114,7 @@ theme_override_font_sizes/font_size = 28
 text = "Possessing: Civilian"
 vertical_alignment = 2
 
-[node name="Crosshair" type="Label" parent="HUD" index="5"]
+[node name="Crosshair" type="Label" parent="HUD" index="7"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -109,7 +132,7 @@ text = "×"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Messages" type="Panel" parent="HUD" index="6"]
+[node name="Messages" type="Panel" parent="HUD" index="8"]
 offset_right = 1017.0
 offset_bottom = 123.0
 

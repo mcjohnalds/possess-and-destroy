@@ -1,0 +1,6 @@
+[gd_resource type="Environment" format=3 uid="uid://ng6uovx21442"]
+
+[resource]
+background_energy_multiplier = 0.5
+tonemap_mode = 2
+glow_enabled = true

@@ -1,8 +1,27 @@
-[gd_scene load_steps=4 format=3 uid="uid://cewa4cg7jix27"]
+[gd_scene load_steps=15 format=3 uid="uid://cewa4cg7jix27"]
 
 [ext_resource type="PackedScene" uid="uid://8oy3xm2sff8" path="res://addons/character-controller/fps/fps_controller_3d.tscn" id="1_fbpun"]
 [ext_resource type="Script" path="res://player.gd" id="2_8r0nc"]
 [ext_resource type="PackedScene" path="res://addons/character-controller/example/main/audios/player_audios.tscn" id="4_ux8kv"]
+[ext_resource type="AudioStream" uid="uid://5nuhnh2wdjbn" path="res://gun_shot.wav" id="4_v5tyn"]
+[ext_resource type="AudioStream" uid="uid://dehmr3owlvppj" path="res://sniper_rifle_shot.ogg" id="5_rtcgj"]
+[ext_resource type="AudioStream" uid="uid://df58mhmh01t0a" path="res://shotgun.ogg" id="6_x4434"]
+[ext_resource type="AudioStream" uid="uid://bnd132vcoxlw2" path="res://hitmarker.mp3" id="7_iau2o"]
+[ext_resource type="AudioStream" uid="uid://dviwyfg3xgfoj" path="res://shield_bash_impact.ogg" id="8_851c0"]
+[ext_resource type="AudioStream" uid="uid://bu0jr3pw0lrp2" path="res://jetbike_flypast.ogg" id="9_e6kr3"]
+[ext_resource type="AudioStream" uid="uid://c1bq65sbkv3hg" path="res://crushing_kick.wav" id="10_8lojy"]
+[ext_resource type="AudioStream" uid="uid://k7ew6ptw76r6" path="res://punch.ogg" id="11_naqbv"]
+
+[sub_resource type="Gradient" id="Gradient_8j8fp"]
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_0jkgy"]
+gradient = SubResource("Gradient_8j8fp")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yhelo"]
+bg_color = Color(0.223529, 0.333333, 0.360784, 0.305882)
 
 [node name="Player" instance=ExtResource("1_fbpun")]
 script = ExtResource("2_8r0nc")
@@ -13,3 +32,107 @@ script = ExtResource("2_8r0nc")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.383, -0.395, -0.42)
 
 [node name="Player Audios" parent="." index="9" instance=ExtResource("4_ux8kv")]
+
+[node name="HUD" type="Node" parent="." index="10"]
+
+[node name="Vignette" type="TextureRect" parent="HUD" index="0"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_0jkgy")
+
+[node name="InvisibilityOverlay" type="Panel" parent="HUD" index="1"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_yhelo")
+
+[node name="Panel" type="Panel" parent="HUD" index="2"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -0.5
+offset_top = -53.5
+offset_right = 501.5
+offset_bottom = 1.5
+grow_vertical = 0
+
+[node name="UseLabel" type="Label" parent="HUD" index="3"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -140.5
+offset_top = 33.5
+offset_right = 140.5
+offset_bottom = 78.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "Press E to possess"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PossessingLabel" type="Label" parent="HUD" index="4"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -53.0
+offset_right = 308.0
+offset_bottom = -8.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 28
+text = "Possessing: Civilian"
+vertical_alignment = 2
+
+[node name="Crosshair" type="Label" parent="HUD" index="5"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -22.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(20, 21)
+theme_override_font_sizes/font_size = 30
+text = "×"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Messages" type="Panel" parent="HUD" index="6"]
+offset_right = 1017.0
+offset_bottom = 123.0
+
+[node name="M16AudioStreamPlayer" type="AudioStreamPlayer" parent="." index="11"]
+stream = ExtResource("4_v5tyn")
+
+[node name="SniperRifleAudioStreamPlayer" type="AudioStreamPlayer" parent="." index="12"]
+stream = ExtResource("5_rtcgj")
+
+[node name="ShotgunAudioStreamPlayer" type="AudioStreamPlayer" parent="." index="13"]
+stream = ExtResource("6_x4434")
+
+[node name="HitmarkerAudioStreamPlayer" type="AudioStreamPlayer" parent="." index="14"]
+stream = ExtResource("7_iau2o")
+
+[node name="HeadshotAudioStreamPlayer" type="AudioStreamPlayer" parent="." index="15"]
+stream = ExtResource("8_851c0")
+
+[node name="InvisibilityAudioStreamPlayer" type="AudioStreamPlayer" parent="." index="16"]
+stream = ExtResource("9_e6kr3")
+
+[node name="PossessionAudioStreamPlayer" type="AudioStreamPlayer" parent="." index="17"]
+stream = ExtResource("10_8lojy")
+
+[node name="DamageAudioStreamPlayer" type="AudioStreamPlayer" parent="." index="18"]
+stream = ExtResource("11_naqbv")

@@ -1,26 +1,18 @@
-[gd_scene load_steps=45 format=3 uid="uid://c2t6smyr8xtty"]
+[gd_scene load_steps=34 format=3 uid="uid://c2t6smyr8xtty"]
 
-[ext_resource type="Script" path="res://level.gd" id="1_cikgd"]
-[ext_resource type="PackedScene" uid="uid://cewa4cg7jix27" path="res://player.tscn" id="2_nvo2f"]
-[ext_resource type="Material" uid="uid://2ciy11rdndma" path="res://addons/character-controller/example/main/materials/grass.tres" id="3_7vb8p"]
-[ext_resource type="PackedScene" uid="uid://b3wdcta6c4k4t" path="res://addons/character-controller/example/main/geometry/floor.tscn" id="3_80rlo"]
-[ext_resource type="PackedScene" uid="uid://dh7wg5y8ky5d8" path="res://addons/character-controller/example/main/water_area_3d.tscn" id="3_ebamq"]
-[ext_resource type="PackedScene" uid="uid://cbfe8rkt51tf8" path="res://addons/character-controller/example/main/geometry/wall.tscn" id="4_36qp7"]
-[ext_resource type="Material" uid="uid://o0b4tbh6yup4" path="res://addons/character-controller/example/main/materials/rock.tres" id="7_ngjv3"]
-[ext_resource type="PhysicsMaterial" uid="uid://bklf2cx3fydt3" path="res://addons/character-controller/example/main/physics/stone.tres" id="7_pqwbx"]
-[ext_resource type="PhysicsMaterial" path="res://addons/character-controller/example/main/physics/wood.tres" id="8_04xdu"]
-[ext_resource type="Material" uid="uid://c72msuxs6n2a8" path="res://addons/character-controller/example/main/materials/leaves.tres" id="8_fcbu8"]
-[ext_resource type="Material" uid="uid://ckvcdcn2iue87" path="res://addons/character-controller/example/main/materials/wood.tres" id="11_cakef"]
-[ext_resource type="Texture2D" uid="uid://svijnbaaeuol" path="res://addons/character-controller/example/main/textures/Free DEMO Pixel Skies Background pack by Digital Moons/demo01_PixelSky.png" id="12_olhen"]
-[ext_resource type="PackedScene" uid="uid://dkw50wbe2l0x5" path="res://man.tscn" id="13_rnn3k"]
-[ext_resource type="AudioStream" uid="uid://dehmr3owlvppj" path="res://sniper_rifle_shot.ogg" id="15_7ymsj"]
-[ext_resource type="AudioStream" uid="uid://df58mhmh01t0a" path="res://shotgun.ogg" id="16_8fmow"]
-[ext_resource type="AudioStream" uid="uid://dviwyfg3xgfoj" path="res://shield_bash_impact.ogg" id="16_l21hj"]
-[ext_resource type="AudioStream" uid="uid://5nuhnh2wdjbn" path="res://gun_shot.wav" id="16_ocj6n"]
-[ext_resource type="AudioStream" uid="uid://bnd132vcoxlw2" path="res://hitmarker.mp3" id="17_vgiwo"]
-[ext_resource type="AudioStream" uid="uid://c1bq65sbkv3hg" path="res://crushing_kick.wav" id="18_4esmo"]
-[ext_resource type="AudioStream" uid="uid://k7ew6ptw76r6" path="res://punch.ogg" id="18_v0jvo"]
-[ext_resource type="AudioStream" uid="uid://bu0jr3pw0lrp2" path="res://jetbike_flypast.ogg" id="19_cbexm"]
+[ext_resource type="PackedScene" uid="uid://b3wdcta6c4k4t" path="res://addons/character-controller/example/main/geometry/floor.tscn" id="1_r56vc"]
+[ext_resource type="Script" path="res://level.gd" id="1_w8xm7"]
+[ext_resource type="Material" uid="uid://2ciy11rdndma" path="res://addons/character-controller/example/main/materials/grass.tres" id="2_gnry3"]
+[ext_resource type="Material" uid="uid://o0b4tbh6yup4" path="res://addons/character-controller/example/main/materials/rock.tres" id="3_dcs2a"]
+[ext_resource type="PackedScene" uid="uid://cbfe8rkt51tf8" path="res://addons/character-controller/example/main/geometry/wall.tscn" id="4_qgyun"]
+[ext_resource type="Material" uid="uid://c72msuxs6n2a8" path="res://addons/character-controller/example/main/materials/leaves.tres" id="5_fodab"]
+[ext_resource type="PhysicsMaterial" uid="uid://bklf2cx3fydt3" path="res://addons/character-controller/example/main/physics/stone.tres" id="6_s67ql"]
+[ext_resource type="Material" uid="uid://ckvcdcn2iue87" path="res://addons/character-controller/example/main/materials/wood.tres" id="7_hia2v"]
+[ext_resource type="PhysicsMaterial" path="res://addons/character-controller/example/main/physics/wood.tres" id="8_7cd6t"]
+[ext_resource type="PackedScene" uid="uid://cewa4cg7jix27" path="res://player.tscn" id="9_an0wm"]
+[ext_resource type="PackedScene" uid="uid://dh7wg5y8ky5d8" path="res://addons/character-controller/example/main/water_area_3d.tscn" id="10_1lxss"]
+[ext_resource type="Texture2D" uid="uid://svijnbaaeuol" path="res://addons/character-controller/example/main/textures/Free DEMO Pixel Skies Background pack by Digital Moons/demo01_PixelSky.png" id="11_dets3"]
+[ext_resource type="PackedScene" uid="uid://dkw50wbe2l0x5" path="res://man.tscn" id="12_5omkb"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_aq60o"]
 vertices = PackedVector3Array(-19.2, 13.2405, -19.2, -19.6, 13.1405, -19.1, -19.6, 13.1405, -18.8, -19.1, 13.2405, -18.6, -19.1, 13.2405, -18.6, -18.7, 13.2405, -18.4, -18.3, 13.2405, -18.8, -18.3, 13.2405, -19.1, -18.6, 13.2405, -19.5, -19.2, 13.2405, -19.2, -19, 13.1405, -17.8, -18.7, 13.1405, -17.8, -18.7, 13.2405, -18.4, -19.1, 13.2405, -18.6, -18.3, 13.2405, -18.8, 17.7, 13.1405, -18.8, 17.7, 13.1405, -19.1, -18.3, 13.2405, -19.1, -18.6, 13.2405, -19.5, -19.1, 13.2405, -19.5, -19.2, 13.2405, -19.2, 19.1, 13.2405, -19.3, 19.1, 13.2405, -19.5, 18.6, 13.2405, -19.5, 18.7, 13.1405, 19.6, 19, 13.1405, 19.6, 19.1, 13.2405, 19.2, 18.5, 13.2405, 19.1, 18.7, 13.2405, 18.3, 18.3, 13.2405, 18.7, 18.5, 13.2405, 19.1, 19.1, 13.2405, 19.2, 19.5, 13.2405, 18.7, 19, 13.2405, 18.3, 19.1, 13.2405, 19.2, 19.5, 13.2405, 19, 19.5, 13.2405, 18.7, 19.5, 13.2405, -18.8, 19.5, 13.2405, -19.1, 19.1, 13.2405, -19.3, 17.7, 13.1405, -19.1, 17.7, 13.1405, -18.8, 18.3, 13.2405, -18.8, 18.3, 13.2405, -19.1, 19, 13.2405, -18.4, 19.5, 13.2405, -18.8, 19.1, 13.2405, -19.3, 18.6, 13.2405, -19.5, 18.3, 13.2405, -18.8, 18.7, 13.2405, -18.4, 18.3, 13.2405, 18.7, 17.7, 13.1405, 18.7, 17.7, 13.1405, 19, 18.5, 13.2405, 19.1, 18.7, 13.2405, -18.4, 18.7, 13.2405, 18.3, 19, 13.2405, 18.3, 19, 13.2405, -18.4, 18.7, 13.1405, -17.2161, 19, 13.1405, -17.2161, 18.6, 13.2405, -19.5, 18.3, 13.2405, -19.1, 18.3, 13.2405, -18.8, -18.9, 0.140537, 6.7, -15.3, 0.140537, 6.7, -15.3, 0.140537, 5.9, -18.9, 0.140537, 6.7, -15.3, 0.140537, 5.9, -14.9, 0.140537, 5.5, -14.9, 0.140537, 5.5, -12.9, 0.140537, 5.6, -4.9, 0.140537, 4.9, -4.8, 0.140537, -7.4, -5, 0.140537, -7.6, -13.8393, 0.240538, 4.09643, -5, 0.140537, -18.9, -17.9, 0.140537, -17.8, -18.9, 0.140537, -17.7, -18.9, 0.140537, 6.7, -14.9, 0.140537, 5.5, -5, 0.140537, -7.6, -13.8393, 0.240538, 4.09643, -15.701, 0.240538, -11.4983, -5, 0.140537, -18.9, -17.7, 0.140537, -18.9, -17.7, 0.140537, -18.1, -5, 0.140537, -18.9, -17.7, 0.140537, -18.1, -17.9, 0.140537, -17.8, -17.9, 6.14054, -17.8, -18.9, 6.14054, -17.7, -18.9, 6.14054, -16, -17.7, 6.14054, -18.1, -17.9, 6.14054, -17.8, -18.9, 6.14054, -16, -7.5, 6.14054, -16, -7.5, 6.14054, -18.9, -7.5, 6.14054, -18.9, -17.7, 6.14054, -18.9, -17.7, 6.14054, -18.1, -4, 4.44054, -18.9, -4.1, 0.340538, -7.6, -3.9, 0.0405378, -7.2, 4.1, 0.0405378, -7.2, 4, 4.44054, -18.9, -4.0579, 4.34054, -12.3579, 4.055, 4.44054, -12.465, 3.49259, 4.04054, -12.1094, 3.50454, 4.44054, -12.7022, -3.9, 0.0405378, -7.2, -3.9, -4.85946, 3.9, 4, -4.85946, 3.9, 4.1, 0.0405378, -7.2, -3.9, -4.85946, -1.35789, 4.04737, -4.85946, -1.35789, -3.9, 0.140537, -18.9, -3.9, 0.140537, -18.2, 3.9, 0.140537, -18.2, 3.9, 0.140537, -18.9, 5, 0.140537, -10.7, 10.2, 0.140537, -10.7, 10.3, 0.140537, -11.7, 5, 0.140537, -10.7, 10.3, 0.140537, -11.7, 10.6, 0.140537, -11.9, 11.4, 0.140537, -18.9, 5, 0.140537, -18.9, 10.6, 0.140537, -11.9, 11.4, 0.140537, -11.9, 11.4, 0.140537, -18.9, 19, 6.14054, -16, 19, 6.14054, -17.7, 17.9, 6.14054, -17.8, 19, 6.14054, -16, 17.9, 6.14054, -17.8, 17.7, 6.14054, -18.1, 7.5, 6.14054, -18.9, 7.5, 6.14054, -16, 17.7, 6.14054, -18.1, 17.7, 6.14054, -18.9, 7.5, 6.14054, -18.9, 11.4, 0.140537, -11.9, 12.4, 0.140537, -11.9, 12.4, 0.140537, -18.9, 11.4, 0.140537, -18.9, 17.7, 0.140537, -18.1, 17.7, 0.140537, -18.9, 12.4, 0.140537, -18.9, 13.6, 0.140537, -11.5, 13.6, 0.140537, -10.7, 19, 0.140537, -10.7, 17.9, 0.140537, -17.8, 17.7, 0.140537, -18.1, 12.4, 0.140537, -18.9, 13.4, 0.140537, -11.8, 13.6, 0.140537, -11.5, 19, 0.140537, -10.7, 19, 0.140537, -10.7, 19, 0.140537, -17.7, 17.9, 0.140537, -17.8, 12.4, 0.140537, -18.9, 12.4, 0.140537, -11.9, 13.4, 0.140537, -11.8, -19, 13.1405, 17.7, -18.7, 13.1405, 17.7, -18.7, 13.1405, -17.8, -19, 13.1405, -17.8, 11.2, 1.64054, -10.9, 11.2, 1.64054, -9.3, 12.6, 1.64054, -9.3, 12.6, 1.64054, -10.9, 5, 0.140537, -10.7, 5, 0.140537, -7.6, 6.6, 0.140537, -7.6, 10.3, 0.140537, -8.6, 10.2, 0.140537, -10.7, 13.6, 0.140537, -9.5, 19, 0.140537, -9.5, 19, 0.140537, -10.7, 13.6, 0.140537, -10.7, 13.2, 0.140537, -8.3, 12.5, 0.140537, -8.3, 12.5, 0.140537, -7, 13.2, 0.140537, -7, 13.6, 0.140537, -9.5, 13.5, 0.140537, -8.5, 13.5, 0.140537, -6.8, 13.6, 0.140537, -5.8, 19, 0.140537, -5.8, 19, 0.140537, -9.5, 13.5, 0.140537, -8.5, 13.2, 0.140537, -8.3, 13.2, 0.140537, -7, 13.5, 0.140537, -6.8, 10.6, 0.140537, -7, 12.5, 0.140537, -7, 12.5, 0.140537, -8.3, 10.6, 0.140537, -8.3, 10.3, 0.140537, -8.6, 6.6, 0.140537, -7.6, 6.9, 0.140537, -7.3, 10.2, 0.140537, -6.6, 10.6, 0.140537, -7, 10.6, 0.140537, -8.3, 6.9, 0.140537, -6.1, 10.2, 0.140537, -6, 10.2, 0.140537, -6.6, 6.9, 0.140537, -7.3, -18.9, 6.14054, -7.5, -18.9, 6.14054, 4, -16, 6.14054, 4, -16, 6.14054, -7.5, 16, 6.14054, -7.5, 16, 6.14054, 4, 19, 6.14054, 4, 19, 6.14054, -7.5, 5.9, 3.74054, 1.3, 6.3, 3.74054, 1, 5.9, 3.74054, 0.5, 5.8, 3.74054, -6.7, 5.8, 3.74054, 9.6, 5.9, 3.74054, 1.3, 5.9, 3.74054, 0.5, 6.9, 0.140537, -4.3, 10.2, 0.140537, -4.4, 10.2, 0.140537, -6, 6.9, 0.140537, -6.1, 11.2, 2.34054, -6, 11.2, 2.34054, -4.4, 12.6, 2.34054, -4.4, 12.6, 2.34054, -6, 11.3, 0.140537, -5.9, 11.3, 0.140537, -4.5, 12.5, 0.140537, -4.5, 12.5, 0.140537, -5.9, 13.6, 0.140537, -4.6, 19, 0.140537, -4.6, 19, 0.140537, -5.8, 13.6, 0.140537, -5.8, 11, 0.140537, -3.4, 10.9, 0.140537, -0.1, 11.4, 0.140537, 0, 13.2, 0.140537, -3.4, 19, 0.140537, -4.6, 13.6, 0.140537, -4.6, 13.6, 0.140537, -3.8, 13.2, 0.140537, -3.4, 11.4, 0.140537, 0, 11.6, 0.140537, 0.4, 19, 0.140537, 0.4, 19, 0.140537, -4.6, 13.6, 0.140537, -3.8, 10.3, 0.140537, -3.6, 10.2, 0.140537, -4.4, 6.9, 0.140537, -4.3, 10.9, 0.140537, -0.1, 11, 0.140537, -3.4, 10.3, 0.140537, -3.6, 6.9, 0.140537, -4.3, 6.9, 0.140537, -0.1, 15.3, 0.140537, 5.9, 15.3, 0.140537, 6.5, 19, 0.140537, 6.4, 14.9, 0.140537, 5.5, 15.3, 0.140537, 5.9, 19, 0.140537, 6.4, 19, 0.140537, 0.4, 11.6, 0.140537, 0.4, 11.5, 0.140537, 1.6, 11.5, 0.140537, 1.6, 12.9, 0.140537, 5.6, 14.9, 0.140537, 5.5, 12.9, 0.140537, 5.6, 11.5, 0.140537, 1.6, 11.2, 0.140537, 1.9, 12.6, 0.140537, 5.9, 12.6, 0.140537, 6.5, 12.6, 0.140537, 5.9, 11.2, 0.140537, 1.9, 6.9, 0.140537, 1.9, 6.9, 0.140537, 6.4, -5.1, 0.140537, 5.8, -4.6, 0.140537, 5.3, -4.9, 0.140537, 4.9, -12.9, 0.140537, 5.6, -12.6, 0.140537, 6, 10.6, 0.840538, 19, 10.6, 0.840538, 16, 9.6, 0.240538, 15.9, 4.8, 0.140537, 10.2, 4.8, 0.140537, 5.4, 3, -0.659462, 5.5, 4.4, 0.140537, 9.15556, 4.35, 0.140537, 5.425, 2.7, -0.859462, 5.2, 2.7, -0.859462, 4.9, -2.7, -0.859462, 4.9, 4.8, 0.140537, 10.2, 3, -0.659462, 5.5, 2.7, -0.859462, 5.2, -2.7, -0.859462, 4.9, -3, -0.659462, 5.4, -2.5125, -0.859462, 5.7, 2.3625, -0.859462, 8.7, 2.85, -0.759462, 9, 4.3125, 0.140537, 9.9, 4.4, 0.140537, 9.15556, 2.30003, -0.859462, 5.89198, 9.6, 0.240538, 15.9, 5.2, 0.140537, 10.6, 4.8, 0.140537, 10.2, 9.6, 0.240538, 15.9, 9.6, 0.140537, 15.2, 6.6, 0.140537, 10.5, 5.2, 0.140537, 10.6, 4.8, 0.140537, 10.2, -3, -0.659462, 5.4, -3.8, -0.159462, 5.4, -3.8, -0.159462, 19, 10.6, 0.840538, 19, 9.6, 0.240538, 15.9, 4.3125, 0.140537, 9.9, 2.85, -0.759462, 9, 2.3625, -0.859462, 8.7, -2.5125, -0.859462, 5.7, -2.6, -0.859462, 19, 2.2, -0.859462, 19, 2.8, -0.759462, 19, 4.6, 0.140537, 19, 9.4, 0.140537, 19, 2.29034, -0.859462, 11.2976, -2.50884, -0.859462, 17.3048, 2.90228, -0.759462, 10.7049, 2.89456, -0.759462, 13.0998, 4.69466, 0.140537, 13.7077, 4.09029, -0.0594625, 10.6937, -3.10957, -0.659462, 12.5055, -2.49556, -0.859462, 12.5099, -3.10875, -0.659462, 17.8927, -3.11, -0.659462, 6.49, -2.50798, -0.859462, 7.10319, -3.8, -0.159462, 5.4, -4.6, 0.140537, 5.3, -5.1, 0.140537, 5.8, -9.6, 0.140537, 15.2, -9.6, 0.240538, 15.9, -3.8, -0.159462, 19, -4.32727, 0.140537, 18.7182, -4.91, 0.140537, 7.09, -9.6, 0.240538, 15.9, -10.6, 0.840538, 16, -10.6, 0.840538, 19, -3.8, -0.159462, 19, -4.32727, 0.140537, 18.7182, -9.46667, 0.140537, 19, -4.36666, 0.140537, 19, -9.09998, 0.140537, 17.892, -9.69599, 0.240538, 17.2944, -13, 0.140537, 10.6, -13.6, 0.140537, 10.6, -13.6, 0.140537, 15, -12.6, 0.140537, 10.2, -13, 0.140537, 10.6, -13.6, 0.140537, 15, -9.8, 0.140537, 15, -12.6, 0.140537, 10.2, -9.8, 0.140537, 15, -9.6, 0.140537, 15.2, -5.1, 0.140537, 5.8, -12.6, 0.140537, 6, 6.9, 0.140537, 9.5, 12.6, 0.140537, 9.5, 12.6, 0.140537, 6.5, 6.9, 0.140537, 6.4, 15.3, 0.140537, 6.5, 15.3, 0.140537, 9.6, 19, 0.140537, 9.7, 19, 0.140537, 6.4, -18.9, 0.140537, 9.4, -15.3, 0.140537, 9.4, -15.3, 0.140537, 6.7, -18.9, 0.140537, 6.7, -15.3, 0.140537, 10.2, -15.3, 0.140537, 9.4, -18.9, 0.140537, 9.4, -15.1, 0.140537, 10.5, -15.3, 0.140537, 10.2, -18.9, 0.140537, 9.4, -18.9, 0.140537, 15.9, -14.5, 0.140537, 15.2, -14.2, 0.140537, 15, -14.2, 0.140537, 15, -13.6, 0.140537, 15, -13.6, 0.140537, 10.6, -15.1, 0.140537, 10.5, -18.9, 0.140537, 15.9, -14.6, 0.140537, 16, -14.5, 0.140537, 15.2, 13.6, 0.140537, 15, 13.6, 0.140537, 10.6, 13, 0.140537, 10.6, 13.6, 0.140537, 15, 13, 0.140537, 10.6, 12.7, 0.140537, 10.4, 9.8, 0.140537, 15, 12.6, 0.140537, 9.5, 6.9, 0.140537, 9.5, 6.9, 0.140537, 10.2, 9.8, 0.140537, 15, 12.7, 0.140537, 10.4, 6.6, 0.140537, 10.5, 9.6, 0.140537, 15.2, 9.8, 0.140537, 15, 6.9, 0.140537, 10.2, 14.6, 0.140537, 19, 17.8, 0.140537, 19, 17.9, 0.140537, 17.9, 19, 0.140537, 9.7, 15.3, 0.140537, 9.6, 15.3, 0.140537, 10.2, 14.6, 0.140537, 19, 17.9, 0.140537, 17.9, 18.2, 0.140537, 17.7, 14.6, 0.140537, 15.4, 19, 0.140537, 9.7, 15.3, 0.140537, 10.2, 15.1, 0.140537, 10.5, 14.2, 0.140537, 15, 14.6, 0.140537, 15.4, 18.2, 0.140537, 17.7, 19, 0.140537, 17.7, 19, 0.140537, 9.7, 15.1, 0.140537, 10.5, 13.6, 0.140537, 10.6, 13.6, 0.140537, 15, 14.2, 0.140537, 15, 15.1, 0.140537, 10.5, -18.9, 3.94054, 15.6, -16, 3.94054, 15.6, -15.9, 3.94054, 15.2, -15.2, 3.94054, 12, -18.9, 3.94054, 12, -15.9, 3.94054, 15.2, -15.1, 3.94054, 15.1, -15.2, 3.94054, 12, -15.1, 3.94054, 15.1, 15.1, 3.94054, 15.1, 15.2, 3.94054, 12, -15.2, 3.94054, 12, 15.9, 3.94054, 15.2, 16, 3.94054, 15.6, 19, 3.94054, 15.6, 19, 3.94054, 12, 15.2, 3.94054, 12, 15.2, 3.94054, 12, 15.1, 3.94054, 15.1, 15.9, 3.94054, 15.2, -18.9, 3.94054, 15.6, -18.9, 3.94054, 17.7, -18, 3.94054, 17.8, -15.8, 3.84054, 16, -16, 3.94054, 15.6, -16.24, 3.94054, 16.36, 18.2, 3.94054, 17.7, 19, 3.94054, 17.7, 19, 3.94054, 15.6, 17.9, 3.94054, 17.9, 18.2, 3.94054, 17.7, 19, 3.94054, 15.6, 16, 3.94054, 15.6, 15.9, 3.94054, 16, 15.2, 3.54054, 19, 17.8, 3.94054, 19, 17.9, 3.94054, 17.9, 15.9, 3.94054, 16, 15.1, 3.44054, 16.1, 16.24, 3.94054, 19, 16.104, 3.94054, 17.8944, -18.9, 0.140537, 15.9, -18.9, 0.140537, 17.7, -18.1, 0.140537, 17.7, -18.9, 0.140537, 15.9, -18.1, 0.140537, 17.7, -17.8, 0.140537, 17.9, -14.6, 0.140537, 19, -14.6, 0.140537, 16, -17.8, 0.140537, 17.9, -17.7, 0.140537, 19, -14.6, 0.140537, 19, -17.7, 3.94054, 18.1, -17.7, 3.94054, 19, -15.2, 3.54054, 19, -16.2, 3.94054, 18.64, -16.2, 3.94054, 19, -15.8, 3.84054, 16, -18, 3.94054, 17.8, -17.7, 3.94054, 18.1, -15.2, 3.54054, 19, -15.1, 3.44054, 16.1, -16.24, 3.94054, 16.36, -16.2, 3.94054, 18.64, -16.296, 3.94054, 17.2944, -15.1, 3.44054, 16.1, -15.2, 3.54054, 19, -10.6, 0.840538, 19, -10.6, 0.840538, 16, -14.5375, 3.14054, 16.0875, 10.6, 0.840538, 19, 15.2, 3.54054, 19, 15.1, 3.44054, 16.1, 10.6, 0.840538, 16, -19.6, 13.1405, 18.7, -19.6, 13.1405, 19, -19.2, 13.2405, 19.1, -19.1, 13.2405, 18.5, -19, 13.1405, 19.6, -18.7, 13.1405, 19.6, -18.6, 13.2405, 19.2, -18.3, 13.2405, 18.7, -18.6, 13.2405, 19.2, -18.3, 13.2405, 19, -19.2, 13.2405, 19.1, -19, 13.1405, 19.6, -18.6, 13.2405, 19.2, -18.3, 13.2405, 18.7, -18.7, 13.2405, 18.3, -19.1, 13.2405, 18.5, -18.7, 13.2405, 18.3, -18.7, 13.1405, 17.7, -19, 13.1405, 17.7, -19.1, 13.2405, 18.5, 17.7, 13.1405, 19, 17.7, 13.1405, 18.7, -18.3, 13.2405, 18.7, -18.3, 13.2405, 19)
@@ -77,131 +69,120 @@ size = Vector3(14, 0.5, 4)
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_do582"]
 data = PackedVector3Array(-7, 0.25, 2, 7, 0.25, 2, -7, -0.25, 2, 7, 0.25, 2, 7, -0.25, 2, -7, -0.25, 2, 7, 0.25, -2, -7, 0.25, -2, 7, -0.25, -2, -7, 0.25, -2, -7, -0.25, -2, 7, -0.25, -2, 7, 0.25, 2, 7, 0.25, -2, 7, -0.25, 2, 7, 0.25, -2, 7, -0.25, -2, 7, -0.25, 2, -7, 0.25, -2, -7, 0.25, 2, -7, -0.25, -2, -7, 0.25, 2, -7, -0.25, 2, -7, -0.25, -2, 7, 0.25, 2, -7, 0.25, 2, 7, 0.25, -2, -7, 0.25, 2, -7, 0.25, -2, 7, 0.25, -2, -7, -0.25, 2, 7, -0.25, 2, -7, -0.25, -2, 7, -0.25, 2, 7, -0.25, -2, -7, -0.25, -2)
 
-[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_l566q"]
-panorama = ExtResource("12_olhen")
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_vbhnw"]
+panorama = ExtResource("11_dets3")
 filter = false
 
-[sub_resource type="Sky" id="Sky_t5ash"]
-sky_material = SubResource("PanoramaSkyMaterial_l566q")
+[sub_resource type="Sky" id="Sky_0jymu"]
+sky_material = SubResource("PanoramaSkyMaterial_vbhnw")
 radiance_size = 0
 
-[sub_resource type="Environment" id="Environment_7ofk6"]
+[sub_resource type="Environment" id="Environment_jqmbp"]
 background_mode = 2
 background_energy_multiplier = 0.5
-sky = SubResource("Sky_t5ash")
+sky = SubResource("Sky_0jymu")
 ambient_light_color = Color(1, 1, 1, 1)
 tonemap_mode = 2
 glow_enabled = true
 
-[sub_resource type="Gradient" id="Gradient_8j8fp"]
-colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_0jkgy"]
-gradient = SubResource("Gradient_8j8fp")
-fill = 1
-fill_from = Vector2(0.5, 0.5)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yhelo"]
-bg_color = Color(0.223529, 0.333333, 0.360784, 0.305882)
-
-[node name="Level" type="Node3D"]
-script = ExtResource("1_cikgd")
+[node name="TestLevel" type="Node3D"]
+script = ExtResource("1_w8xm7")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = SubResource("NavigationMesh_aq60o")
 
-[node name="Floor2" parent="NavigationRegion3D" instance=ExtResource("3_80rlo")]
+[node name="Floor2" parent="NavigationRegion3D" instance=ExtResource("1_r56vc")]
 transform = Transform3D(15, 0, 0, 0, 1, 0, 0, 0, 40, 12, -0.5, 0)
-material_override = ExtResource("3_7vb8p")
+material_override = ExtResource("2_gnry3")
 skeleton = NodePath("../..")
 
-[node name="Floor9" parent="NavigationRegion3D" instance=ExtResource("3_80rlo")]
+[node name="Floor9" parent="NavigationRegion3D" instance=ExtResource("1_r56vc")]
 transform = Transform3D(15, 0, 0, 0, 1, 0, 0, 0, 40, -11.9786, -0.5, 0)
-material_override = ExtResource("3_7vb8p")
+material_override = ExtResource("2_gnry3")
 skeleton = NodePath("../..")
 
-[node name="Floor7" parent="NavigationRegion3D" instance=ExtResource("3_80rlo")]
+[node name="Floor7" parent="NavigationRegion3D" instance=ExtResource("1_r56vc")]
 transform = Transform3D(1.73205, -0.5, 0, 1, 0.866025, 0, 0, 0, 15, 3.88, -0.935, 12.5)
-material_override = ExtResource("3_7vb8p")
+material_override = ExtResource("2_gnry3")
 skeleton = NodePath("../..")
 
-[node name="Floor8" parent="NavigationRegion3D" instance=ExtResource("3_80rlo")]
+[node name="Floor8" parent="NavigationRegion3D" instance=ExtResource("1_r56vc")]
 transform = Transform3D(1.73205, 0.5, 0, -1, 0.866025, 0, 0, 0, 15, -3.86087, -0.931208, 12.4865)
-material_override = ExtResource("3_7vb8p")
+material_override = ExtResource("2_gnry3")
 skeleton = NodePath("../..")
 
-[node name="Floor4" parent="NavigationRegion3D" instance=ExtResource("3_80rlo")]
+[node name="Floor4" parent="NavigationRegion3D" instance=ExtResource("1_r56vc")]
 transform = Transform3D(-6.55671e-07, 0, -10, 0, 5, 0, 15, 0, -4.37114e-07, -0.00529146, -3.47481, 11.9858)
-material_override = ExtResource("7_ngjv3")
+material_override = ExtResource("3_dcs2a")
 skeleton = NodePath("../..")
 
-[node name="Floor10" parent="NavigationRegion3D" instance=ExtResource("3_80rlo")]
+[node name="Floor10" parent="NavigationRegion3D" instance=ExtResource("1_r56vc")]
 transform = Transform3D(-6.55671e-07, 0, -1, 0, 5, 0, 15, 0, -4.37114e-08, 5.00169, -3.47481, -1.26244)
-material_override = ExtResource("7_ngjv3")
+material_override = ExtResource("3_dcs2a")
 skeleton = NodePath("../..")
 
-[node name="Floor11" parent="NavigationRegion3D" instance=ExtResource("3_80rlo")]
+[node name="Floor11" parent="NavigationRegion3D" instance=ExtResource("1_r56vc")]
 transform = Transform3D(-6.55671e-07, 0, -1, 0, 5, 0, 15, 0, -4.37114e-08, -4.979, -3.475, -1.262)
-material_override = ExtResource("7_ngjv3")
+material_override = ExtResource("3_dcs2a")
 skeleton = NodePath("../..")
 
-[node name="Floor5" parent="NavigationRegion3D" instance=ExtResource("3_80rlo")]
+[node name="Floor5" parent="NavigationRegion3D" instance=ExtResource("1_r56vc")]
 transform = Transform3D(-4.37114e-07, 0, -10, 0, 1, 0, 10, 0, -4.37114e-07, 0, -5.5497, 0)
-material_override = ExtResource("7_ngjv3")
+material_override = ExtResource("3_dcs2a")
 skeleton = NodePath("../..")
 
-[node name="Floor6" parent="NavigationRegion3D" instance=ExtResource("3_80rlo")]
+[node name="Floor6" parent="NavigationRegion3D" instance=ExtResource("1_r56vc")]
 transform = Transform3D(-2.98942e-07, 0, -10, 0, 1, 0, 6.839, 0, -4.37114e-07, 0, -0.5, -16.512)
-material_override = ExtResource("3_7vb8p")
+material_override = ExtResource("2_gnry3")
 skeleton = NodePath("../..")
 
 [node name="ArenaGeometry" type="Node3D" parent="NavigationRegion3D"]
 
-[node name="Wall" parent="NavigationRegion3D/ArenaGeometry" instance=ExtResource("4_36qp7")]
+[node name="Wall" parent="NavigationRegion3D/ArenaGeometry" instance=ExtResource("4_qgyun")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.75, -20)
-material_override = ExtResource("8_fcbu8")
+material_override = ExtResource("5_fodab")
 
-[node name="Wall2" parent="NavigationRegion3D/ArenaGeometry" instance=ExtResource("4_36qp7")]
+[node name="Wall2" parent="NavigationRegion3D/ArenaGeometry" instance=ExtResource("4_qgyun")]
 transform = Transform3D(1, 0, 0, 0, 1.1, 0, 0, 0, 1, 0, 5.15, 20)
-material_override = ExtResource("8_fcbu8")
+material_override = ExtResource("5_fodab")
 
-[node name="Wall3" parent="NavigationRegion3D/ArenaGeometry" instance=ExtResource("4_36qp7")]
+[node name="Wall3" parent="NavigationRegion3D/ArenaGeometry" instance=ExtResource("4_qgyun")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 20, 5.75, 0)
-material_override = ExtResource("8_fcbu8")
+material_override = ExtResource("5_fodab")
 
-[node name="Wall4" parent="NavigationRegion3D/ArenaGeometry" instance=ExtResource("4_36qp7")]
+[node name="Wall4" parent="NavigationRegion3D/ArenaGeometry" instance=ExtResource("4_qgyun")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -20, 5.75, 0)
-material_override = ExtResource("8_fcbu8")
+material_override = ExtResource("5_fodab")
 
 [node name="Cube" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(1.12259, 0, 0, 0, 1.2, 0, 0, 0, 0.65, 0, 1.8571, -13.8123)
-material_override = ExtResource("7_ngjv3")
+material_override = ExtResource("3_dcs2a")
 mesh = SubResource("BoxMesh_egctf")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Cube"]
-physics_material_override = ExtResource("7_pqwbx")
+physics_material_override = ExtResource("6_s67ql")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Cube/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_4rksp")
 
 [node name="Cube4" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 4, -12, -1.92674, -4)
-material_override = ExtResource("7_ngjv3")
+material_override = ExtResource("3_dcs2a")
 mesh = SubResource("BoxMesh_egctf")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Cube4"]
-physics_material_override = ExtResource("7_pqwbx")
+physics_material_override = ExtResource("6_s67ql")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Cube4/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_4rksp")
 
 [node name="Cube6" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(0.295931, 0, 0, 0, 1.01676, 0, 0, 0, 0.633337, 11.8998, 0.191363, -5.23253)
-material_override = ExtResource("7_ngjv3")
+material_override = ExtResource("3_dcs2a")
 mesh = SubResource("BoxMesh_egctf")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Cube6"]
-physics_material_override = ExtResource("7_pqwbx")
+physics_material_override = ExtResource("6_s67ql")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Cube6/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_4rksp")
@@ -211,11 +192,11 @@ shape = SubResource("ConcavePolygonShape3D_4rksp")
 
 [node name="Cube7" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(0.11789, 0, 0, 0, 1.70281, 0, 0, 0, 4.28287, 5.84785, 0.191363, 1.45757)
-material_override = ExtResource("7_ngjv3")
+material_override = ExtResource("3_dcs2a")
 mesh = SubResource("BoxMesh_egctf")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Cube7"]
-physics_material_override = ExtResource("7_pqwbx")
+physics_material_override = ExtResource("6_s67ql")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Cube7/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_4rksp")
@@ -225,11 +206,11 @@ shape = SubResource("ConcavePolygonShape3D_4rksp")
 
 [node name="Cube9" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(-5.15313e-09, 0, 1.28018, 0, 1.70281, 0, -0.11789, 0, -5.59583e-08, 8.49521, 0.191363, 0.890389)
-material_override = ExtResource("7_ngjv3")
+material_override = ExtResource("3_dcs2a")
 mesh = SubResource("BoxMesh_egctf")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Cube9"]
-physics_material_override = ExtResource("7_pqwbx")
+physics_material_override = ExtResource("6_s67ql")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Cube9/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_4rksp")
@@ -239,11 +220,11 @@ shape = SubResource("ConcavePolygonShape3D_4rksp")
 
 [node name="Cube8" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(0.295931, 0, 0, 0, 1.01676, 0, 0, 0, 0.633337, 11.8998, -0.559413, -10.0766)
-material_override = ExtResource("7_ngjv3")
+material_override = ExtResource("3_dcs2a")
 mesh = SubResource("BoxMesh_egctf")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Cube8"]
-physics_material_override = ExtResource("7_pqwbx")
+physics_material_override = ExtResource("6_s67ql")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Cube8/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_4rksp")
@@ -253,278 +234,278 @@ shape = SubResource("ConcavePolygonShape3D_4rksp")
 
 [node name="Cube2" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(1.12259, 0, 0, 0, 1.2, 0, 0, 0, 0.65, 0, 1.88, -18.812)
-material_override = ExtResource("7_ngjv3")
+material_override = ExtResource("3_dcs2a")
 mesh = SubResource("BoxMesh_egctf")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Cube2"]
-physics_material_override = ExtResource("7_pqwbx")
+physics_material_override = ExtResource("6_s67ql")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Cube2/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_4rksp")
 
 [node name="Cube3" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(1.12379, 0, 0, 0, 0.702028, 0, 0, 0, 0.650693, 0, 2.85382, -16.3191)
-material_override = ExtResource("7_ngjv3")
+material_override = ExtResource("3_dcs2a")
 mesh = SubResource("BoxMesh_egctf")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Cube3"]
-physics_material_override = ExtResource("7_pqwbx")
+physics_material_override = ExtResource("6_s67ql")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Cube3/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_4rksp")
 
 [node name="Slope1" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(1.28, 0, 0, 0, 0.766044, -0.642788, 0, 0.642788, 0.766044, 0, 0.317887, -10.92)
-material_override = ExtResource("7_ngjv3")
+material_override = ExtResource("3_dcs2a")
 mesh = SubResource("BoxMesh_23v81")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Slope1"]
-physics_material_override = ExtResource("7_pqwbx")
+physics_material_override = ExtResource("6_s67ql")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Slope1/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_mwbuo")
 
 [node name="Slope2" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(1.28, 0, 0, 0, 0.766044, -0.642788, 0, 0.642788, 0.766044, 0, -4.21692, -5.50796)
-material_override = ExtResource("7_ngjv3")
+material_override = ExtResource("3_dcs2a")
 mesh = SubResource("BoxMesh_23v81")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Slope2"]
-physics_material_override = ExtResource("7_pqwbx")
+physics_material_override = ExtResource("6_s67ql")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Slope2/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_mwbuo")
 
 [node name="Platform1" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.25, 5.75, -17.5)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_hf657")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Platform1"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Platform1/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_makhu")
 
 [node name="Platform2" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.25, 5.75, -17.5)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_hf657")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Platform2"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Platform2/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_makhu")
 
 [node name="Platform3" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -17.5, 5.75, -1.75)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_ook3l")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Platform3"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Platform3/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_gl53m")
 
 [node name="Platform4" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 17.5, 5.75, -1.75)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_ook3l")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Platform4"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Platform4/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_gl53m")
 
 [node name="Bridge" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 13.5)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_qmaip")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/Bridge"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/Bridge/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_okliu")
 
 [node name="BridgePlat1" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18, 3.5, 17.5)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_wgm2j")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat1"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat1/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_ioobg")
 
 [node name="BridgePlat3" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(0.3, 0, 0, 0, 30, 0, 0, 0, 0.3, 18.9025, 5.55493, 18.8874)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_wgm2j")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat3"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat3/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_ioobg")
 
 [node name="BridgePlat4" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(0.3, 0, 0, 0, 30, 0, 0, 0, 0.3, -18.8939, 5.55493, 18.8893)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_wgm2j")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat4"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat4/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_ioobg")
 
 [node name="BridgePlat5" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(0.3, 0, 0, 0, 30, 0, 0, 0, 0.3, -18.8939, 5.55493, -18.8897)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_wgm2j")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat5"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat5/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_ioobg")
 
 [node name="BridgePlat6" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(0.3, 0, 0, 0, 30, 0, 0, 0, 0.3, 18.8887, 5.55493, -18.8897)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_wgm2j")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat6"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat6/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_ioobg")
 
 [node name="BridgePlat7" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(0.3, 0, 0, 0, -3.49691e-06, -0.3, 0, 80, -1.31134e-08, 18.8938, 12.3411, 0.0363693)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_wgm2j")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat7"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat7/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_ioobg")
 
 [node name="BridgePlat8" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(0.3, 0, 0, 0, -3.49691e-06, -0.3, 0, 80, -1.31134e-08, -18.8988, 12.3411, 0.0363693)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_wgm2j")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat8"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat8/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_ioobg")
 
 [node name="BridgePlat9" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(-1.31134e-08, 80, -1.31134e-08, 0, -3.49691e-06, -0.3, -0.3, -3.49691e-06, 5.73206e-16, -0.0608397, 12.3411, 18.8918)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_wgm2j")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat9"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat9/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_ioobg")
 
 [node name="BridgePlat10" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(-1.31134e-08, 80, -1.31134e-08, 0, -3.49691e-06, -0.3, -0.3, -3.49691e-06, 5.73206e-16, -0.0608397, 12.3411, -18.9317)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_wgm2j")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat10"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat10/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_ioobg")
 
 [node name="BridgePlat2" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 3.5, 17.5)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_wgm2j")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat2"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat2/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_ioobg")
 
 [node name="BridgePlat11" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.054476, 4.03285, -17.5191)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_wgm2j")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat11"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/BridgePlat11/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_ioobg")
 
 [node name="BridgeSlope1" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(-0.866026, -0.5, 8.74228e-08, -0.5, 0.866025, -1.77636e-15, -7.57104e-08, -4.37114e-08, -1, 12.87, 1.66, 17.5)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_1xrj7")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/BridgeSlope1"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/BridgeSlope1/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_mr3ar")
 
 [node name="BridgeSlope2" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(0.866026, 0.5, 0, -0.5, 0.866025, 0, 0, 0, 1, -12.87, 1.66, 17.5)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_1xrj7")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/BridgeSlope2"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/BridgeSlope2/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_mr3ar")
 
 [node name="TooSteep1" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(-0.5, -0.866025, 8.74228e-08, -0.866025, 0.5, 0, -4.37114e-08, -7.57103e-08, -1, 16.5, 5.5, 8)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_006tu")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/TooSteep1"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/TooSteep1/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_do582")
 
 [node name="TooSteep2" type="MeshInstance3D" parent="NavigationRegion3D/ArenaGeometry"]
 transform = Transform3D(0.5, 0.866025, 0, -0.866025, 0.5, 0, 0, 0, 1, -16.5, 5.5, 8)
-material_override = ExtResource("11_cakef")
+material_override = ExtResource("7_hia2v")
 mesh = SubResource("BoxMesh_006tu")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D/ArenaGeometry/TooSteep2"]
-physics_material_override = ExtResource("8_04xdu")
+physics_material_override = ExtResource("8_7cd6t")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/ArenaGeometry/TooSteep2/StaticBody3D"]
 shape = SubResource("ConcavePolygonShape3D_do582")
 
-[node name="Player" parent="." instance=ExtResource("2_nvo2f")]
+[node name="Player" parent="." instance=ExtResource("9_an0wm")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.04353, 5.39765, 15.255)
 
-[node name="Area3D" parent="." instance=ExtResource("3_ebamq")]
+[node name="Area3D" parent="." instance=ExtResource("10_1lxss")]
 transform = Transform3D(0.491574, 0, 0, 0, 1, 0, 0, 0, 0.555284, 0, -3, 5.93584)
 
 [node name="Lighting" type="Node" parent="."]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting"]
-environment = SubResource("Environment_7ofk6")
+environment = SubResource("Environment_jqmbp")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Lighting"]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866026, -0.5, 0.75, -0.433013, 0, 5, 0)
@@ -547,118 +528,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.9238, 0, 2.78047)
 
 [node name="Men" type="Node" parent="."]
 
-[node name="Pvt Renolds" parent="Men" instance=ExtResource("13_rnn3k")]
+[node name="Pvt Renolds" parent="Men" instance=ExtResource("12_5omkb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.76001, 0, 0.541676)
 
-[node name="Pvt Smith" parent="Men" instance=ExtResource("13_rnn3k")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.95971, 7.15256e-07, 16.4773)
+[node name="Pvt Smith" parent="Men" instance=ExtResource("12_5omkb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.13286, 7.15256e-07, 4.18329)
 gun_type = 2
-
-[node name="Pvt Miller" parent="Men" instance=ExtResource("13_rnn3k")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5718, 5.33561, 13.7766)
-patrol = false
-gun_type = 1
-
-[node name="UI" type="Node" parent="."]
-
-[node name="Vignette" type="TextureRect" parent="UI"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = SubResource("GradientTexture2D_0jkgy")
-
-[node name="InvisibilityOverlay" type="Panel" parent="UI"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_yhelo")
-
-[node name="Panel" type="Panel" parent="UI"]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = -0.5
-offset_top = -53.5
-offset_right = 501.5
-offset_bottom = 1.5
-grow_vertical = 0
-
-[node name="UseLabel" type="Label" parent="UI"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -140.5
-offset_top = 33.5
-offset_right = 140.5
-offset_bottom = 78.5
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_font_sizes/font_size = 32
-text = "Press E to possess"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="PossessingLabel" type="Label" parent="UI"]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = -53.0
-offset_right = 308.0
-offset_bottom = -8.0
-grow_vertical = 0
-theme_override_font_sizes/font_size = 28
-text = "Possessing: Civilian"
-vertical_alignment = 2
-
-[node name="Crosshair" type="Label" parent="UI"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -22.0
-offset_right = 20.0
-offset_bottom = 20.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset = Vector2(20, 21)
-theme_override_font_sizes/font_size = 30
-text = "×"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Messages" type="Panel" parent="UI"]
-offset_right = 1017.0
-offset_bottom = 123.0
-
-[node name="M16AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("16_ocj6n")
-
-[node name="SniperRifleAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("15_7ymsj")
-
-[node name="ShotgunAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("16_8fmow")
-
-[node name="HitmarkerAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("17_vgiwo")
-
-[node name="HeadshotAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("16_l21hj")
-
-[node name="InvisibilityAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("19_cbexm")
-
-[node name="PossessionAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("18_4esmo")
-
-[node name="DamageAudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("18_v0jvo")

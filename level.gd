@@ -16,6 +16,9 @@ enum AiTeamState {
 enum AiManState {
 	MOVING_TO_PATROL_POSITION,
 	PATHING_TO_PATROL_POSITION,
+	MOVING_TO_INITIAL_POSITION,
+	PATHING_TO_INITIAL_POSITION,
+	REACHED_INITIAL_POSITION,
 	MOVING_TO_ENGAGE_POSITION,
 	PATHING_TO_ENGAGE_POSITION,
 	MOVING_TO_LAST_KNOWN_POSITION,
@@ -46,8 +49,6 @@ var suspicious_sound_heard_at := -10000.0
 var suspicious_sound_has_been_investigated := true
 @onready var men: Node = $Men
 @onready var patrol: Node = $Patrol
-@onready var use_label: Label = $UI/UseLabel
-@onready var possessing_label: Label = $UI/PossessingLabel
 @onready var player: Player = $Player
 @onready var bullet_impact_scene := preload("res://bullet_impact.tscn")
 @onready var blood_impact_scene := preload("res://blood_impact.tscn")
@@ -56,39 +57,6 @@ var suspicious_sound_has_been_investigated := true
 @onready var m_16_scene := preload("res://m_16.tscn")
 @onready var sniper_rifle_scene := preload("res://sniper_rifle.tscn")
 @onready var shotgun_scene := preload("res://shotgun.tscn")
-@onready var crosshair := $UI/Crosshair as Control
-@onready var nav_region: NavigationRegion3D = $NavigationRegion3D
-@onready var invisibility_overlay: Control = $UI/InvisibilityOverlay
-@onready var vignette: TextureRect = $UI/Vignette
-@onready var vignette_gradient_2d: GradientTexture2D = vignette.texture
-@onready var vignette_gradient: Gradient = (
-	vignette_gradient_2d.gradient
-)
-@onready var m_16_audio_stream_player := (
-	$M16AudioStreamPlayer as AudioStreamPlayer
-)
-@onready var sniper_rifle_audio_stream_player := (
-	$SniperRifleAudioStreamPlayer as AudioStreamPlayer
-)
-@onready var shotgun_audio_stream_player := (
-	$ShotgunAudioStreamPlayer as AudioStreamPlayer
-)
-@onready var invisibility_audio_stream_player := (
-	$InvisibilityAudioStreamPlayer as AudioStreamPlayer
-)
-@onready var hitmarker_audio_stream_player := (
-	$HitmarkerAudioStreamPlayer as AudioStreamPlayer
-)
-@onready var headshot_audio_stream_player := (
-	$HeadshotAudioStreamPlayer as AudioStreamPlayer
-)
-@onready var possession_audio_stream_player := (
-	$PossessionAudioStreamPlayer as AudioStreamPlayer
-)
-@onready var damage_audio_stream_player := (
-	$DamageAudioStreamPlayer as AudioStreamPlayer
-)
-@onready var messages := $UI/Messages as Control
 
 
 func _ready() -> void:
@@ -106,7 +74,7 @@ func _ready() -> void:
 	)
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	player.setup()
-	invisibility_overlay.visible = false
+	player.invisibility_overlay.visible = false
 
 
 func on_velocity_computed(safe_velocity: Vector3, man: Man) -> void:
@@ -116,8 +84,10 @@ func on_velocity_computed(safe_velocity: Vector3, man: Man) -> void:
 func actor_setup() -> void:
 	await get_tree().physics_frame
 	for man: Man in men.get_children():
-		if man.patrol:
-			man.navigation_agent.set_target_position((patrol.get_child(0) as Node3D).position)
+		if man.mode == Man.Mode.Patrol:
+			man.navigation_agent.set_target_position(
+				(patrol.get_child(0) as Node3D).position
+			)
 
 
 func _input(event: InputEvent) -> void:
@@ -135,13 +105,13 @@ func _input(event: InputEvent) -> void:
 	var key := event as InputEventKey
 	if key and key.keycode == KEY_F and key.pressed:
 		player.invisible = not player.invisible
-		invisibility_overlay.visible = player.invisible
+		player.invisibility_overlay.visible = player.invisible
 		if player.gun:
 			if player.invisible:
 				make_player_gun_invisible()
 			else:
 				make_player_gun_visible()
-			invisibility_audio_stream_player.play(0.9)
+			player.invisibility_audio_stream_player.play(0.9)
 
 
 func make_player_gun_invisible() -> void:
@@ -177,15 +147,13 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
-	# print(AiTeamState.keys()[ai_team_state_last_frame])
-	# print(AiManState.keys()[(men.get_children()[0] as Man).last_ai_state])
 	process_use()
 	process_vignette()
-	for msg: Message in messages.get_children():
+	for msg: Message in player.messages.get_children():
 		msg.modulate.a = lerpf(
 			1.0,
 			0.6,
-			clampf((Global.time() - msg.created_at) / 2.0, 0.0, 1.0)
+			clampf((Level.get_ticks_sec() - msg.created_at) / 2.0, 0.0, 1.0)
 		)
 	process_player_shooting()
 	process_man_shooting()
@@ -249,16 +217,16 @@ func process_use() -> void:
 
 	# --- Side effects ---
 
-	use_label.visible = behind_target
+	player.use_label.visible = behind_target
 
 	if possessed:
-		possession_audio_stream_player.play(4.9)
+		player.possession_audio_stream_player.play(4.9)
 		possessed_man_name = targetted_man.name
 		# + 0.1 prevents player from falling beneath floor
 		player.position = targetted_man.position + 0.1 * Vector3.UP
 		player.velocity = Vector3.ZERO
-		possessing_label.text = "Possessing: " + targetted_man.name
-		player.last_possessed_at = Global.time()
+		player.possessing_label.text = "Possessing: " + targetted_man.name
+		player.last_possessed_at = Level.get_ticks_sec()
 		targetted_man.queue_free()
 
 		if player.gun:
@@ -288,19 +256,19 @@ func process_use() -> void:
 
 
 func process_vignette() -> void:
-	var d := Global.time() - player.last_possessed_at
+	var d := Level.get_ticks_sec() - player.last_possessed_at
 	var t := minf(d / 0.1, 1.0)
 	var a1 := lerpf(0.8, 0.0, t)
 	var a2 := lerpf(1.0, 0.3, t)
-	vignette_gradient.set_color(0, Color(0.0, 0.0, 0.0, a1))
-	vignette_gradient.set_color(1, Color(0.0, 0.0, 0.0, a2))
+	player.vignette_gradient.set_color(0, Color(0.0, 0.0, 0.0, a1))
+	player.vignette_gradient.set_color(1, Color(0.0, 0.0, 0.0, a2))
 
 
 func process_player_shooting() -> void:
 	if (
 		player.gun
 		and Input.is_action_pressed("primary")
-		and Global.time() - player.gun.last_fired_at
+		and Level.get_ticks_sec() - player.gun.last_fired_at
 			> get_gun_cooldown(player.gun)
 	):
 		get_gun_audio_stream_player(player.gun).play()
@@ -321,15 +289,16 @@ func process_player_shooting() -> void:
 				man.health -= damage
 				if man.health <= 0.0:
 					man.alive = false
-					man.died_at = Global.time()
+					man.died_at = Level.get_ticks_sec()
+					man.gun.gun_shot_audio_stream_player.stop()
 					man.collision_layer = 0
 					man.collision_mask = 0
 		if hit_man:
-			hitmarker_audio_stream_player.play(0.1)
+			player.hitmarker_audio_stream_player.play(0.1)
 		if headshot:
-			headshot_audio_stream_player.play(0.085)
+			player.headshot_audio_stream_player.play(0.085)
 		suspicious_sound_position = player.global_position
-		suspicious_sound_heard_at = Global.time()
+		suspicious_sound_heard_at = Level.get_ticks_sec()
 		suspicious_sound_has_been_investigated  = false
 
 
@@ -337,11 +306,11 @@ func process_man_shooting() -> void:
 	for man: Man in men.get_children():
 		if not is_instance_valid(man) or not man.alive:
 			continue
-		if not man.alive and Global.time() - man.died_at > 5.0:
+		if not man.alive and Level.get_ticks_sec() - man.died_at > 5.0:
 			man.queue_free()
 			continue
 		var fired_recently := (
-			Global.time() - man.gun.last_fired_at <= get_gun_cooldown(man.gun)
+			Level.get_ticks_sec() - man.gun.last_fired_at <= get_gun_cooldown(man.gun)
 		)
 		var can_fire := (
 			player_identity_compromised
@@ -360,9 +329,9 @@ func process_man_shooting() -> void:
 			)
 			for hit in hits:
 				if hit.collider == player:
-					damage_audio_stream_player.play()
+					player.damage_audio_stream_player.play()
 					break
-			man.gun.last_fired_at = Global.time()
+			man.gun.last_fired_at = Level.get_ticks_sec()
 			man.gun.gun_shot_audio_stream_player.play()
 
 
@@ -383,7 +352,7 @@ func process_guns(delta: float) -> void:
 		player.gun.accuracy = clampf(
 			player.gun.accuracy, 0.0, max_accuracy
 		)
-		crosshair.scale = (
+		player.crosshair.scale = (
 			Vector2(1.0, 1.0) * (1.0 + 3.0 * (1.0 - player.gun.accuracy))
 		)
 
@@ -444,7 +413,7 @@ func physics_process_man(delta: float) -> void:
 			is_instance_valid(man)
 			and man.alive
 			and can_man_see_player(man)
-			and Global.time() - suspicious_sound_heard_at < 3.0
+			and Level.get_ticks_sec() - suspicious_sound_heard_at < 3.0
 			and player.last_possessed_at < suspicious_sound_heard_at
 			and not player_identity_compromised
 		):
@@ -465,10 +434,10 @@ func physics_process_man(delta: float) -> void:
 		random_man_name = valid_men_names.pick_random()
 
 	var max_team_search_duration_exceeded := (
-		Global.time() - suspicious_sound_heard_at > 20.0
+		Level.get_ticks_sec() - suspicious_sound_heard_at > 20.0
 		and (
 			not player_identity_compromised
-			or Global.time() - player.last_seen_at > 20.0
+			or Level.get_ticks_sec() - player.last_seen_at > 20.0
 		)
 	)
 
@@ -492,11 +461,11 @@ func physics_process_man(delta: float) -> void:
 		AiTeamState.ENGAGING if
 			player_identity_compromised
 			and (
-				spotted_this_frame or Global.time() - player.last_seen_at < 4.0
+				spotted_this_frame or Level.get_ticks_sec() - player.last_seen_at < 4.0
 			)
 			or player_shooting_witnessed_this_frame
 		else AiTeamState.INVESTIGATING_SUSPICIOUS_SOUND if
-			Global.time() - suspicious_sound_heard_at < 20.0
+			Level.get_ticks_sec() - suspicious_sound_heard_at < 20.0
 			and not suspicious_sound_was_visited_last_frame
 			and not suspicious_sound_has_been_investigated
 		else AiTeamState.SEARCHING_RANDOMLY if
@@ -589,7 +558,7 @@ func physics_process_man(delta: float) -> void:
 
 		var man_pos := man.global_position
 
-		var search_duration := Global.time() - man.nav_last_updated_at
+		var search_duration := Level.get_ticks_sec() - man.nav_last_updated_at
 
 		var can_see_player := can_man_see_player(man)
 
@@ -617,11 +586,13 @@ func physics_process_man(delta: float) -> void:
 		var ai_state := (
 			AiManState.MOVING_TO_ENGAGE_POSITION if
 				man.alive
+				and man.mode != Man.Mode.Fixed
 				and ai_team_state == AiTeamState.ENGAGING
 				and need_to_move_closer_to_engage
 				and pathing_cooldown
 			else AiManState.PATHING_TO_ENGAGE_POSITION if
 				man.alive
+				and man.mode != Man.Mode.Fixed
 				and ai_team_state == AiTeamState.ENGAGING
 				and need_to_move_closer_to_engage
 			else AiManState.ENGAGING_PLAYER_WHILE_STANDING_STILL if
@@ -629,6 +600,7 @@ func physics_process_man(delta: float) -> void:
 				and ai_team_state == AiTeamState.ENGAGING
 			else AiManState.MOVING_TO_SUSPICIOUS_SOUND_POSITION if
 				man.alive
+				and man.mode != Man.Mode.Fixed
 				and ai_team_state
 					== AiTeamState.INVESTIGATING_SUSPICIOUS_SOUND
 				and ai_team_state_last_frame
@@ -637,39 +609,60 @@ func physics_process_man(delta: float) -> void:
 				and search_duration < 20.0
 			else AiManState.PATHING_TO_SUSPICIOUS_SOUND_POSITION if
 				man.alive
+				and man.mode != Man.Mode.Fixed
 				and began_investigating_suspicious_sound_this_frame
 			else AiManState.MOVING_TO_RANDOM_SEARCH_POSITION if
 				man.alive
+				and man.mode != Man.Mode.Fixed
 				and ai_team_state == AiTeamState.SEARCHING_RANDOMLY
 				and not nav_finished
 				and search_duration < random_search_duration
 			else AiManState.PATHING_TO_RANDOM_SEARCH_POSITION if
 				man.alive
+				and man.mode != Man.Mode.Fixed
 				and ai_team_state == AiTeamState.SEARCHING_RANDOMLY
-				and not pathing_cooldown
 			else AiManState.MOVING_TO_LAST_KNOWN_POSITION if
 				man.alive
+				and man.mode != Man.Mode.Fixed
 				and ai_team_state
 					== AiTeamState.APPROACHING_LAST_KNOWN_POSITION
 				and not nav_finished
 				and search_duration < 20.0
 			else AiManState.PATHING_TO_RANDOM_SEARCH_POSITION if
 				man.alive
+				and man.mode != Man.Mode.Fixed
 				and ai_team_state
 					== AiTeamState.APPROACHING_LAST_KNOWN_POSITION
 			else AiManState.MOVING_TO_PATROL_POSITION if
 				man.alive
-				and man.patrol
+				and man.mode == Man.Mode.Patrol
 				and ai_team_state == AiTeamState.PATROLLING
 				and not nav_finished
 				and search_duration < 20.0
 			else AiManState.PATHING_TO_PATROL_POSITION if
 				man.alive
-				and man.patrol
+				and man.mode == Man.Mode.Patrol
 				and ai_team_state == AiTeamState.PATROLLING
-				and not pathing_cooldown
+			else AiManState.PATHING_TO_INITIAL_POSITION if
+				man.alive
+				and man.mode == Man.Mode.Stationary
+				and ai_team_state == AiTeamState.PATROLLING
+				and man.last_ai_state != AiManState.PATHING_TO_INITIAL_POSITION
+			else AiManState.MOVING_TO_INITIAL_POSITION if
+				man.alive
+				and man.mode == Man.Mode.Stationary
+				and ai_team_state == AiTeamState.PATROLLING
+				and not nav_finished
+			else AiManState.REACHED_INITIAL_POSITION if
+				man.alive
+				and man.mode == Man.Mode.Stationary
+				and ai_team_state == AiTeamState.PATROLLING
+				and nav_finished
 			else AiManState.PAUSING
 		)
+
+		# print(AiTeamState.keys()[ai_team_state_last_frame])
+		# print(AiManState.keys()[(men.get_children()[0] as Man).last_ai_state])
 
 		var random_dist := 10.0
 		var random_search_pos := man_pos + Vector3(
@@ -685,6 +678,7 @@ func physics_process_man(delta: float) -> void:
 		var look_at_target: Vector3
 		var has_nav_target := false
 		var has_aim_target := false
+		var reset_to_initial_rotation := false
 
 		match ai_state:
 			AiManState.MOVING_TO_PATROL_POSITION:
@@ -695,6 +689,15 @@ func physics_process_man(delta: float) -> void:
 				has_new_nav_target = true
 				var patrol_node: Node3D = patrol.get_child(man.patrol_index)
 				new_nav_target = patrol_node.position
+			AiManState.MOVING_TO_INITIAL_POSITION:
+				has_nav_target = true
+				has_look_at_target = true
+				look_at_target = next_path_pos
+			AiManState.PATHING_TO_INITIAL_POSITION:
+				has_new_nav_target = true
+				new_nav_target = man.initial_position
+			AiManState.REACHED_INITIAL_POSITION:
+				reset_to_initial_rotation = true
 			AiManState.MOVING_TO_ENGAGE_POSITION:
 				has_nav_target = true
 				has_look_at_target = true
@@ -734,6 +737,11 @@ func physics_process_man(delta: float) -> void:
 			AiManState.PAUSING:
 				pass
 
+		var aim_target := (
+			player.camera.global_position if can_see_player
+			else player.last_known_position
+		)
+
 		var next_patrol_index := (
 			(man.patrol_index + 1) % patrol.get_child_count()
 				if ai_state == AiManState.PATHING_TO_PATROL_POSITION
@@ -760,13 +768,15 @@ func physics_process_man(delta: float) -> void:
 		man.patrol_index = next_patrol_index
 		if has_new_nav_target:
 			man.navigation_agent.set_target_position(new_nav_target)
-			man.nav_last_updated_at = Global.time()
+			man.nav_last_updated_at = Level.get_ticks_sec()
 		if has_look_at_target:
-			Global.safe_look_at(man, look_at_target)
+			Level.safe_look_at(man, look_at_target)
+		if reset_to_initial_rotation:
+			man.global_rotation = man.initial_rotation
 		man.rotation.x = 0
 		man.rotation.z = 0
 		if has_aim_target:
-			man.gun.look_at(player.last_known_position, Vector3.UP)
+			man.gun.look_at(aim_target, Vector3.UP)
 		else:
 			man.gun.rotation.x = 0
 			man.gun.rotation.y = 0
@@ -781,7 +791,7 @@ func physics_process_man(delta: float) -> void:
 
 	if can_any_man_see_player:
 		player.last_known_position = player.global_position
-		player.last_seen_at = Global.time()
+		player.last_seen_at = Level.get_ticks_sec()
 
 	if (
 		stopped_investigating_suspicious_sound_this_frame
@@ -807,17 +817,17 @@ func print_hierarchy(node: Node) -> void:
 
 func log_message(text: String) -> void:
 	var new_msg := Message.new()
-	new_msg.created_at = Global.time()
+	new_msg.created_at = Level.get_ticks_sec()
 	new_msg.position.x = 8.0
 	new_msg.add_theme_font_size_override("font_size", 24)
 	new_msg.text = text
-	messages.add_child(new_msg)
-	if messages.get_child_count() > 3:
-		var c := messages.get_child(0)
+	player.messages.add_child(new_msg)
+	if player.messages.get_child_count() > 3:
+		var c := player.messages.get_child(0)
 		c.queue_free()
-		messages.remove_child(c)
+		player.messages.remove_child(c)
 	var y := 8.0
-	for msg: Label in messages.get_children():
+	for msg: Label in player.messages.get_children():
 		msg.position.y = y
 		y += 36.0
 
@@ -860,7 +870,7 @@ func fire_gun(
 ) -> Array[BulletHit]:
 	var hits: Array[BulletHit] = []
 
-	gun.last_fired_at = Global.time()
+	gun.last_fired_at = Level.get_ticks_sec()
 
 	for i in get_gun_pellets(gun):
 		var hit_man: Man
@@ -967,11 +977,11 @@ func hash_int_to_random_float(value: int) -> float:
 
 func get_gun_cooldown(gun: Gun) -> float:
 	match gun.gun_type:
-		Level.GunType.M16:
+		GunType.M16:
 			return 0.1
-		Level.GunType.SNIPER_RIFLE:
+		GunType.SNIPER_RIFLE:
 			return 2.3
-		Level.GunType.SHOTGUN:
+		GunType.SHOTGUN:
 			return 1.18
 	push_error("Unhandled state")
 	return 1.0
@@ -979,11 +989,11 @@ func get_gun_cooldown(gun: Gun) -> float:
 
 func get_gun_damage(gun: Gun, distance: float, headshot: bool) -> float:
 	match gun.gun_type:
-		Level.GunType.M16:
+		GunType.M16:
 			return 1.0 if headshot else 0.1
-		Level.GunType.SNIPER_RIFLE:
+		GunType.SNIPER_RIFLE:
 			return 1.0
-		Level.GunType.SHOTGUN:
+		GunType.SHOTGUN:
 			var l := 0.05
 			var u := 0.2
 			return clampf(remap(distance, 10.0, 20.0, u, l), l, u)
@@ -993,23 +1003,23 @@ func get_gun_damage(gun: Gun, distance: float, headshot: bool) -> float:
 
 func get_gun_audio_stream_player(gun: Gun) -> AudioStreamPlayer:
 	match gun.gun_type:
-		Level.GunType.M16:
-			return m_16_audio_stream_player
-		Level.GunType.SNIPER_RIFLE:
-			return sniper_rifle_audio_stream_player
-		Level.GunType.SHOTGUN:
-			return shotgun_audio_stream_player
+		GunType.M16:
+			return player.m_16_audio_stream_player
+		GunType.SNIPER_RIFLE:
+			return player.sniper_rifle_audio_stream_player
+		GunType.SHOTGUN:
+			return player.shotgun_audio_stream_player
 	push_error("Unhandled state")
 	return null
 
 
 func get_gun_max_spread(gun: Gun) -> float:
 	match gun.gun_type:
-		Level.GunType.M16:
+		GunType.M16:
 			return 0.2 * (1.0 - gun.accuracy)
-		Level.GunType.SNIPER_RIFLE:
+		GunType.SNIPER_RIFLE:
 			return 0.0
-		Level.GunType.SHOTGUN:
+		GunType.SHOTGUN:
 			return 0.06
 	push_error("Unhandled state")
 	return 1.0
@@ -1017,11 +1027,26 @@ func get_gun_max_spread(gun: Gun) -> float:
 
 func get_gun_pellets(gun: Gun) -> int:
 	match gun.gun_type:
-		Level.GunType.M16:
+		GunType.M16:
 			return 1
-		Level.GunType.SNIPER_RIFLE:
+		GunType.SNIPER_RIFLE:
 			return 1
-		Level.GunType.SHOTGUN:
+		GunType.SHOTGUN:
 			return 14
 	push_error("Unhandled state")
 	return 1
+
+
+static func get_ticks_sec() -> float:
+	return Time.get_ticks_msec() / 1000.0
+
+
+static func safe_look_at(node: Node3D, target: Vector3) -> void:
+	var direction: Vector3 = (
+		target - node.global_transform.origin
+	).normalized()
+
+	for up: Vector3 in [Vector3.UP, Vector3.RIGHT, Vector3.BACK]:
+		if node.global_position != target and abs(up.dot(direction)) != 1:
+			node.look_at(target, up)
+			break

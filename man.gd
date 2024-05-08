@@ -2,7 +2,9 @@
 class_name Man
 extends CharacterBody3D
 
-@export var patrol := true
+enum Mode { Stationary, Patrol, Fixed }
+
+@export var mode: Mode
 
 
 @export var gun_type := Level.GunType.M16:
@@ -59,6 +61,8 @@ var gun: Gun:
 @onready var sniper_rifle_scene := preload("res://sniper_rifle.tscn")
 @onready var shotgun_scene := preload("res://shotgun.tscn")
 @onready var body_mesh: MeshInstance3D = $Mesh/Body
+@onready var initial_position := body_mesh.global_position
+@onready var initial_rotation := body_mesh.global_rotation
 
 
 func _ready() -> void:

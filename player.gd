@@ -8,3 +8,37 @@ var invisible := false
 var gun: Gun
 @onready var gun_transform: Node3D = $Head/GunTransform
 @onready var camera: Camera3D = $Head/FirstPersonCameraReference/Camera3D
+@onready var m_16_audio_stream_player := (
+	$M16AudioStreamPlayer as AudioStreamPlayer
+)
+@onready var sniper_rifle_audio_stream_player := (
+	$SniperRifleAudioStreamPlayer as AudioStreamPlayer
+)
+@onready var shotgun_audio_stream_player := (
+	$ShotgunAudioStreamPlayer as AudioStreamPlayer
+)
+@onready var invisibility_audio_stream_player := (
+	$InvisibilityAudioStreamPlayer as AudioStreamPlayer
+)
+@onready var hitmarker_audio_stream_player := (
+	$HitmarkerAudioStreamPlayer as AudioStreamPlayer
+)
+@onready var headshot_audio_stream_player := (
+	$HeadshotAudioStreamPlayer as AudioStreamPlayer
+)
+@onready var possession_audio_stream_player := (
+	$PossessionAudioStreamPlayer as AudioStreamPlayer
+)
+@onready var damage_audio_stream_player := (
+	$DamageAudioStreamPlayer as AudioStreamPlayer
+)
+@onready var crosshair := $HUD/Crosshair as Control
+@onready var invisibility_overlay: Control = $HUD/InvisibilityOverlay
+@onready var vignette: TextureRect = $HUD/Vignette
+@onready var use_label: Label = $HUD/UseLabel
+@onready var possessing_label: Label = $HUD/PossessingLabel
+@onready var vignette_gradient_2d: GradientTexture2D = vignette.texture
+@onready var vignette_gradient: Gradient = (
+	vignette_gradient_2d.gradient
+)
+@onready var messages := $HUD/Messages as Control

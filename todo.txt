@@ -43,77 +43,85 @@ Todo:
 - [x] When approaching last known position or suspiscious gunshot sound, they
   aim at that position if the position if its view is unobstructed, else they
   aim to their next nav point.
+- [x] Can zoom with sniper.
+- [ ] Player has health bar.
+- [ ] Player is compromised if enemies see him toggle invisibility.
+- [ ] Touching an enemy will end invisiblity.
+- [ ] Possessing or shooting deactivates invisibility.
+- [ ] Player has energy bar. Possession regains 100% energy. Activating
+  invisibility subtracts 100% from invisibility. Killing regains 50%.
+  Invisibility lasts 30 seconds.
 - [ ] Enemies take time to aim, especially the sniper.
-- [ ] Plyaer is compromised if enemies see him toggle invisibility.
-- [ ] Invisibility drains health. Possession regains health. Health is
-  displayed in UI.
 
 Backlog:
 
-- [ ] Some enemies follow other enemies when they patrol.
-- [ ] Slow spotting
-  - [ ] Spotting is not instant. Spotting is faster when player is closer or
+- Player gains powers/new mechanics over a series of levels.
+- Some enemies follow other enemies when they patrol.
+- Slow spotting
+  - Spotting is not instant. Spotting is faster when player is closer or
     enemies are hunting. A UI control displays spotting level.
-  - [ ] When enemy is spotting player, they pause what they are doing and stare
-    at the player.
-- [ ] Ammo
-  - [ ] Ammo is finite. Must possess to get more ammo.
-  - [ ] Enemy drops ammo on death.
-- [ ] Enemies turn and accelerate slowly.
-- [ ] When player possesses enemy, player is no longer in hunted mode.
-- [ ] When player shoots gun, nearby enemies will investigate area as if it
-- [ ] Player can die and game must restart. were the player's last known
-  location.
-- [ ] Melee. Instant kill. Silent. Has a cooldown to prevent being OP.
-- [ ] Commander. Patrols. Walks slow. Unarmed. Can be possessed. Prints
-  messages like "<commander> enemy spotted in medical ward - all nearby units
-  engage!". When possessed, enemy response radius is permanently narrowed, and
-  player can order units to any location.
-- [ ] Tank. Player can enter tank.
-- [ ] Tank can drive and collide with walls.
-- [ ] Tank can shoot.
-- [ ] Player can exit tank.
-- [ ] When player fires gun, all nearby enemies are alerted.
-- [ ] Enemies will try to engage player in tank but do no damage.
-- [ ] After 30 sec, artillery barrage will rain down, creating explosions.
+  - When enemy is spotting player, they pause what they are doing and stare at
+    the player.
+- Ammo
+  - Ammo is finite. Must possess to get more ammo.
+  - Enemy drops ammo on death.
+- Enemies turn and accelerate slowly.
+- When player possesses enemy, player is no longer in hunted mode.
+- When player shoots gun, nearby enemies will investigate area as if it
+- Player can die and game must restart. were the player's last known location.
+- Melee. Instant kill. Silent. Has a cooldown to prevent being OP.
+- Commander. Patrols. Walks slow. Unarmed. Can be possessed. Prints messages
+  like "<commander> enemy spotted in medical ward - all nearby units engage!".
+  When possessed, enemy response radius is permanently narrowed, and player can
+  order units to any location.
+- Tank. Player can enter tank.
+- Tank can drive and collide with walls.
+- Tank can shoot.
+- Player can exit tank.
+- When player fires gun, all nearby enemies are alerted.
+- Enemies will try to engage player in tank but do no damage.
+- After 30 sec, artillery barrage will rain down, creating explosions.
   Artillery will "walk" to the tank. When tank is hit, it explodes, killing
   player if still inside. Messages are printed that warn player.
-- [ ] Enemy with very powerful machine gun.
-- [ ] Guns have a single mag. Enemies drop weapon on death. Player can walk
-  over weapon to gain its ammo, if player has same weapon type.
-- [ ] Build semi complete level.
-- [ ] Enemies killed counter.
-- [ ] Secrets unlocked tracker.
-- [ ] Tutorial levels.
-- [ ] Start menu.
-- [ ] Game over menu.
-- [ ] 3D models and textures.
-- [ ] Better tracers (HL2 tracers?).
-- [ ] Sound effects.
-- [ ] Animations.
-- [ ] Recoil.
-- [ ] Transition effect when possessing. Player's view should quickly slide
-  into enemy, sound should be played, and screen effect should be applied.
-- [ ] Music.
-- [ ] Particle effect.
-- [ ] Screen space shaders. (film grain and maybe something to give a bit of a
-  fish eye effect?)
-- [ ] Test on all platforms.
-- [ ] Export to itch.io.
-- [ ] Secret: finish game without possessing anyone
-- [ ] Highly skilled paratroopers. Player cannot defeat them without unfair
+- Enemy with very powerful machine gun.
+- Guns have a single mag. Enemies drop weapon on death. Player can walk over
+  weapon to gain its ammo, if player has same weapon type.
+- Build semi complete level.
+- Enemies killed counter.
+- Secrets unlocked tracker.
+- Tutorial levels.
+- Start menu.
+- Game over menu.
+- 3D models and textures.
+- Better tracers (HL2 tracers?).
+- Sound effects.
+- Animations.
+- Recoil.
+- Transition effect when possessing. Player's view should quickly slide into
+  enemy, sound should be played, and screen effect should be applied.
+- Music.
+- Particle effect.
+- Screen space shaders. (film grain and maybe something to give a bit of a fish
+  eye effect?)
+- Test on all platforms.
+- Export to itch.io.
+- Secret: finish game without possessing anyone
+- Highly skilled paratroopers. Player cannot defeat them without unfair
   advantage. When player kills enemy who is aware of player, or enemy witnesses
   death, then counter increases by 1. When counter exceeds 5, paratroopers are
   called.
-- [ ] HAM radio operator. Unarmed. If killed, pratroopers cannot be called. If
+- HAM radio operator. Unarmed. If killed, pratroopers cannot be called. If
   posssessed, player can call paratroopers.
-- [ ] Artillery is actually a mortar operator that player can possess.
-- [ ] Make nav agent movement more human like and avoid obstacles.
-- [ ] Make gun not clip through things
-- [ ] Make view kick when shooting
-- [ ] Make enemies detect, aim, and hit both player head and body, especially
+- Artillery is actually a mortar operator that player can possess.
+- Make nav agent movement more human like and avoid obstacles.
+- Make gun not clip through things
+- Make view kick when shooting
+- Make enemies detect, aim, and hit both player head and body, especially
   important if player crouches underneath something.
-- [ ] Enemy footsteps
-- [ ] Vary man speed depending on action.
-- [ ] Bug: enemies will aim at player after player has possessed enemy due to
-  last known position logic
+- Enemy footsteps
+- Vary man speed depending on action.
+- Bug: enemies will aim at player after player has possessed enemy due to last
+  known position logic
+- Other powers like creating an exposion, making enemies attack each other,
+  creating a distraction.
+- Slow moving, heavily armored MG enemy

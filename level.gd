@@ -149,6 +149,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	process_use()
+	process_zoom()
 	process_vignette()
 	for msg: Message in player.messages.get_children():
 		msg.modulate.a = lerpf(
@@ -1005,7 +1006,10 @@ func get_gun_cooldown(gun: Gun) -> float:
 func get_gun_damage(gun: Gun, distance: float, headshot: bool) -> float:
 	match gun.gun_type:
 		GunType.M16:
-			return 1.0 if headshot else 0.1
+			var m := 5.0 if headshot else 1.0
+			var l := 0.1 * m
+			var u := 0.2 * m
+			return clampf(remap(distance, 5.0, 20.0, u, l), l, u)
 		GunType.SNIPER_RIFLE:
 			return 1.0
 		GunType.SHOTGUN:
@@ -1084,3 +1088,16 @@ func can_man_look_at(man: Man, point: Vector3) -> bool:
 	var collision := get_world_3d().direct_space_state.intersect_ray(query)
 
 	return collision.is_empty()
+
+
+func process_zoom() -> void:
+	if (
+		player.gun
+		and player.gun.gun_type == GunType.SNIPER_RIFLE
+		and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
+	):
+		player.camera.fov = 30.0
+		player.head.mouse_sensitivity = 2.0 * 30.0 / 75.0
+	else:
+		player.camera.fov = 75.0
+		player.head.mouse_sensitivity = 2.0

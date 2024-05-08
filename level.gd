@@ -29,6 +29,7 @@ enum AiManState {
 	PATHING_TO_SUSPICIOUS_SOUND_POSITION,
 	PAUSING,
 	ENGAGING_PLAYER_WHILE_STANDING_STILL,
+	PAUSING_TO_LOOK_AT_PLAYER,
 }
 
 enum GunType { M16, SNIPER_RIFLE, SHOTGUN }
@@ -757,10 +758,15 @@ func physics_process_man(delta: float) -> void:
 			else man.patrol_index
 		)
 
+		var run_speed := 7.0 if man.gun_type == GunType.SHOTGUN else 4.0
+
+		var walk_speed := 2.0
+
 		var speed := (
-			2.0 if ai_team_state != AiTeamState.ENGAGING
-			else 7.0 if man.gun_type == GunType.SHOTGUN
-			else 4.0
+			walk_speed
+				if ai_team_state == AiTeamState.PATROLLING
+				or ai_team_state == AiTeamState.SEARCHING_RANDOMLY
+			else run_speed
 		)
 
 		var velocity := Vector3(0.0, man.velocity.y - 9.8 * delta, 0.0)

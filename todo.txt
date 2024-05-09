@@ -45,16 +45,16 @@ Todo:
   aim to their next nav point.
 - [x] Can zoom with sniper.
 - [x] Player has health bar.
+- [x] Player is compromised if enemies see him toggle invisibility.
+- [x] Possessing or shooting deactivates invisibility.
+- [x] Enemies take time to aim, especially the sniper.
+- [ ] Make screen flash red when hit.
 - [ ] Fix bug where enemy does no damage when right up in player face
-- [ ] Player is compromised if enemies see him toggle invisibility.
 - [ ] Touching an enemy will end invisiblity.
-- [ ] Possessing or shooting deactivates invisibility.
 - [ ] Player has energy bar. Possession regains 100% energy. Activating
   invisibility subtracts 100% from invisibility. Killing regains 50%.
   Invisibility lasts 30 seconds.
-- [ ] Enemies take time to aim, especially the sniper.
 - [ ] Player can die.
-- [ ] Make screen flash red when hit.
 
 Backlog:
 

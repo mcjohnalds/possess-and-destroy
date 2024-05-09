@@ -129,3 +129,4 @@ Backlog:
 - Other powers like creating an exposion, making enemies attack each other,
   creating a distraction.
 - Slow moving, heavily armored MG enemy
+- Fix bug where left mouse button doesn't work

@@ -105,46 +105,57 @@ func _input(event: InputEvent) -> void:
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	var key := event as InputEventKey
 	if key and key.keycode == KEY_F and key.pressed:
-		player.invisible = not player.invisible
-		player.invisibility_overlay.visible = player.invisible
+		if player.invisible:
+			make_player_visible()
+		else:
+			make_player_invisible()
+
+
+func make_player_invisible() -> void:
+		player.invisible = true
+		player.invisibility_overlay.visible = true
 		if player.gun:
-			if player.invisible:
-				make_player_gun_invisible()
-			else:
-				make_player_gun_visible()
+			apply_material_to_player_gun(almost_invisible)
 			player.invisibility_audio_stream_player.play(0.9)
 
 
-func make_player_gun_invisible() -> void:
+func make_player_visible() -> void:
+		player.invisible = false
+		player.invisibility_overlay.visible = false
+		if player.gun:
+			apply_material_to_player_gun(null)
+			player.invisibility_audio_stream_player.play(0.9)
+		for man: Man in men.get_children():
+			if (
+				is_instance_valid(man)
+				and man.alive
+				and can_man_see_player(man)
+				and not player_identity_compromised
+			):
+				hunt_player()
+				log_message(
+					"<%s> I saw %s doing demon stuff, engaging!"
+					% [man.name, possessed_man_name]
+				)
+				break
+
+
+func apply_material_to_player_gun(material: Material) -> void:
 	for n: Node in player.gun.model.find_children(
 		"*", "MeshInstance3D", true, false
 	):
 		var mesh := n as MeshInstance3D
 		if mesh:
 			for i in mesh.get_surface_override_material_count():
-				mesh.set_surface_override_material(i, almost_invisible)
-		else:
-			push_error("Invalid state")
-
-
-func make_player_gun_visible() -> void:
-	for n: Node in player.gun.model.find_children(
-		"*", "MeshInstance3D", true, false
-	):
-		var mesh := n as MeshInstance3D
-		if mesh:
-			for i in mesh.get_surface_override_material_count():
-				mesh.set_surface_override_material(i, null)
+				mesh.set_surface_override_material(i, material)
 		else:
 			push_error("Invalid state")
 
 
 # Capture mouse if clicked on the game, needed for HTML5
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		var m := event as InputEventMouseButton
-		if m.button_index == MOUSE_BUTTON_LEFT && m.pressed:
-			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	if event.is_action_pressed("primary"):
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
 func _process(delta: float) -> void:
@@ -249,7 +260,7 @@ func process_use() -> void:
 		player.gun = gun_scene.instantiate()
 		player.gun_transform.add_child(player.gun)
 		if player.invisible:
-			make_player_gun_invisible()
+			apply_material_to_player_gun(almost_invisible)
 
 		if not possession_witness:
 			player_identity_compromised = false
@@ -260,6 +271,10 @@ func process_use() -> void:
 			"<%s> I saw the demon possess %s, engaging enemy!"
 			% [possession_witness.name, targetted_man.name]
 		)
+
+	if possessed and player.invisible:
+		make_player_visible()
+
 
 
 func process_vignette() -> void:
@@ -307,6 +322,8 @@ func process_player_shooting() -> void:
 		suspicious_sound_position = player.global_position
 		suspicious_sound_heard_at = Level.get_ticks_sec()
 		suspicious_sound_has_been_investigated  = false
+		if player.invisible:
+			make_player_visible()
 
 
 func process_man_shooting() -> void:

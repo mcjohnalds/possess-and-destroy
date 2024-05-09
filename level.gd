@@ -148,7 +148,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
-	player.health_label.text = "%s%%" % ceilf(player.health * 100.0)
+	player.health_label.text = "Health: %s%%" % ceilf(player.health * 100.0)
 	process_use()
 	process_zoom()
 	process_vignette()
@@ -323,6 +323,7 @@ func process_man_shooting() -> void:
 			player_identity_compromised
 			and not fired_recently
 			and can_man_see_player(man)
+			and man.aim_progress >= 1.0
 		)
 		if can_fire:
 			var exclude: Array[Variant] = []
@@ -775,7 +776,7 @@ func physics_process_man(delta: float) -> void:
 
 		var run_speed := 7.0 if man.gun_type == GunType.SHOTGUN else 4.0
 
-		var walk_speed := 2.0
+		var walk_speed := 3.0
 
 		var speed := (
 			walk_speed
@@ -792,6 +793,23 @@ func physics_process_man(delta: float) -> void:
 				velocity += dir * speed
 		if man.is_on_floor():
 			velocity.y = 0.0
+
+		var is_engaging := (
+			ai_state == AiManState.PATHING_TO_ENGAGE_POSITION
+			or ai_state == AiManState.MOVING_TO_ENGAGE_POSITION
+			or ai_state == AiManState.ENGAGING_PLAYER_WHILE_STANDING_STILL
+		)
+
+		var next_aim_progress := man.aim_progress
+		if is_engaging and man.aim_progress < 0.5:
+			next_aim_progress += delta / 1.2
+		elif is_engaging and can_see_player:
+			var d := clampf(distance_to_player, 1.0, 50.0)
+			var r := remap(d, 1.0, 50.0, 0.6, 1.5)
+			next_aim_progress += delta / r
+		else:
+			next_aim_progress -= delta / 1.2
+		next_aim_progress = clampf(next_aim_progress, 0.0, 1.0)
 
 		# --- Side effects ---
 
@@ -815,6 +833,7 @@ func physics_process_man(delta: float) -> void:
 		# man.safe_velocity = Vector3.ZERO
 		man.move_and_slide()
 		man.last_ai_state = ai_state
+		man.aim_progress = next_aim_progress
 
 	if player_shooting_witnessed_this_frame:
 		hunt_player()

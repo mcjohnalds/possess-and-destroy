@@ -103,7 +103,8 @@ Backlog:
 - Transition effect when possessing. Player's view should quickly slide into
   enemy, sound should be played, and screen effect should be applied.
 - Music.
-- Particle effect.
+- Particle effects.
+  - Shooting emits smoke https://www.youtube.com/shorts/IOsjaEPMAec
 - Screen space shaders. (film grain and maybe something to give a bit of a fish
   eye effect?)
 - Test on all platforms.

@@ -566,6 +566,24 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.8982, 0.240436, -18.655)
 mode = 1
 gun_type = 2
 
+[node name="Man7" parent="Men" instance=ExtResource("2_lpms1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.99471, 0.240438, 4.53048)
+mode = 1
+
+[node name="Man8" parent="Men" instance=ExtResource("2_lpms1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.93241, 0.240438, 4.53048)
+mode = 1
+gun_type = 2
+
+[node name="Man11" parent="Men" instance=ExtResource("2_lpms1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.0291, 0.240436, 22.8053)
+mode = 1
+
+[node name="Man12" parent="Men" instance=ExtResource("2_lpms1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.96675, 0.240436, 22.8053)
+mode = 1
+gun_type = 2
+
 [node name="Man3" parent="Men" instance=ExtResource("2_lpms1")]
 transform = Transform3D(0.860751, 0, -0.509026, 0, 1, 0, 0.509026, 0, 0.860751, 18.7122, 9.34979, 9.92937)
 mode = 2

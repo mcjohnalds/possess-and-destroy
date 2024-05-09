@@ -36,6 +36,7 @@ var nav_last_updated_at := -10000.0
 var alive := true
 var died_at := 0.0
 var last_ai_state: Level.AiManState
+var aim_progress := 0.0
 
 
 var gun: Gun:

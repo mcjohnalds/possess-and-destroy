@@ -62,3 +62,4 @@ transform = Transform3D(-7.01241e-09, 0, 0.160425, 0, 0.160425, 0, -0.160425, 0,
 [node name="GunShotAudioStreamPlayer" type="AudioStreamPlayer3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.144784, -1.57319)
 stream = ExtResource("4_1qpvo")
+unit_size = 40.0

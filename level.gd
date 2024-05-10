@@ -41,6 +41,9 @@ class BulletHit:
 
 
 const ENEMY_FOV := 0.42 * TAU
+const POSSESSION_ENERGY_COST := 0.25
+const INVISIBILITY_ENERGY_COST := 0.25
+const KILL_ENERGY_GAIN := 0.2
 var possessed_man_name := "the civilian"
 var player_identity_compromised := false
 var ai_team_state_last_frame := AiTeamState.PATROLLING
@@ -104,7 +107,12 @@ func _input(event: InputEvent) -> void:
 			Input.MOUSE_MODE_VISIBLE:
 				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	var key := event as InputEventKey
-	if key and key.keycode == KEY_F and key.pressed:
+	if (
+		key
+		and key.keycode == KEY_F
+		and key.pressed
+		and player.energy >= INVISIBILITY_ENERGY_COST
+	):
 		if player.invisible:
 			make_player_visible()
 		else:
@@ -112,6 +120,7 @@ func _input(event: InputEvent) -> void:
 
 
 func make_player_invisible() -> void:
+		player.energy -= INVISIBILITY_ENERGY_COST
 		player.invisible = true
 		player.invisibility_overlay.visible = true
 		if player.gun:
@@ -159,7 +168,13 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
-	player.health_label.text = "Health: %s%%" % ceilf(player.health * 100.0)
+	player.health_label.text = "Health: %s%%" % ceilf(
+		player.health / player.initial_health * 100.0
+	)
+	player.energy_label.text = "Energy: %s%%" % ceilf(
+		player.energy * 100.0
+	)
+	player.compromised_control.visible = player_identity_compromised
 	process_use()
 	process_zoom()
 	process_vignette()
@@ -206,9 +221,11 @@ func process_use() -> void:
 		and target_to_player_dir.angle_to(targetted_man_rear_dir) < TAU * 0.23
 	)
 
-	var possessed := false
-	if behind_target and Input.is_action_just_pressed("use"):
-		possessed = true
+	var possessed := (
+		behind_target
+		and Input.is_action_just_pressed("use")
+		and player.energy >= POSSESSION_ENERGY_COST
+	)
 
 	var possession_witness: Man
 	if possessed:
@@ -224,7 +241,6 @@ func process_use() -> void:
 					)
 					or can_man_see_player(man)
 				)
-				and not player_identity_compromised
 			):
 				possession_witness = man
 				break
@@ -246,6 +262,7 @@ func process_use() -> void:
 		player.possessing_label.text = "Possessing: " + targetted_man.name
 		player.last_possessed_at = Level.get_ticks_sec()
 		targetted_man.queue_free()
+		targetted_man.alive = false
 
 		if player.gun:
 			player.gun.queue_free()
@@ -262,19 +279,19 @@ func process_use() -> void:
 		if player.invisible:
 			apply_material_to_player_gun(almost_invisible)
 
-		if not possession_witness:
-			player_identity_compromised = false
+		player.energy -= POSSESSION_ENERGY_COST
 
-	if possession_witness:
-		hunt_player()
-		log_message(
-			"<%s> I saw the demon possess %s, engaging enemy!"
-			% [possession_witness.name, targetted_man.name]
-		)
+		player_identity_compromised = possession_witness != null
 
-	if possessed and player.invisible:
-		make_player_visible()
+		if possession_witness:
+			hunt_player()
+			log_message(
+				"<%s> I saw the demon possess %s, engaging enemy!"
+				% [possession_witness.name, targetted_man.name]
+			)
 
+		if player.invisible:
+			make_player_visible()
 
 
 func process_vignette() -> void:
@@ -310,6 +327,9 @@ func process_player_shooting() -> void:
 				var damage := get_gun_damage(player.gun, distance, headshot)
 				man.health -= damage
 				if man.health <= 0.0:
+					player.energy = clampf(
+						player.energy + KILL_ENERGY_GAIN, 0.0, 1.0
+					)
 					man.alive = false
 					man.died_at = Level.get_ticks_sec()
 					man.gun.gun_shot_audio_stream_player.stop()
@@ -1063,15 +1083,15 @@ func get_gun_damage(gun: Gun, distance: float, headshot: bool) -> float:
 	match gun.gun_type:
 		GunType.M16:
 			var m := 5.0 if headshot else 1.0
-			var l := 0.1 * m
+			var l := 0.05 * m
 			var u := 0.2 * m
 			return clampf(remap(distance, 5.0, 20.0, u, l), l, u)
 		GunType.SNIPER_RIFLE:
 			return 1.0
 		GunType.SHOTGUN:
-			var l := 0.05
+			var l := 0.025
 			var u := 0.2
-			return clampf(remap(distance, 10.0, 20.0, u, l), l, u)
+			return clampf(remap(distance, 10.0, 30.0, u, l), l, u)
 	push_error("Unhandled state")
 	return 1.0
 
@@ -1147,13 +1167,14 @@ func can_man_look_at(man: Man, point: Vector3) -> bool:
 
 
 func process_zoom() -> void:
+	var s := 0.8
 	if (
 		player.gun
 		and player.gun.gun_type == GunType.SNIPER_RIFLE
 		and Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
 	):
 		player.camera.fov = 30.0
-		player.head.mouse_sensitivity = 2.0 * 30.0 / 75.0
+		player.head.mouse_sensitivity = s * 30.0 / 75.0
 	else:
 		player.camera.fov = 75.0
-		player.head.mouse_sensitivity = 2.0
+		player.head.mouse_sensitivity = s

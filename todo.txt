@@ -130,3 +130,5 @@ Backlog:
   creating a distraction.
 - Slow moving, heavily armored MG enemy
 - Fix bug where left mouse button doesn't work
+- Fix bug where sniper does not turn to look at suspicious sound
+- Make shell reload sound ASP have lower unit size than shot sound

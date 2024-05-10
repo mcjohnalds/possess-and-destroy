@@ -5,8 +5,11 @@ var last_known_position: Vector3
 var last_seen_at := -10000.0
 var last_possessed_at := -10000.0
 var invisible := false
-var health := 10.0
+var initial_health := 5.0
+var health := initial_health
 var gun: Gun
+var initial_energy := 9.5
+var energy := initial_energy
 @onready var gun_transform: Node3D = $Head/GunTransform
 @onready var camera: Camera3D = $Head/FirstPersonCameraReference/Camera3D
 @onready var m_16_audio_stream_player := (
@@ -44,4 +47,6 @@ var gun: Gun
 )
 @onready var messages := $HUD/Messages as Control
 @onready var health_label := $HUD/HealthLabel as Label
+@onready var energy_label := $HUD/EnergyLabel as Label
+@onready var compromised_control := $HUD/Compromised as Control
 @onready var capsule: CapsuleShape3D = ($Collision as CollisionShape3D).shape

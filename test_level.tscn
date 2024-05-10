@@ -531,7 +531,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.9238, 0, 2.78047)
 
 [node name="Pvt Renolds" parent="Men" instance=ExtResource("12_5omkb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.76001, 0, 0.541676)
+mode = 2
+gun_type = 1
 
 [node name="Pvt Smith" parent="Men" instance=ExtResource("12_5omkb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.13286, 7.15256e-07, 4.18329)
-gun_type = 2
+mode = 2

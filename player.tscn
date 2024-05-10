@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://cewa4cg7jix27"]
+[gd_scene load_steps=17 format=3 uid="uid://cewa4cg7jix27"]
 
 [ext_resource type="PackedScene" uid="uid://8oy3xm2sff8" path="res://addons/character-controller/fps/fps_controller_3d.tscn" id="1_fbpun"]
 [ext_resource type="Script" path="res://player.gd" id="2_8r0nc"]
@@ -22,6 +22,14 @@ fill_from = Vector2(0.5, 0.5)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yhelo"]
 bg_color = Color(0.223529, 0.333333, 0.360784, 0.305882)
+
+[sub_resource type="Gradient" id="Gradient_1j6ap"]
+colors = PackedColorArray(0.709804, 0.0705882, 0.0705882, 0.12549, 0.53, 0.053, 0.053, 0.345098)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_fdygk"]
+gradient = SubResource("Gradient_1j6ap")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
 
 [node name="Player" instance=ExtResource("1_fbpun")]
 script = ExtResource("2_8r0nc")
@@ -51,7 +59,15 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_yhelo")
 
-[node name="EnergyPanel" type="Panel" parent="HUD" index="2"]
+[node name="HurtOverlay" type="TextureRect" parent="HUD" index="2"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_fdygk")
+
+[node name="EnergyPanel" type="Panel" parent="HUD" index="3"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -61,7 +77,7 @@ offset_right = 501.5
 offset_bottom = -110.0
 grow_vertical = 0
 
-[node name="EnergyLabel" type="Label" parent="HUD" index="3"]
+[node name="EnergyLabel" type="Label" parent="HUD" index="4"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -74,7 +90,7 @@ theme_override_font_sizes/font_size = 28
 text = "Energy: 30%"
 vertical_alignment = 2
 
-[node name="HealthPanel" type="Panel" parent="HUD" index="4"]
+[node name="HealthPanel" type="Panel" parent="HUD" index="5"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -84,7 +100,7 @@ offset_right = 501.5
 offset_bottom = -54.0
 grow_vertical = 0
 
-[node name="HealthLabel" type="Label" parent="HUD" index="5"]
+[node name="HealthLabel" type="Label" parent="HUD" index="6"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -97,7 +113,7 @@ theme_override_font_sizes/font_size = 28
 text = "Health: 30%"
 vertical_alignment = 2
 
-[node name="UseLabel" type="Label" parent="HUD" index="6"]
+[node name="UseLabel" type="Label" parent="HUD" index="7"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -114,7 +130,7 @@ text = "Press E to possess"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PossessingPanel" type="Panel" parent="HUD" index="7"]
+[node name="PossessingPanel" type="Panel" parent="HUD" index="8"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -124,7 +140,7 @@ offset_right = 501.5
 offset_bottom = 1.5
 grow_vertical = 0
 
-[node name="PossessingLabel" type="Label" parent="HUD" index="8"]
+[node name="PossessingLabel" type="Label" parent="HUD" index="9"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -137,7 +153,7 @@ theme_override_font_sizes/font_size = 28
 text = "Possessing: Civilian"
 vertical_alignment = 2
 
-[node name="Crosshair" type="Label" parent="HUD" index="9"]
+[node name="Crosshair" type="Label" parent="HUD" index="10"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -155,11 +171,11 @@ text = "×"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Messages" type="Panel" parent="HUD" index="10"]
+[node name="Messages" type="Panel" parent="HUD" index="11"]
 offset_right = 1017.0
 offset_bottom = 123.0
 
-[node name="Compromised" type="Control" parent="HUD" index="11"]
+[node name="Compromised" type="Control" parent="HUD" index="12"]
 layout_mode = 3
 anchors_preset = 0
 offset_left = 168.0

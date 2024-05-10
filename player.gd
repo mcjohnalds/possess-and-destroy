@@ -50,3 +50,4 @@ var energy := initial_energy
 @onready var energy_label := $HUD/EnergyLabel as Label
 @onready var compromised_control := $HUD/Compromised as Control
 @onready var capsule: CapsuleShape3D = ($Collision as CollisionShape3D).shape
+@onready var hurt_overlay := $HUD/HurtOverlay as TextureRect

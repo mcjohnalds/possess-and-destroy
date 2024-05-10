@@ -175,6 +175,10 @@ func _process(delta: float) -> void:
 		player.energy * 100.0
 	)
 	player.compromised_control.visible = player_identity_compromised
+	player.hurt_overlay.modulate.a -= delta
+	player.hurt_overlay.modulate.a = clampf(
+		player.hurt_overlay.modulate.a, 0.0, 1.0
+	)
 	process_use()
 	process_zoom()
 	process_vignette()
@@ -372,16 +376,22 @@ func process_man_shooting() -> void:
 			var hits := fire_gun(
 				man.gun, man.gun.muzzle_flash.global_transform, exclude, false
 			)
-			var hit_player := false
+
+			var damage_to_player := 0.0
 			for hit in hits:
 				if hit.collider == player:
-					hit_player = true
 					var headshot := false
 					var distance := (man.gun.muzzle_flash.global_position
 						.distance_to(hit.position))
-					var damage := get_gun_damage(man.gun, distance, headshot)
-					player.health -= damage
-			if hit_player:
+					damage_to_player += get_gun_damage(
+						man.gun, distance, headshot
+					)
+
+			if damage_to_player > 0.0:
+				player.health -= damage_to_player
+				player.hurt_overlay.modulate.a = clampf(
+					damage_to_player * 2.0, 0.3, 1.0
+				)
 				player.damage_audio_stream_player.play()
 			man.gun.last_fired_at = Level.get_ticks_sec()
 			man.gun.gun_shot_audio_stream_player.play()

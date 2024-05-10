@@ -2,9 +2,15 @@
 class_name Man
 extends CharacterBody3D
 
-enum Mode { Stationary, Patrol, Fixed }
+enum Mode { Stationary, Patrol, Fixed, Follow }
 
-@export var mode: Mode
+@export var mode: Mode:
+	set(value):
+		mode = value
+		notify_property_list_changed()
+
+
+@export var follow: Man
 
 
 @export var gun_type := Level.GunType.M16:
@@ -68,3 +74,8 @@ var gun: Gun:
 
 func _ready() -> void:
 	gun_type = gun_type
+
+
+func _validate_property(property: Dictionary) -> void:
+	if property.name == "follow" and mode != Mode.Follow:
+		property.usage = PROPERTY_USAGE_NO_EDITOR

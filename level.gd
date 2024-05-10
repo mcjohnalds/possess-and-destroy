@@ -16,6 +16,8 @@ enum AiTeamState {
 enum AiManState {
 	MOVING_TO_PATROL_POSITION,
 	PATHING_TO_PATROL_POSITION,
+	MOVING_TO_FOLLOW_TARGET,
+	PATHING_TO_FOLLOW_TARGET,
 	MOVING_TO_INITIAL_POSITION,
 	PATHING_TO_INITIAL_POSITION,
 	REACHED_INITIAL_POSITION,
@@ -40,6 +42,7 @@ class BulletHit:
 	var position: Vector3
 
 
+const LOOKING_SUSPICIOUS_DURATION := 3.0
 const ENEMY_FOV := 0.42 * TAU
 const POSSESSION_ENERGY_COST := 0.25
 const INVISIBILITY_ENERGY_COST := 0.25
@@ -61,9 +64,11 @@ var suspicious_sound_has_been_investigated := true
 @onready var m_16_scene := preload("res://m_16.tscn")
 @onready var sniper_rifle_scene := preload("res://sniper_rifle.tscn")
 @onready var shotgun_scene := preload("res://shotgun.tscn")
+@onready var world_environment: WorldEnvironment = $Lighting/WorldEnvironment
 
 
 func _ready() -> void:
+	world_environment.environment.sdfgi_enabled = true
 	for man: Man in men.get_children():
 		man.navigation_agent.path_desired_distance = 0.5
 		man.navigation_agent.target_desired_distance = 0.5
@@ -178,6 +183,10 @@ func _process(delta: float) -> void:
 	player.hurt_overlay.modulate.a -= delta
 	player.hurt_overlay.modulate.a = clampf(
 		player.hurt_overlay.modulate.a, 0.0, 1.0
+	)
+	player.suspicious_label.visible = (
+		Level.get_ticks_sec() - suspicious_sound_heard_at
+		< LOOKING_SUSPICIOUS_DURATION
 	)
 	process_use()
 	process_zoom()
@@ -477,7 +486,9 @@ func physics_process_man(delta: float) -> void:
 			is_instance_valid(man)
 			and man.alive
 			and can_man_see_player(man)
-			and Level.get_ticks_sec() - suspicious_sound_heard_at < 3.0
+			and
+				Level.get_ticks_sec() - suspicious_sound_heard_at
+				< LOOKING_SUSPICIOUS_DURATION
 			and player.last_possessed_at < suspicious_sound_heard_at
 			and not player_identity_compromised
 		):
@@ -622,7 +633,7 @@ func physics_process_man(delta: float) -> void:
 
 		var man_pos := man.global_position
 
-		var search_duration := Level.get_ticks_sec() - man.nav_last_updated_at
+		var nav_duration := Level.get_ticks_sec() - man.nav_last_updated_at
 
 		var can_see_player := can_man_see_player(man)
 
@@ -630,13 +641,19 @@ func physics_process_man(delta: float) -> void:
 			5.0, 10.0, hash_int_to_random_float(man.get_index())
 		)
 
-		var pathing_cooldown_duration := (
-			0.5 if man.gun_type == GunType.SHOTGUN else 3.0)
+		var engage_pathing_cooldown_duration := (
+			0.5 if man.gun_type == GunType.SHOTGUN else 3.0
+		)
 
-		var pathing_cooldown := search_duration < pathing_cooldown_duration
+		var engage_pathing_cooldown := (
+			nav_duration < engage_pathing_cooldown_duration
+		)
+
+		var follow_pathing_cooldown := nav_duration < 0.5
 
 		var distance_to_player := man.global_position.distance_to(
-			player.last_known_position)
+			player.last_known_position
+		)
 
 		var need_to_move_closer_to_engage := (
 			man.gun_type == GunType.SHOTGUN
@@ -653,7 +670,7 @@ func physics_process_man(delta: float) -> void:
 				and man.mode != Man.Mode.Fixed
 				and ai_team_state == AiTeamState.ENGAGING
 				and need_to_move_closer_to_engage
-				and pathing_cooldown
+				and engage_pathing_cooldown
 			else AiManState.PATHING_TO_ENGAGE_POSITION if
 				man.alive
 				and man.mode != Man.Mode.Fixed
@@ -670,7 +687,7 @@ func physics_process_man(delta: float) -> void:
 				and ai_team_state_last_frame
 					== AiTeamState.INVESTIGATING_SUSPICIOUS_SOUND
 				and not nav_finished
-				and search_duration < 20.0
+				and nav_duration < 20.0
 			else AiManState.PATHING_TO_SUSPICIOUS_SOUND_POSITION if
 				man.alive
 				and man.mode != Man.Mode.Fixed
@@ -680,7 +697,7 @@ func physics_process_man(delta: float) -> void:
 				and man.mode != Man.Mode.Fixed
 				and ai_team_state == AiTeamState.SEARCHING_RANDOMLY
 				and not nav_finished
-				and search_duration < random_search_duration
+				and nav_duration < random_search_duration
 			else AiManState.PATHING_TO_RANDOM_SEARCH_POSITION if
 				man.alive
 				and man.mode != Man.Mode.Fixed
@@ -691,7 +708,7 @@ func physics_process_man(delta: float) -> void:
 				and ai_team_state
 					== AiTeamState.APPROACHING_LAST_KNOWN_POSITION
 				and not nav_finished
-				and search_duration < 20.0
+				and nav_duration < 20.0
 			else AiManState.PATHING_TO_RANDOM_SEARCH_POSITION if
 				man.alive
 				and man.mode != Man.Mode.Fixed
@@ -702,10 +719,20 @@ func physics_process_man(delta: float) -> void:
 				and man.mode == Man.Mode.Patrol
 				and ai_team_state == AiTeamState.PATROLLING
 				and not nav_finished
-				and search_duration < 20.0
+				and nav_duration < 20.0
 			else AiManState.PATHING_TO_PATROL_POSITION if
 				man.alive
 				and man.mode == Man.Mode.Patrol
+				and ai_team_state == AiTeamState.PATROLLING
+			else AiManState.MOVING_TO_FOLLOW_TARGET if
+				man.alive
+				and man.mode == Man.Mode.Follow
+				and ai_team_state == AiTeamState.PATROLLING
+				and not nav_finished
+				and follow_pathing_cooldown
+			else AiManState.PATHING_TO_FOLLOW_TARGET if
+				man.alive
+				and man.mode == Man.Mode.Follow
 				and ai_team_state == AiTeamState.PATROLLING
 			else AiManState.PATHING_TO_INITIAL_POSITION if
 				man.alive
@@ -753,6 +780,13 @@ func physics_process_man(delta: float) -> void:
 				has_new_nav_target = true
 				var patrol_node: Node3D = patrol.get_child(man.patrol_index)
 				new_nav_target = patrol_node.global_position
+			AiManState.MOVING_TO_FOLLOW_TARGET:
+				has_nav_target = true
+				has_look_at_target = true
+				look_at_target = next_path_pos
+			AiManState.PATHING_TO_FOLLOW_TARGET:
+				has_new_nav_target = true
+				new_nav_target = man.follow.global_position
 			AiManState.MOVING_TO_INITIAL_POSITION:
 				has_nav_target = true
 				has_look_at_target = true

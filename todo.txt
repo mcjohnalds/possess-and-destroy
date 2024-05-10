@@ -48,7 +48,8 @@ Todo:
 - [x] Player is compromised if enemies see him toggle invisibility.
 - [x] Possessing or shooting deactivates invisibility.
 - [x] Enemies take time to aim, especially the sniper.
-- [ ] Make screen flash red when hit.
+- [x] Make screen flash red when hit.
+- [x] Make some enemies follow other enemies so they are safer together.
 - [ ] Fix bug where enemy does no damage when right up in player face
 - [ ] Touching an enemy will end invisiblity.
 - [ ] Player has energy bar. Possession regains 100% energy. Activating

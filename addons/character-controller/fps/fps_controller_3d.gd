@@ -12,16 +12,16 @@ class_name FPSController3D
 @export_group("FOV")
 
 ## Speed at which the FOV changes
-@export var fov_change_speed := 4
+var fov_change_speed := 4.0
 
 ## FOV to be multiplied when active the sprint
-@export var sprint_fov_multiplier := 1.1
+var sprint_fov_multiplier := 1.0
 
 ## FOV to be multiplied when active the crouch
-@export var crouch_fov_multiplier := 0.95
+var crouch_fov_multiplier := 1.0
 
 ## FOV to be multiplied when active the swim
-@export var swim_fov_multiplier := 1.0
+var swim_fov_multiplier := 1.0
 
 
 @export_group("Mouse")
@@ -114,6 +114,8 @@ func move(_delta: float, input_axis := Vector2.ZERO, input_jump := false, input_
 		_direction_base_node = head
 	else:
 		_direction_base_node = self
+	# Always enable sprint to simulate the fact that walking forward is faster
+	input_sprint = true
 	super.move(_delta, input_axis, input_jump, input_crouch, input_sprint, input_swim_down, input_swim_up)
 #	TODO Make in exemple this	
 #	if not is_fly_mode() and not swim_ability.is_floating() and not swim_ability.is_submerged()

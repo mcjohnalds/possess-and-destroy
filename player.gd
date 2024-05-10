@@ -5,7 +5,7 @@ var last_known_position: Vector3
 var last_seen_at := -10000.0
 var last_possessed_at := -10000.0
 var invisible := false
-var initial_health := 5.0
+var initial_health := 10.0
 var health := initial_health
 var gun: Gun
 var initial_energy := 0.5

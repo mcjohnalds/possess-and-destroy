@@ -74,7 +74,7 @@ signal stopped_floating
 ## Note: this speed is used as a basis for abilities to multiply their 
 ## respective values, changing it will have consequences on [b]all abilities[/b]
 ## that use velocity.
-@export var speed : float = 10.0
+var speed : float = 5.5
 
 ## Time for the character to reach full speed
 @export var acceleration : float = 8.0
@@ -209,8 +209,8 @@ func setup():
 
 ## Moves the character controller.
 ## parameters are inputs that are sent to be handled by all abilities.
-func move(_delta: float, input_axis := Vector2.ZERO, input_jump := false, input_crouch := false, input_sprint := false, input_swim_down := false, input_swim_up := false) -> void:
-	var direction = _direction_input(input_axis, input_swim_down, input_swim_up, _direction_base_node)
+func move(_delta: float, input_axis := Vector2.ZERO, input_jump := false, _input_crouch := false, input_sprint := false, input_swim_down := false, input_swim_up := false) -> void:
+	var direction := _direction_input(input_axis, input_swim_down, input_swim_up, _direction_base_node)
 	if not swim_ability.is_floating():
 		_check_landed()
 	if not jump_ability.is_actived() and not is_fly_mode() and not is_submerged() and not is_floating():
@@ -219,10 +219,10 @@ func move(_delta: float, input_axis := Vector2.ZERO, input_jump := false, input_
 	swim_ability.set_active(!fly_ability.is_actived())
 	jump_ability.set_active(input_jump and is_on_floor() and not head_check.is_colliding())
 	walk_ability.set_active(not is_fly_mode() and not swim_ability.is_floating())
-	crouch_ability.set_active(input_crouch and is_on_floor() and not is_floating() and not is_submerged() and not is_fly_mode())
+	# crouch_ability.set_active(input_crouch and is_on_floor() and not is_floating() and not is_submerged() and not is_fly_mode())
 	sprint_ability.set_active(input_sprint and is_on_floor() and  input_axis.y >= 0.5 and !is_crouching() and not is_fly_mode() and not swim_ability.is_floating() and not swim_ability.is_submerged())
 	
-	var multiplier = 1.0
+	var multiplier := 1.0
 	for ability in _abilities:
 		multiplier *= ability.get_speed_modifier()
 	speed = _normal_speed * multiplier
@@ -272,7 +272,7 @@ func is_submerged() -> bool:
 	return swim_ability.is_submerged()
 
 
-func _reset_step():
+func _reset_step() -> void:
 	_next_step = _step_cycle + step_interval
 
 

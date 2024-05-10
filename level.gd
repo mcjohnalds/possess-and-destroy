@@ -42,7 +42,7 @@ class BulletHit:
 	var position: Vector3
 
 
-const LOOKING_SUSPICIOUS_DURATION := 3.0
+const LOOKING_SUSPICIOUS_DURATION := 6.0
 const ENEMY_FOV := 0.42 * TAU
 const POSSESSION_ENERGY_COST := 0.25
 const INVISIBILITY_ENERGY_COST := 0.25
@@ -212,26 +212,26 @@ func process_use() -> void:
 
 	var collision := get_world_3d().direct_space_state.intersect_ray(query)
 
-	var targetted_man: Man
+	var targeted_man: Man
 	if collision and collision.collider is Man:
 		var man: Man = collision.collider
 		if man and man.alive:
-			targetted_man = collision.collider
+			targeted_man = collision.collider
 
 
 	var target_to_player_dir: Vector3
-	if targetted_man:
+	if targeted_man:
 		target_to_player_dir = (
-			targetted_man.global_position.direction_to(player.global_position)
+			targeted_man.global_position.direction_to(player.global_position)
 		)
 
-	var targetted_man_rear_dir: Vector3
-	if targetted_man:
-		targetted_man_rear_dir = targetted_man.global_basis.z
+	var targeted_man_rear_dir: Vector3
+	if targeted_man:
+		targeted_man_rear_dir = targeted_man.global_basis.z
 
 	var behind_target := (
-		targetted_man
-		and target_to_player_dir.angle_to(targetted_man_rear_dir) < TAU * 0.23
+		targeted_man
+		and target_to_player_dir.angle_to(targeted_man_rear_dir) < TAU * 0.23
 	)
 
 	var possessed := (
@@ -245,12 +245,12 @@ func process_use() -> void:
 		for man: Man in men.get_children():
 			if (
 				is_instance_valid(man)
-				and man != targetted_man
+				and man != targeted_man
 				and man.alive
 				and (
 					can_man_see_point(
 						man,
-						targetted_man.head_hitbox.global_position
+						targeted_man.head_hitbox.global_position
 					)
 					or can_man_see_player(man)
 				)
@@ -264,27 +264,28 @@ func process_use() -> void:
 
 	if possessed:
 		player.possession_audio_stream_player.play(4.9)
-		possessed_man_name = targetted_man.name
+		possessed_man_name = targeted_man.name
 		player.global_position = (
 			# + player height / 2 because player origin is different to enemy
 			# origin
-			targetted_man.global_position
+			targeted_man.global_position
 				+ player.capsule.height / 2.0 * Vector3.UP
 		)
 		player.velocity = Vector3.ZERO
-		player.possessing_label.text = "Possessing: " + targetted_man.name
+		player.possessing_label.text = "Possessing: " + targeted_man.name
 		player.last_possessed_at = Level.get_ticks_sec()
-		targetted_man.queue_free()
-		targetted_man.alive = false
+		targeted_man.queue_free()
+		targeted_man.alive = false
+		make_followers_stationary(targeted_man)
 
 		if player.gun:
 			player.gun.queue_free()
 			player.gun_transform.remove_child(player.gun)
 		var gun_scene := (
 			m_16_scene
-				if targetted_man.gun_type == GunType.M16
+				if targeted_man.gun_type == GunType.M16
 			else sniper_rifle_scene
-				if targetted_man.gun_type == GunType.SNIPER_RIFLE
+				if targeted_man.gun_type == GunType.SNIPER_RIFLE
 			else shotgun_scene
 		)
 		player.gun = gun_scene.instantiate()
@@ -300,7 +301,7 @@ func process_use() -> void:
 			hunt_player()
 			log_message(
 				"<%s> I saw the demon possess %s, engaging enemy!"
-				% [possession_witness.name, targetted_man.name]
+				% [possession_witness.name, targeted_man.name]
 			)
 
 		if player.invisible:
@@ -344,6 +345,7 @@ func process_player_shooting() -> void:
 						player.energy + KILL_ENERGY_GAIN, 0.0, 1.0
 					)
 					man.alive = false
+					make_followers_stationary(man)
 					man.died_at = Level.get_ticks_sec()
 					man.gun.gun_shot_audio_stream_player.stop()
 					man.collision_layer = 0
@@ -1222,3 +1224,9 @@ func process_zoom() -> void:
 	else:
 		player.camera.fov = 75.0
 		player.head.mouse_sensitivity = s
+
+
+func make_followers_stationary(man: Man) -> void:
+	for man_2: Man in men.get_children():
+		if man_2.mode == Man.Mode.Follow and man_2.follow == man:
+			man_2.mode = Man.Mode.Stationary

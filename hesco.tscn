@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://c8nte0a2at0hn"]
+
+[ext_resource type="Script" path="res://hesco.gd" id="1_dh4cl"]
+[ext_resource type="PackedScene" uid="uid://c22x1360syegi" path="res://hesco.glb" id="1_ggk8l"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_crk5s"]
+size = Vector3(1.59082, 3.07178, 1.58789)
+
+[node name="Hesco" type="StaticBody3D"]
+script = ExtResource("1_dh4cl")
+
+[node name="Model" parent="." instance=ExtResource("1_ggk8l")]
+transform = Transform3D(1.70944, 0, 0, 0, 3.33982, 0, 0, 0, 1.72119, -0.0957174, 0, 0.066893)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 1.53589, 2.08165e-12)
+shape = SubResource("BoxShape3D_crk5s")

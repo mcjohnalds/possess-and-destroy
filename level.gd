@@ -65,10 +65,20 @@ var suspicious_sound_has_been_investigated := true
 @onready var sniper_rifle_scene := preload("res://sniper_rifle.tscn")
 @onready var shotgun_scene := preload("res://shotgun.tscn")
 @onready var world_environment: WorldEnvironment = $Lighting/WorldEnvironment
+@onready var hescos: Node3D = $NavigationRegion3D/Hescos
 
 
 func _ready() -> void:
 	world_environment.environment.sdfgi_enabled = true
+	for hesco: Hesco in hescos.get_children():
+		hesco.rotate_y(randi_range(0, 3) * TAU / 4.0 + randf_range(-0.01, 0.01) * TAU)
+		hesco.rotate_x(randf_range(-0.005, 0.005) * TAU)
+		hesco.rotate_z(randf_range(-0.005, 0.005) * TAU)
+		hesco.global_position.x += randf_range(-0.02, 0.02)
+		hesco.global_position.z += randf_range(-0.02, 0.02)
+		hesco.model.scale.x *= 1.0 + randf_range(-0.02, 0.02)
+		hesco.model.scale.y *= 1.0 + randf_range(-0.02, 0.02)
+		hesco.model.scale.z *= 1.0 + randf_range(-0.02, 0.02)
 	for man: Man in men.get_children():
 		man.navigation_agent.path_desired_distance = 0.5
 		man.navigation_agent.target_desired_distance = 0.5

@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://b4jrn1g2wkrh7"]
+
+[ext_resource type="PackedScene" uid="uid://b6acdqsmkfr14" path="res://damaged_couch.glb" id="1_gu7d6"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lgalv"]
+size = Vector3(2.68457, 0.585938, 1.02319)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_uoj48"]
+size = Vector3(0.299438, 0.331299, 1.02319)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_pgfck"]
+size = Vector3(2.68457, 0.585938, 0.328995)
+
+[node name="DamagedCouch" type="StaticBody3D"]
+
+[node name="Root Scene" parent="." instance=ExtResource("1_gu7d6")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.292969, -0.155884)
+shape = SubResource("BoxShape3D_lgalv")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.32318, 0.752434, -0.155884)
+shape = SubResource("BoxShape3D_uoj48")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3402, 0.752434, -0.155884)
+shape = SubResource("BoxShape3D_uoj48")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.983496, 0.180931, 0, -0.180931, 0.983496, 0, 0.864083, -0.572553)
+shape = SubResource("BoxShape3D_pgfck")

@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://b4xluy0tqsb40"]
+
+[ext_resource type="PackedScene" uid="uid://bg0f6kc7bpsc6" path="res://concrete_barrier.glb" id="1_7yut3"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3k20g"]
+size = Vector3(1.965, 1.206, 0.332)
+
+[node name="ConcreteBarrier" type="StaticBody3D"]
+
+[node name="concrete_barrier" parent="." instance=ExtResource("1_7yut3")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.601452, 0)
+shape = SubResource("BoxShape3D_3k20g")

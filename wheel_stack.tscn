@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://duf2n0op8tvkr"]
+
+[ext_resource type="PackedScene" uid="uid://c3gs6twbpfbx3" path="res://wheel_stack.glb" id="1_c0wqs"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_x3n6n"]
+height = 0.596362
+radius = 0.309785
+
+[node name="WheelStack" type="StaticBody3D"]
+
+[node name="Root Scene" parent="." instance=ExtResource("1_c0wqs")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.306112, 0)
+shape = SubResource("CylinderShape3D_x3n6n")

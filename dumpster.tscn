@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://s3ogn0x85cay"]
+
+[ext_resource type="PackedScene" uid="uid://us2bj1qmo0c2" path="res://dumpster.glb" id="1_dmwov"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cqqiv"]
+size = Vector3(2.45898, 1.59558, 1.2879)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ioq51"]
+size = Vector3(2.45898, 0.279272, 1.31209)
+
+[node name="Dumpster" type="StaticBody3D"]
+
+[node name="dumpster" parent="." instance=ExtResource("1_dmwov")]
+
+[node name="CollisionShape3D1" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.797791, 0.00918579)
+shape = SubResource("BoxShape3D_cqqiv")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.986937, -0.161104, 0, 0.161104, 0.986937, 0, 1.63319, 0.00199121)
+shape = SubResource("BoxShape3D_ioq51")

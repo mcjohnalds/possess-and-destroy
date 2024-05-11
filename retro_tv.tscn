@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://cg3yos3lb0vpb"]
+
+[ext_resource type="PackedScene" uid="uid://bx3n3dv40b41g" path="res://retro_tv.glb" id="1_tccgv"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ahibn"]
+size = Vector3(0.923767, 0.642944, 0.47998)
+
+[node name="RetroTv" type="StaticBody3D"]
+
+[node name="retro_tv" parent="." instance=ExtResource("1_tccgv")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.305504, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.129303, 0.315496, 0.19458)
+shape = SubResource("BoxShape3D_ahibn")

@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3 uid="uid://be8ubhjjucgtl"]
+
+[ext_resource type="PackedScene" uid="uid://b1k7p2wqgx6bo" path="res://jeep.glb" id="1_0eee3"]
+[ext_resource type="Texture2D" uid="uid://dpgyk30x65lb0" path="res://addons/kenney_particle_pack/smoke_08.png" id="2_wngfa"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_h3uy0"]
+size = Vector3(1.63269, 0.916138, 4.10548)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ej5bt"]
+size = Vector3(1.63269, 0.916138, 0.0584431)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_l4i4h"]
+size = Vector3(0.881607, 0.925751, 0.338259)
+
+[node name="Jeep" type="StaticBody3D"]
+
+[node name="jeep" parent="." instance=ExtResource("1_0eee3")]
+
+[node name="CollisionShape3D1" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0692749, 0.903381, 0.18589)
+shape = SubResource("BoxShape3D_h3uy0")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.883774, 0.467914, 0, -0.467914, 0.883774, 0.0692751, 1.74341, 0.801994)
+shape = SubResource("BoxShape3D_ej5bt")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.219582, 1.21968, -2.02526)
+shape = SubResource("BoxShape3D_l4i4h")
+
+[node name="Decal37" type="Decal" parent="."]
+transform = Transform3D(1.53338e-07, 0, -0.318906, 0, 0.318906, 0, 0.318906, 0, 1.53338e-07, 0, 1.13853, 0)
+size = Vector3(30.6172, 8.89343, 8.51263)
+texture_albedo = ExtResource("2_wngfa")
+modulate = Color(0.88, 0.714707, 0.4488, 1)

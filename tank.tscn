@@ -1,0 +1,78 @@
+[gd_scene load_steps=12 format=3 uid="uid://dyg4qf0l0t1ql"]
+
+[ext_resource type="PackedScene" uid="uid://bbn2lndxyotku" path="res://tank.glb" id="1_u1qy1"]
+[ext_resource type="Texture2D" uid="uid://dpgyk30x65lb0" path="res://addons/kenney_particle_pack/smoke_08.png" id="2_y2kr6"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_n8jfb"]
+size = Vector3(6.5522, 1.41068, 4.65967)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_c3ah8"]
+size = Vector3(6.46322, 0.976326, 5.04468)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cg6h5"]
+size = Vector3(6.46322, 0.976326, 5.04468)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_gkug5"]
+size = Vector3(1.71691, 0.52869, 5.04468)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jr3g0"]
+size = Vector3(1.71691, 0.52869, 5.04468)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ekllj"]
+size = Vector3(3.31568, 0.763063, 2.83008)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xud0f"]
+size = Vector3(5.365, 0.250732, 0.244507)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bcnl8"]
+size = Vector3(0.649966, 0.663147, 1.50488)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rv3ui"]
+size = Vector3(1.12109, 0.312531, 0.642761)
+
+[node name="Tank" type="StaticBody3D"]
+
+[node name="tank" parent="." instance=ExtResource("1_u1qy1")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 0)
+
+[node name="CollisionShape3D1" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.0529785, 0.702469, 0.290459)
+shape = SubResource("BoxShape3D_n8jfb")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.0529785, 1.35451, -0.540562)
+shape = SubResource("BoxShape3D_c3ah8")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.0529785, 1.35451, -0.540562)
+shape = SubResource("BoxShape3D_cg6h5")
+
+[node name="CollisionShape3D4" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0.257504, 0.966277, 1.12559e-08, -0.966277, 0.257504, -4.22373e-08, 0.0529784, 1.34882, 3.4831)
+shape = SubResource("BoxShape3D_gkug5")
+
+[node name="CollisionShape3D5" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.0529784, 1.12381, 3.5801)
+shape = SubResource("BoxShape3D_jr3g0")
+
+[node name="CollisionShape3D6" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0.0529785, 2.21721, 0.136528)
+shape = SubResource("BoxShape3D_ekllj")
+
+[node name="CollisionShape3D7" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, -0.271743, 0.96237, -1.18783e-08, -0.96237, -0.271743, -4.20665e-08, 0.0243531, 3.00808, 4.61593)
+shape = SubResource("BoxShape3D_xud0f")
+
+[node name="CollisionShape3D8" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 1.71294, 2.17519, -3.54174)
+shape = SubResource("BoxShape3D_bcnl8")
+
+[node name="CollisionShape3D9" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 1.98714, 1.99988, -1.40534)
+shape = SubResource("BoxShape3D_rv3ui")
+
+[node name="Decal37" type="Decal" parent="."]
+transform = Transform3D(1.53338e-07, 0, -0.318906, 0, 0.318906, 0, 0.318906, 0, 1.53338e-07, 0, 2.11704, 0)
+size = Vector3(30.6172, 14.2769, 18.4395)
+texture_albedo = ExtResource("2_y2kr6")
+modulate = Color(0.88, 0.714707, 0.4488, 1)

@@ -1,0 +1,18 @@
+[gd_resource type="StandardMaterial3D" load_steps=6 format=3 uid="uid://ucjc0jk4d7ph"]
+
+[ext_resource type="Texture2D" uid="uid://droqx2cda7kpp" path="res://wood_barn_wall_03_2k/wood_barn_wall_03_color_2k.png" id="1_k8de0"]
+[ext_resource type="Texture2D" uid="uid://dkyjvc8pn3x67" path="res://wood_barn_wall_03_2k/wood_barn_wall_03_ambient_occlusion_2k.png" id="2_rybpx"]
+[ext_resource type="Texture2D" uid="uid://dhrrs0xkqbn3b" path="res://wood_barn_wall_03_2k/wood_barn_wall_03_height_2k.png" id="3_canu7"]
+[ext_resource type="Texture2D" uid="uid://bp46gh7kbd3d1" path="res://wood_barn_wall_03_2k/wood_barn_wall_03_normal_gl_2k.png" id="4_1181e"]
+[ext_resource type="Texture2D" uid="uid://dej12vkwmwl87" path="res://wood_barn_wall_03_2k/wood_barn_wall_03_roughness_2k.png" id="5_qxdfc"]
+
+[resource]
+albedo_texture = ExtResource("1_k8de0")
+roughness_texture = ExtResource("5_qxdfc")
+normal_enabled = true
+normal_texture = ExtResource("4_1181e")
+ao_enabled = true
+ao_texture = ExtResource("2_rybpx")
+heightmap_enabled = true
+heightmap_texture = ExtResource("3_canu7")
+uv1_scale = Vector3(1, 2, 2)

@@ -54,6 +54,8 @@ Todo:
 - [x] Player has energy bar. Possession regains 100% energy. Activating
   invisibility subtracts 100% from invisibility. Killing regains 50%.
   Invisibility lasts 30 seconds.
+- [ ] Make map pretty
+- [ ] Create sand decals based on https://ambientcg.com/view?id=Ground033
 - [ ] Fix bug where enemy does no damage when right up in player face
 - [ ] Touching an enemy will end invisiblity.
 - [ ] Player can die.

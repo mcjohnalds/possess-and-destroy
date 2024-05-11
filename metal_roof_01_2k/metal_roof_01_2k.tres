@@ -1,0 +1,20 @@
+[gd_resource type="StandardMaterial3D" load_steps=7 format=3 uid="uid://x20habcupri7"]
+
+[ext_resource type="Texture2D" uid="uid://w7wqu0d002pd" path="res://metal_roof_01_2k/metal_roof_01_color_2k.png" id="1_83n2f"]
+[ext_resource type="Texture2D" uid="uid://do5h7t2fx5owr" path="res://metal_roof_01_2k/metal_roof_01_ambient_occlusion_2k.png" id="2_udy5r"]
+[ext_resource type="Texture2D" uid="uid://cuv318pu0m7qr" path="res://metal_roof_01_2k/metal_roof_01_height_2k.png" id="3_p8er4"]
+[ext_resource type="Texture2D" uid="uid://da3rnmoof2tc4" path="res://metal_roof_01_2k/metal_roof_01_metallic_2k.png" id="4_e2ut8"]
+[ext_resource type="Texture2D" uid="uid://bauubx6pe641p" path="res://metal_roof_01_2k/metal_roof_01_normal_gl_2k.png" id="5_8xwfc"]
+[ext_resource type="Texture2D" uid="uid://k3sywdhlc6ri" path="res://metal_roof_01_2k/metal_roof_01_roughness_2k.png" id="6_hwg6p"]
+
+[resource]
+albedo_texture = ExtResource("1_83n2f")
+metallic = 1.0
+metallic_texture = ExtResource("4_e2ut8")
+roughness_texture = ExtResource("6_hwg6p")
+normal_enabled = true
+normal_texture = ExtResource("5_8xwfc")
+ao_enabled = true
+ao_texture = ExtResource("2_udy5r")
+heightmap_enabled = true
+heightmap_texture = ExtResource("3_p8er4")

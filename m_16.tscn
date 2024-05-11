@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://cdl0koy3r7fiq"]
+[gd_scene load_steps=11 format=3 uid="uid://cdl0koy3r7fiq"]
 
 [ext_resource type="Script" path="res://gun.gd" id="1_tfeoc"]
 [ext_resource type="Texture2D" uid="uid://dolsmonda4njl" path="res://addons/kenney_particle_pack/fire_02.png" id="1_xjp86"]
 [ext_resource type="PackedScene" uid="uid://di14cmdia7qtu" path="res://m_16.glb" id="2_bw0wy"]
+[ext_resource type="Texture2D" uid="uid://dpgyk30x65lb0" path="res://addons/kenney_particle_pack/smoke_08.png" id="2_xcccy"]
 [ext_resource type="AudioStream" uid="uid://5nuhnh2wdjbn" path="res://gun_shot.wav" id="4_cuppa"]
 
 [sub_resource type="Curve" id="Curve_7ia0f"]
@@ -38,6 +39,12 @@ cap_bottom = false
 
 [node name="M16" type="Node3D" groups=["guns"]]
 script = ExtResource("1_tfeoc")
+
+[node name="Decal37" type="Decal" parent="."]
+transform = Transform3D(4.33126e-07, 0, -1, 0, 1, 0, 1, 0, 4.33126e-07, -1.2565e-07, 0.0830078, -0.2901)
+size = Vector3(1.3302, 0.421875, 0.135742)
+texture_albedo = ExtResource("2_xcccy")
+modulate = Color(0.878431, 0.713726, 0.447059, 0.0823529)
 
 [node name="MuzzleFlash" type="Node3D" parent="."]
 transform = Transform3D(0.557019, 0, 0, 0, 0.557019, 0, 0, 0, 0.557019, 0, 0.144784, -0.976012)

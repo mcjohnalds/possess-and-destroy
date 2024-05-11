@@ -1,9 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://b18din3kidcn6"]
+[gd_scene load_steps=11 format=3 uid="uid://b18din3kidcn6"]
 
 [ext_resource type="Script" path="res://gun.gd" id="1_fx2vr"]
 [ext_resource type="Texture2D" uid="uid://d3aft8v1l17k3" path="res://addons/kenney_particle_pack/fire_01.png" id="2_66tqi"]
 [ext_resource type="PackedScene" uid="uid://bcmkfsug1jy84" path="res://mossberg.glb" id="3_rwd5k"]
 [ext_resource type="AudioStream" uid="uid://df58mhmh01t0a" path="res://shotgun.ogg" id="4_qlmf2"]
+[ext_resource type="Texture2D" uid="uid://dpgyk30x65lb0" path="res://addons/kenney_particle_pack/smoke_08.png" id="5_h0gtd"]
 
 [sub_resource type="Curve" id="Curve_kg1db"]
 _data = [Vector2(0, 0.0334573), 0.0, 5.44344, 0, 0, Vector2(0.214634, 1), 0.0994017, 0.0994017, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -63,3 +64,9 @@ transform = Transform3D(-1.07253e-08, 0, 0.245365, 0, 0.245365, 0, -0.245365, 0,
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.113549, -1.08716)
 stream = ExtResource("4_qlmf2")
 volume_db = -8.0
+
+[node name="Decal37" type="Decal" parent="."]
+transform = Transform3D(4.33126e-07, 0, -1, 0, 1, 0, 1, 0, 4.33126e-07, -2.21143e-07, 0.0487061, -0.510574)
+size = Vector3(1.9097, 0.255127, 0.135742)
+texture_albedo = ExtResource("5_h0gtd")
+modulate = Color(0.878431, 0.713726, 0.447059, 0.0823529)

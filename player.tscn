@@ -214,32 +214,7 @@ offset_top = -40.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="SuspiciousPanel" type="Panel" parent="HUD/BottomRight" index="0"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = -461.5
-offset_top = -110.0
-offset_right = 40.5
-offset_bottom = -55.0
-grow_vertical = 0
-
-[node name="SuspiciousLabel" type="Label" parent="HUD/BottomRight" index="1"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = -451.0
-offset_top = -108.0
-offset_right = -153.0
-offset_bottom = -63.0
-grow_vertical = 0
-theme_override_font_sizes/font_size = 28
-text = "looking suspicious"
-vertical_alignment = 2
-
-[node name="PossessingPanel" type="Panel" parent="HUD/BottomRight" index="2"]
+[node name="PossessingPanel" type="Panel" parent="HUD/BottomRight" index="0"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -250,7 +225,7 @@ offset_right = 39.5
 offset_bottom = 0.5
 grow_vertical = 0
 
-[node name="PossessingLabel" type="Label" parent="HUD/BottomRight" index="3"]
+[node name="PossessingLabel" type="Label" parent="HUD/BottomRight" index="1"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -264,7 +239,7 @@ theme_override_font_sizes/font_size = 28
 text = "identity: Civilian"
 vertical_alignment = 2
 
-[node name="Compromised" type="Control" parent="HUD/BottomRight" index="4"]
+[node name="Compromised" type="Control" parent="HUD/BottomRight" index="2"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -301,6 +276,102 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 20
 text = "compromised"
 horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="Suspicious" type="Control" parent="HUD/BottomRight" index="3"]
+anchors_preset = 0
+offset_top = -57.0
+offset_right = 40.0
+offset_bottom = -17.0
+
+[node name="Panel" type="Panel" parent="HUD/BottomRight/Suspicious" index="0"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -461.5
+offset_top = -110.0
+offset_right = 40.5
+offset_bottom = -55.0
+grow_vertical = 0
+
+[node name="Label" type="Label" parent="HUD/BottomRight/Suspicious" index="1"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -451.0
+offset_top = -108.0
+offset_right = -153.0
+offset_bottom = -63.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 28
+text = "looking suspicious"
+vertical_alignment = 2
+
+[node name="EnemiesLeft" type="Control" parent="HUD/BottomRight" index="4"]
+anchors_preset = 0
+offset_top = -1.0
+offset_right = 40.0
+offset_bottom = 39.0
+
+[node name="Panel" type="Panel" parent="HUD/BottomRight/EnemiesLeft" index="0"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -461.5
+offset_top = -110.0
+offset_right = 40.5
+offset_bottom = -55.0
+grow_vertical = 0
+
+[node name="Label" type="Label" parent="HUD/BottomRight/EnemiesLeft" index="1"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -451.0
+offset_top = -108.0
+offset_right = -153.0
+offset_bottom = -63.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 28
+text = "enemies left: 10"
+vertical_alignment = 2
+
+[node name="Ammo" type="Control" parent="HUD" index="13"]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 40.0
+grow_vertical = 0
+
+[node name="Panel" type="Panel" parent="HUD/Ammo" index="0"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -0.5
+offset_top = -167.0
+offset_right = 501.5
+offset_bottom = -112.0
+grow_vertical = 0
+
+[node name="Label" type="Label" parent="HUD/Ammo" index="1"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -165.0
+offset_right = 308.0
+offset_bottom = -120.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 28
+text = "ammo: 30"
 vertical_alignment = 2
 
 [node name="M16AudioStreamPlayer" type="AudioStreamPlayer" parent="." index="11"]

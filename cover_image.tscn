@@ -1,0 +1,86 @@
+[gd_scene load_steps=12 format=3 uid="uid://bm8hxiikxd4pt"]
+
+[ext_resource type="Environment" uid="uid://ng6uovx21442" path="res://environment.tres" id="2_xi6fe"]
+[ext_resource type="CameraAttributesPractical" uid="uid://nf2n85jai8dd" path="res://camera_attributes_practical.tres" id="3_pmawn"]
+[ext_resource type="Texture2D" uid="uid://dbvbmq8sygfw0" path="res://addons/kenney_particle_pack/smoke_01.png" id="4_15bck"]
+[ext_resource type="Texture2D" uid="uid://3lyybiyokess" path="res://addons/kenney_particle_pack/dirt_01.png" id="5_q7igl"]
+[ext_resource type="PackedScene" uid="uid://di14cmdia7qtu" path="res://m_16.glb" id="6_s3tpw"]
+[ext_resource type="Material" uid="uid://bsbydtecggyco" path="res://sand.tres" id="7_bt33k"]
+[ext_resource type="FontFile" uid="uid://61ne5rpld1yx" path="res://PermanentMarker-Regular.ttf" id="8_n25o3"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_af1mw"]
+material = ExtResource("7_bt33k")
+size = Vector2(1000, 1000)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_kljc2"]
+blend_mode = 2
+
+[sub_resource type="Gradient" id="Gradient_r8hqa"]
+offsets = PackedFloat32Array(0.0692641, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0.384314, 0.454902, 0.54902, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_crk20"]
+gradient = SubResource("Gradient_r8hqa")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[node name="ConverImage" type="Node3D"]
+
+[node name="Lighting" type="Node" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting"]
+environment = ExtResource("2_xi6fe")
+camera_attributes = ExtResource("3_pmawn")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Lighting"]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866026, -0.5, 0.75, -0.433013, 0, 5, 0)
+shadow_enabled = true
+directional_shadow_max_distance = 250.0
+
+[node name="Decal20" type="Decal" parent="."]
+transform = Transform3D(0.551398, 0, 0.551398, 0, 0.779794, 0, -0.551398, 0, 0.551398, 0.119154, 0, 0.0221254)
+size = Vector3(2.94629, 2, 1.49609)
+texture_albedo = ExtResource("4_15bck")
+modulate = Color(0.78, 0.61893, 0.3198, 1)
+albedo_mix = 0.8
+
+[node name="Decal21" type="Decal" parent="."]
+transform = Transform3D(0.328739, 0, 0.328739, 0, 0.464907, 0, -0.328739, 0, 0.328739, 0.265766, 0, -0.124487)
+size = Vector3(3.83826, 2, 2.70801)
+texture_albedo = ExtResource("5_q7igl")
+modulate = Color(0.45, 0.036, 0.036, 1)
+
+[node name="M16" parent="." instance=ExtResource("6_s3tpw")]
+transform = Transform3D(0.868808, 0.362055, -0.340582, -0.407699, 0.911385, -0.0711741, 0.284361, 0.200501, 0.938533, 0, 0, 0)
+
+[node name="CameraParent" type="Node3D" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="CameraParent"]
+transform = Transform3D(0.0627905, -3.69999e-16, -0.998027, 3.48787e-16, 1, -3.48787e-16, 0.998027, -3.26198e-16, 0.0627905, -0.652, 0.26, 2.08165e-12)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_af1mw")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Vignette" type="TextureRect" parent="UI"]
+material = SubResource("CanvasItemMaterial_kljc2")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_crk20")
+
+[node name="Title" type="Label" parent="UI"]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -477.0
+offset_top = 256.0
+offset_right = 477.0
+offset_bottom = 399.0
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("8_n25o3")
+theme_override_font_sizes/font_size = 150
+text = "Possess and Destroy"

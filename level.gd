@@ -226,15 +226,25 @@ func _process(delta: float) -> void:
 	player.energy_label.text = "energy: %s%%" % ceilf(
 		player.energy * 100.0
 	)
+	player.ammo_label.text = "ammo: %s" % player.ammo
+	player.ammo_control.visible = player.gun != null
 	player.compromised_control.visible = player_identity_compromised
 	player.hurt_overlay.modulate.a -= delta
 	player.hurt_overlay.modulate.a = clampf(
 		player.hurt_overlay.modulate.a, 0.0, 10.0
 	)
-	player.suspicious_label.visible = (
+	player.suspicious_control.visible = (
 		Level.get_ticks_sec() - suspicious_sound_heard_at
-		< LOOKING_SUSPICIOUS_DURATION
+			< LOOKING_SUSPICIOUS_DURATION
+		or player_identity_compromised
 	)
+
+	var enemies_left := 0
+	for man: Man in men.get_children():
+		if is_instance_valid(man) and man.alive:
+			enemies_left += 1
+	player.enemies_left_label.text = "enemies left: %s" % enemies_left
+
 	process_use()
 	process_zoom()
 	process_vignette()
@@ -242,7 +252,7 @@ func _process(delta: float) -> void:
 		msg.modulate.a = lerpf(
 			1.0,
 			0.6,
-			clampf((Level.get_ticks_sec() - msg.created_at) / 2.0, 0.0, 1.0)
+			clampf((Level.get_ticks_sec() - msg.created_at) / 8.0, 0.0, 1.0)
 		)
 	process_player_shooting()
 	process_man_shooting()
@@ -328,14 +338,20 @@ func process_use() -> void:
 		if player.gun:
 			player.gun.queue_free()
 			player.gun_transform.remove_child(player.gun)
-		var gun_scene := (
-			m_16_scene
-				if targeted_man.gun_type == GunType.M16
-			else sniper_rifle_scene
-				if targeted_man.gun_type == GunType.SNIPER_RIFLE
-			else shotgun_scene
-		)
+		var gun_scene: PackedScene
+		var ammo: int
+		match targeted_man.gun_type:
+			GunType.M16:
+				gun_scene = m_16_scene
+				ammo = 30
+			GunType.SHOTGUN:
+				gun_scene = shotgun_scene
+				ammo = 8
+			GunType.SNIPER_RIFLE:
+				gun_scene = sniper_rifle_scene
+				ammo = 5
 		player.gun = gun_scene.instantiate()
+		player.ammo = ammo
 		player.gun_transform.add_child(player.gun)
 		if player.invisible:
 			apply_material_to_player_gun(almost_invisible)
@@ -370,6 +386,7 @@ func process_player_shooting() -> void:
 		and Input.is_action_pressed("primary")
 		and Level.get_ticks_sec() - player.gun.last_fired_at
 			> get_gun_cooldown(player.gun)
+		and player.ammo > 0
 	):
 		get_gun_audio_stream_player(player.gun).play()
 		var hits := fire_gun(
@@ -404,6 +421,7 @@ func process_player_shooting() -> void:
 		suspicious_sound_position = player.global_position
 		suspicious_sound_heard_at = Level.get_ticks_sec()
 		suspicious_sound_has_been_investigated  = false
+		player.ammo -= 1
 		if player.invisible:
 			make_player_visible()
 
@@ -932,12 +950,16 @@ func physics_process_man(delta: float) -> void:
 		)
 
 		var next_aim_progress := man.aim_progress
-		if is_engaging and man.aim_progress < 0.5:
-			next_aim_progress += delta / 1.2
-		elif is_engaging and can_see_player:
+		if is_engaging and can_see_player:
 			var d := clampf(distance_to_player, 1.0, 50.0)
 			var r := remap(d, 1.0, 50.0, 0.6, 1.5)
 			next_aim_progress += delta / r
+		elif is_engaging and man.aim_progress <= 0.5:
+			next_aim_progress += minf(delta / 1.2, 0.5)
+		elif (
+			ai_team_state != AiTeamState.PATROLLING and man.aim_progress <= 0.5
+		):
+			next_aim_progress += minf(delta / 2.0, 0.5)
 		else:
 			next_aim_progress -= delta / 1.2
 		next_aim_progress = clampf(next_aim_progress, 0.0, 1.0)
@@ -1181,7 +1203,10 @@ func get_gun_damage(gun: Gun, distance: float, headshot: bool) -> float:
 			var u := 0.2 * m
 			return clampf(remap(distance, 5.0, 20.0, u, l), l, u)
 		GunType.SNIPER_RIFLE:
-			return 1.0
+			var m := 3.0 if headshot else 1.0
+			var l := 0.5 * m
+			var u := 1.0 * m
+			return clampf(remap(distance, 5.0, 20.0, u, l), l, u)
 		GunType.SHOTGUN:
 			var l := 0.025
 			var u := 0.2

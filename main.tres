@@ -1,7 +1,8 @@
-[gd_resource type="Theme" load_steps=4 format=3 uid="uid://bqnr42uqoyrcn"]
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://bqnr42uqoyrcn"]
 
 [ext_resource type="StyleBox" uid="uid://dnx5ix7jjwgb7" path="res://button_style_box.tres" id="1_fgf3t"]
 [ext_resource type="FontFile" uid="uid://ctgl106dehd5x" path="res://IndieFlower-Regular.ttf" id="1_jsx7g"]
+[ext_resource type="StyleBox" uid="uid://dps1oawouygev" path="res://button_style_box_seconary.tres" id="3_rw1ro"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4l4b4"]
 bg_color = Color(0.976471, 0.917647, 0.819608, 0.545098)
@@ -26,3 +27,9 @@ Button/styles/normal = ExtResource("1_fgf3t")
 Button/styles/pressed = ExtResource("1_fgf3t")
 Label/colors/font_color = Color(0.160784, 0.027451, 0.00392157, 1)
 Panel/styles/panel = SubResource("StyleBoxFlat_4l4b4")
+secondary/base_type = &"Button"
+secondary/styles/disabled = ExtResource("3_rw1ro")
+secondary/styles/focus = ExtResource("3_rw1ro")
+secondary/styles/hover = ExtResource("3_rw1ro")
+secondary/styles/normal = ExtResource("3_rw1ro")
+secondary/styles/pressed = ExtResource("3_rw1ro")

@@ -113,7 +113,21 @@ theme_override_font_sizes/font_size = 28
 text = "energy: 30%"
 vertical_alignment = 2
 
-[node name="HealthPanel" type="Panel" parent="HUD" index="6"]
+[node name="PowerCostLabel" type="Label" parent="HUD" index="6"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 186.0
+offset_top = -116.0
+offset_right = 484.0
+offset_bottom = -71.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 20
+text = "power cost: 25%"
+horizontal_alignment = 2
+vertical_alignment = 2
+
+[node name="HealthPanel" type="Panel" parent="HUD" index="7"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -122,20 +136,20 @@ offset_top = -55.0
 offset_right = 501.5
 grow_vertical = 0
 
-[node name="HealthLabel" type="Label" parent="HUD" index="7"]
+[node name="HealthLabel" type="Label" parent="HUD" index="8"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 10.0
-offset_top = -53.0
+offset_top = -50.0
 offset_right = 308.0
-offset_bottom = -8.0
+offset_bottom = -5.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 28
 text = "health: 30%"
 vertical_alignment = 2
 
-[node name="UsePanel" type="Panel" parent="HUD" index="8"]
+[node name="UsePanel" type="Panel" parent="HUD" index="9"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -166,29 +180,29 @@ text = "press E to POSSESS"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Crosshair" type="Label" parent="HUD" index="9"]
+[node name="Crosshair" type="Label" parent="HUD" index="10"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -22.0
-offset_right = 20.0
-offset_bottom = 20.0
+offset_left = -19.0
+offset_top = -35.0
+offset_right = 21.0
+offset_bottom = 31.0
 grow_horizontal = 2
 grow_vertical = 2
-pivot_offset = Vector2(20, 21)
-theme_override_font_sizes/font_size = 30
+pivot_offset = Vector2(19.06, 34.98)
+theme_override_font_sizes/font_size = 45
 text = "×"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Messages" type="Panel" parent="HUD" index="10"]
+[node name="Messages" type="Panel" parent="HUD" index="11"]
 offset_right = 1017.0
 offset_bottom = 123.0
 
-[node name="BottomRight" type="Control" parent="HUD" index="11"]
+[node name="BottomRight" type="Control" parent="HUD" index="12"]
 layout_mode = 3
 anchors_preset = 3
 anchor_left = 1.0
@@ -280,9 +294,9 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 288.0
-offset_top = -51.0
+offset_top = -50.0
 offset_right = 485.0
-offset_bottom = -13.0
+offset_bottom = -12.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 20
 text = "compromised"

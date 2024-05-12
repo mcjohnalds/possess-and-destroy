@@ -50,3 +50,12 @@ func go_to_win() -> void:
 	var win: Win = win_scene.instantiate()
 	add_child(win)
 	win.restart_button.button_down.connect(go_to_start)
+
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		if get_child(0) is Start:
+			get_tree().quit()
+		else:
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			go_to_start()

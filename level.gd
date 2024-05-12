@@ -126,9 +126,8 @@ func _ready() -> void:
 	player.setup()
 	player.invisibility_overlay.visible = false
 
-	if global.graphics == Global.Graphics.LOW:
-		for decal: Decal in find_children("*", "Decal", true, false):
-			decal.visible = false
+	for decal: Decal in find_children("*", "Decal", true, false):
+		decal.visible = global.decals_enabled()
 
 	# Debug code
 	# get_tree().create_timer(2.0).timeout.connect(func() -> void:
@@ -467,15 +466,16 @@ func process_guns(delta: float) -> void:
 	var max_accuracy := 1.0
 	if player._direction != Vector3.ZERO:
 		max_accuracy = 0.9
-	if player.sprint_ability._active:
-		max_accuracy = 0.6
 	if player.gun:
 		player.gun.accuracy = clampf(
 			player.gun.accuracy, 0.0, max_accuracy
 		)
-		player.crosshair.scale = (
-			Vector2(1.0, 1.0) * (1.0 + 3.0 * (1.0 - player.gun.accuracy))
-		)
+		if player.gun and player.gun.gun_type == GunType.M16:
+			player.crosshair.scale = (
+				Vector2(1.0, 1.0) * (1.0 + 3.0 * (1.0 - player.gun.accuracy))
+			)
+		else:
+			player.crosshair.scale = Vector2(1.0, 1.0)
 
 	for gun: Gun in get_tree().get_nodes_in_group("guns"):
 		if not is_instance_valid(gun):

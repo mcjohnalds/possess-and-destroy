@@ -10,6 +10,11 @@ var resolution := Resolution.HIGH
 @onready var music_asp: AudioStreamPlayer = $AudioStreamPlayer
 
 
+func _ready() -> void:
+	set_graphics_high()
+	set_resolution_high()
+
+
 func set_graphics_low() -> void:
 	graphics = Graphics.LOW
 	environment.sdfgi_enabled = false
@@ -55,6 +60,10 @@ func set_resolution_high() -> void:
 	get_viewport().scaling_3d_scale = 1.0
 
 
+func decals_enabled() -> bool:
+	return graphics > Global.Graphics.LOW
+
+
 func _input(event: InputEvent) -> void:
-	if OS.is_debug_build() and event.is_action_pressed("ui_cancel"):
+	if  OS.is_debug_build() and event.is_action_pressed("debug_quit"):
 		get_tree().quit()

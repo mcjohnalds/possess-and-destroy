@@ -7,6 +7,7 @@ const BUTTON_STYLE_BOXES = ["normal", "hover", "pressed", "disabled", "focus"]
 )
 @onready var camera_parent: Node3D = $CameraParent
 @onready var start_button: Button = $UI/StartButton
+@onready var quit_button: Button = $UI/QuitButton
 @onready var graphics_low_button: Button = $UI/Graphics/LowButton
 @onready var graphics_med_button: Button = $UI/Graphics/MedButton
 @onready var graphics_high_button: Button = $UI/Graphics/HighButton
@@ -16,33 +17,34 @@ const BUTTON_STYLE_BOXES = ["normal", "hover", "pressed", "disabled", "focus"]
 
 
 func _ready() -> void:
-	global.set_graphics_high()
-	global.set_resolution_high()
 	graphics_low_button.button_down.connect(func() -> void:
 		global.set_graphics_low()
-		update_buttons()
+		update_ui()
 	)
 	graphics_med_button.button_down.connect(func() -> void:
 		global.set_graphics_medium()
-		update_buttons()
+		update_ui()
 	)
 	graphics_high_button.button_down.connect(func() -> void:
 		global.set_graphics_high()
-		update_buttons()
+		update_ui()
 	)
 	resolution_low_button.button_down.connect(func() -> void:
 		global.set_resolution_low()
-		update_buttons()
+		update_ui()
 	)
 	resolution_med_button.button_down.connect(func() -> void:
 		global.set_resolution_medium()
-		update_buttons()
+		update_ui()
 	)
 	resolution_high_button.button_down.connect(func() -> void:
 		global.set_resolution_high()
-		update_buttons()
+		update_ui()
 	)
-	update_buttons()
+	quit_button.button_down.connect(func() -> void:
+		get_tree().quit()
+	)
+	update_ui()
 
 
 func _process(_delta: float) -> void:
@@ -54,7 +56,7 @@ func _process(_delta: float) -> void:
 	)
 
 
-func update_buttons() -> void:
+func update_ui() -> void:
 	set_button_selected(
 		graphics_low_button, global.graphics == Global.Graphics.LOW
 	)
@@ -73,6 +75,8 @@ func update_buttons() -> void:
 	set_button_selected(
 		resolution_high_button, global.resolution == Global.Resolution.HIGH
 	)
+	for decal: Decal in find_children("*", "Decal", true, false):
+		decal.visible = global.decals_enabled()
 
 
 func set_button_selected(button: Button, selected: bool) -> void:

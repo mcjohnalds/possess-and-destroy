@@ -1,3 +1,5 @@
+Made with Godot 4.2.2.
+
 Character Controller (MIT) Godot asset by Expresso Bits.
 
 MAN.BODY (CC0) model by Семён Хазам via poly.pizza.

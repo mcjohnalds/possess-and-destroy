@@ -7,3 +7,4 @@ extends Node3D
 
 func _ready() -> void:
 	asp.play(2.6)
+	global.music_asp.volume_db = 0

@@ -81,6 +81,7 @@ var suspicious_sound_has_been_investigated := true
 
 
 func _ready() -> void:
+	global.music_asp.volume_db = -10
 	for i in range(men.get_child_count()):
 		var prefix := "pvt"
 		if i % 4 == 0:

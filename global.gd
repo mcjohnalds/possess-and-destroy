@@ -7,6 +7,7 @@ enum Resolution { LOW, MEDIUM, HIGH }
 var graphics := Graphics.HIGH
 var resolution := Resolution.HIGH
 @onready var environment: Environment = preload("res://environment.tres")
+@onready var music_asp: AudioStreamPlayer = $AudioStreamPlayer
 
 
 func set_graphics_low() -> void:

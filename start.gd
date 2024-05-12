@@ -15,13 +15,9 @@ const BUTTON_STYLE_BOXES = ["normal", "hover", "pressed", "disabled", "focus"]
 @onready var resolution_high_button: Button = $UI/Resolution/HighButton
 
 
-func _process(_delta: float) -> void:
-	camera_parent.rotation.y = (
-		sin(Level.get_ticks_sec() * 0.17) * 0.002 * TAU
-	)
-	camera_parent.position.y = (
-		sin(Level.get_ticks_sec() * 0.15) * 0.1
-	)
+func _ready() -> void:
+	global.set_graphics_high()
+	global.set_resolution_high()
 	graphics_low_button.button_down.connect(func() -> void:
 		global.set_graphics_low()
 		update_buttons()
@@ -47,6 +43,15 @@ func _process(_delta: float) -> void:
 		update_buttons()
 	)
 	update_buttons()
+
+
+func _process(_delta: float) -> void:
+	camera_parent.rotation.y = (
+		sin(Level.get_ticks_sec() * 0.17) * 0.002 * TAU
+	)
+	camera_parent.position.y = (
+		sin(Level.get_ticks_sec() * 0.15) * 0.1
+	)
 
 
 func update_buttons() -> void:

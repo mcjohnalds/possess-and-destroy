@@ -1,33 +1,14 @@
-[gd_scene load_steps=16 format=3 uid="uid://5mf55kfoiy8v"]
+[gd_scene load_steps=14 format=3 uid="uid://5mf55kfoiy8v"]
 
 [ext_resource type="Script" path="res://dead.gd" id="1_pklr1"]
 [ext_resource type="CameraAttributesPractical" uid="uid://nf2n85jai8dd" path="res://camera_attributes_practical.tres" id="2_d78yg"]
+[ext_resource type="Environment" uid="uid://ng6uovx21442" path="res://environment.tres" id="2_jve2o"]
 [ext_resource type="Texture2D" uid="uid://3lyybiyokess" path="res://addons/kenney_particle_pack/dirt_01.png" id="4_bdejr"]
 [ext_resource type="Texture2D" uid="uid://gmi2uw24ikd6" path="res://addons/kenney_particle_pack/dirt_02.png" id="4_krt6y"]
 [ext_resource type="Texture2D" uid="uid://df54q6vdokuq1" path="res://addons/kenney_particle_pack/dirt_03.png" id="5_aymsm"]
 [ext_resource type="Material" uid="uid://bsbydtecggyco" path="res://sand.tres" id="6_6qgqh"]
 [ext_resource type="FontFile" uid="uid://61ne5rpld1yx" path="res://PermanentMarker-Regular.ttf" id="7_ci3a4"]
 [ext_resource type="AudioStream" uid="uid://7wikr6uxbi1w" path="res://monster_moan.ogg" id="8_e8hsu"]
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_tpa6p"]
-sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
-ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
-
-[sub_resource type="Sky" id="Sky_sk6rk"]
-sky_material = SubResource("ProceduralSkyMaterial_tpa6p")
-
-[sub_resource type="Environment" id="Environment_saw7y"]
-background_mode = 2
-sky = SubResource("Sky_sk6rk")
-tonemap_mode = 2
-glow_enabled = true
-fog_enabled = true
-fog_light_color = Color(0.52, 0.76, 1, 1)
-fog_density = 0.005
-volumetric_fog_enabled = true
-volumetric_fog_density = 0.01
-volumetric_fog_albedo = Color(1, 1, 0, 1)
-volumetric_fog_emission = Color(0.521569, 0.760784, 1, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_af1mw"]
 material = ExtResource("6_6qgqh")
@@ -51,7 +32,7 @@ script = ExtResource("1_pklr1")
 [node name="Lighting" type="Node" parent="."]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting"]
-environment = SubResource("Environment_saw7y")
+environment = ExtResource("2_jve2o")
 camera_attributes = ExtResource("2_d78yg")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Lighting"]
@@ -165,6 +146,7 @@ offset_right = 138.0
 offset_bottom = 109.0
 grow_horizontal = 2
 grow_vertical = 2
+focus_mode = 0
 theme_override_font_sizes/font_size = 50
 text = "RESTART"
 

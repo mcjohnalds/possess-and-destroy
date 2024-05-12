@@ -100,7 +100,6 @@ func _ready() -> void:
 			% random_man_name
 	)
 
-	world_environment.environment.sdfgi_enabled = true
 	for hesco: Hesco in hescos.get_children():
 		hesco.rotate_y(randi_range(0, 3) * TAU / 4.0 + randf_range(-0.01, 0.01) * TAU)
 		hesco.rotate_x(randf_range(-0.005, 0.005) * TAU)
@@ -125,6 +124,10 @@ func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	player.setup()
 	player.invisibility_overlay.visible = false
+
+	if global.graphics == Global.Graphics.LOW:
+		for decal: Decal in find_children("*", "Decal", true, false):
+			decal.visible = false
 
 	# Debug code
 	# get_tree().create_timer(2.0).timeout.connect(func() -> void:

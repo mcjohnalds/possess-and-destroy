@@ -17,7 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Global="*res://Global.tscn"
+global="*res://Global.tscn"
 
 [debug]
 
@@ -31,8 +31,9 @@ gdscript/warnings/unsafe_call_argument=1
 
 window/size/viewport_width=1600
 window/size/viewport_height=1200
-window/stretch/mode="canvas_items"
-window/stretch/aspect="ignore"
+window/size/mode=4
+window/stretch/mode="viewport"
+window/stretch/aspect="expand"
 
 [filesystem]
 

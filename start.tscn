@@ -1,32 +1,13 @@
-[gd_scene load_steps=15 format=3 uid="uid://dx15es8x30sl5"]
+[gd_scene load_steps=13 format=3 uid="uid://dx15es8x30sl5"]
 
 [ext_resource type="Script" path="res://start.gd" id="1_qvnj6"]
 [ext_resource type="CameraAttributesPractical" uid="uid://nf2n85jai8dd" path="res://camera_attributes_practical.tres" id="1_sowg0"]
+[ext_resource type="Environment" uid="uid://ng6uovx21442" path="res://environment.tres" id="2_erxf3"]
 [ext_resource type="Material" uid="uid://bsbydtecggyco" path="res://sand.tres" id="2_xj7tm"]
 [ext_resource type="Texture2D" uid="uid://dbvbmq8sygfw0" path="res://addons/kenney_particle_pack/smoke_01.png" id="3_71p30"]
 [ext_resource type="Texture2D" uid="uid://3lyybiyokess" path="res://addons/kenney_particle_pack/dirt_01.png" id="4_mn04w"]
 [ext_resource type="PackedScene" uid="uid://di14cmdia7qtu" path="res://m_16.glb" id="5_3xhkg"]
 [ext_resource type="FontFile" uid="uid://61ne5rpld1yx" path="res://PermanentMarker-Regular.ttf" id="7_5rmqk"]
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_tpa6p"]
-sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
-ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
-
-[sub_resource type="Sky" id="Sky_sk6rk"]
-sky_material = SubResource("ProceduralSkyMaterial_tpa6p")
-
-[sub_resource type="Environment" id="Environment_saw7y"]
-background_mode = 2
-sky = SubResource("Sky_sk6rk")
-tonemap_mode = 2
-glow_enabled = true
-fog_enabled = true
-fog_light_color = Color(0.52, 0.76, 1, 1)
-fog_density = 0.005
-volumetric_fog_enabled = true
-volumetric_fog_density = 0.01
-volumetric_fog_albedo = Color(1, 1, 0, 1)
-volumetric_fog_emission = Color(0.521569, 0.760784, 1, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_af1mw"]
 material = ExtResource("2_xj7tm")
@@ -50,7 +31,7 @@ script = ExtResource("1_qvnj6")
 [node name="Lighting" type="Node" parent="."]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting"]
-environment = SubResource("Environment_saw7y")
+environment = ExtResource("2_erxf3")
 camera_attributes = ExtResource("1_sowg0")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Lighting"]
@@ -103,24 +84,200 @@ theme_override_font_sizes/font_size = 100
 text = "Possess and Destroy"
 
 [node name="Body" type="Label" parent="UI"]
-offset_left = 71.0
-offset_top = 404.0
-offset_right = 1444.0
-offset_bottom = 1001.0
-theme_override_constants/line_spacing = 20
-theme_override_font_sizes/font_size = 45
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 72.0
+offset_top = -862.0
+offset_right = 1445.0
+offset_bottom = -240.0
+grow_vertical = 0
+theme_override_constants/line_spacing = 5
+theme_override_font_sizes/font_size = 35
 text = "you are a DEMON
 you must HUNT all humans
-press E from behind a human to POSSESS them
+move with WASD
+jump with SPACE
+left click to SHOOT when holding a weapon
+right click to ZOOM when holding the sniper
+press E while behind a human to POSSESS them
 press Q to become INVISIBLE
-these powers require ENERGY
+these powers cost ENERGY
 KILL to gain energy
 suspicious activity, if witnessed, COMPROMISES your identity"
 
-[node name="Button" type="Button" parent="UI"]
+[node name="StartButton" type="Button" parent="UI"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
 offset_left = 73.0
-offset_top = 1068.0
+offset_top = -132.0
 offset_right = 309.0
-offset_bottom = 1142.0
+offset_bottom = -58.0
+grow_vertical = 0
+focus_mode = 0
 theme_override_font_sizes/font_size = 50
 text = "START"
+
+[node name="Graphics" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Label" type="Label" parent="UI/Graphics"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -628.0
+offset_top = -116.0
+offset_right = -492.0
+offset_bottom = -50.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/line_spacing = 20
+theme_override_font_sizes/font_size = 40
+text = "Quality"
+horizontal_alignment = 2
+
+[node name="HighButton" type="Button" parent="UI/Graphics"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -212.0
+offset_top = -117.0
+offset_right = -85.0
+offset_bottom = -58.0
+grow_horizontal = 0
+grow_vertical = 0
+focus_mode = 0
+theme_override_font_sizes/font_size = 40
+text = "HIGH"
+
+[node name="MedButton" type="Button" parent="UI/Graphics"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -340.0
+offset_top = -117.0
+offset_right = -213.0
+offset_bottom = -58.0
+grow_horizontal = 0
+grow_vertical = 0
+focus_mode = 0
+theme_override_font_sizes/font_size = 40
+text = "MED"
+
+[node name="LowButton" type="Button" parent="UI/Graphics"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -468.0
+offset_top = -117.0
+offset_right = -341.0
+offset_bottom = -58.0
+grow_horizontal = 0
+grow_vertical = 0
+focus_mode = 0
+theme_override_font_sizes/font_size = 40
+text = "LOW"
+
+[node name="Resolution" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -128.0
+offset_bottom = -88.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Label" type="Label" parent="UI/Resolution"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -663.0
+offset_top = -116.0
+offset_right = -491.0
+offset_bottom = -50.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/line_spacing = 20
+theme_override_font_sizes/font_size = 40
+text = "Resolution"
+horizontal_alignment = 2
+
+[node name="HighButton" type="Button" parent="UI/Resolution"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -212.0
+offset_top = -117.0
+offset_right = -85.0
+offset_bottom = -58.0
+grow_horizontal = 0
+grow_vertical = 0
+focus_mode = 0
+theme_override_font_sizes/font_size = 40
+text = "HIGH"
+
+[node name="MedButton" type="Button" parent="UI/Resolution"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -340.0
+offset_top = -117.0
+offset_right = -213.0
+offset_bottom = -58.0
+grow_horizontal = 0
+grow_vertical = 0
+focus_mode = 0
+theme_override_font_sizes/font_size = 40
+text = "MED"
+
+[node name="LowButton" type="Button" parent="UI/Resolution"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -468.0
+offset_top = -117.0
+offset_right = -341.0
+offset_bottom = -58.0
+grow_horizontal = 0
+grow_vertical = 0
+focus_mode = 0
+theme_override_font_sizes/font_size = 40
+text = "LOW"

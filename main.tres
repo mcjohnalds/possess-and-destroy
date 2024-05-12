@@ -4,7 +4,7 @@
 [ext_resource type="FontFile" uid="uid://ctgl106dehd5x" path="res://IndieFlower-Regular.ttf" id="1_jsx7g"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4l4b4"]
-bg_color = Color(0.976471, 0.917647, 0.819608, 0.631373)
+bg_color = Color(0.976471, 0.917647, 0.819608, 0.545098)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
@@ -13,6 +13,12 @@ corner_radius_bottom_left = 20
 [resource]
 default_font = ExtResource("1_jsx7g")
 Button/colors/font_color = Color(0.160784, 0.027451, 0.00392157, 1)
+Button/colors/font_disabled_color = Color(0.160784, 0.027451, 0.00392157, 1)
+Button/colors/font_focus_color = Color(0.160784, 0.027451, 0.00392157, 1)
+Button/colors/font_hover_color = Color(0.160784, 0.027451, 0.00392157, 1)
+Button/colors/font_hover_pressed_color = Color(0.160784, 0.027451, 0.00392157, 1)
+Button/colors/font_outline_color = Color(0.160784, 0.027451, 0.00392157, 1)
+Button/colors/font_pressed_color = Color(0.160784, 0.027451, 0.00392157, 1)
 Button/styles/disabled = ExtResource("1_fgf3t")
 Button/styles/focus = ExtResource("1_fgf3t")
 Button/styles/hover = ExtResource("1_fgf3t")

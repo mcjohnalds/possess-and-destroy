@@ -48,6 +48,7 @@ fill_from = Vector2(0.5, 0.5)
 script = ExtResource("2_8r0nc")
 
 [node name="Camera3D" type="Camera3D" parent="Head/FirstPersonCameraReference" index="0"]
+far = 500.0
 
 [node name="GunTransform" type="Node3D" parent="Head" index="3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.383, -0.395, -0.42)
@@ -112,30 +113,7 @@ theme_override_font_sizes/font_size = 28
 text = "energy: 30%"
 vertical_alignment = 2
 
-[node name="SuspiciousPanel" type="Panel" parent="HUD" index="6"]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 1098.5
-offset_top = -109.0
-offset_right = 1600.5
-offset_bottom = -54.0
-grow_vertical = 0
-
-[node name="SuspiciousLabel" type="Label" parent="HUD" index="7"]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 1109.0
-offset_top = -107.0
-offset_right = 1407.0
-offset_bottom = -62.0
-grow_vertical = 0
-theme_override_font_sizes/font_size = 28
-text = "looking suspicious"
-vertical_alignment = 2
-
-[node name="HealthPanel" type="Panel" parent="HUD" index="8"]
+[node name="HealthPanel" type="Panel" parent="HUD" index="6"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -144,7 +122,7 @@ offset_top = -55.0
 offset_right = 501.5
 grow_vertical = 0
 
-[node name="HealthLabel" type="Label" parent="HUD" index="9"]
+[node name="HealthLabel" type="Label" parent="HUD" index="7"]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
@@ -157,7 +135,7 @@ theme_override_font_sizes/font_size = 28
 text = "health: 30%"
 vertical_alignment = 2
 
-[node name="UsePanel" type="Panel" parent="HUD" index="10"]
+[node name="UsePanel" type="Panel" parent="HUD" index="8"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -177,9 +155,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -140.5
+offset_left = -147.0
 offset_top = -24.0
-offset_right = 140.5
+offset_right = 147.0
 offset_bottom = 24.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -188,30 +166,7 @@ text = "press E to POSSESS"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PossessingPanel" type="Panel" parent="HUD" index="11"]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 1097.5
-offset_top = -53.5
-offset_right = 1599.5
-offset_bottom = 1.5
-grow_vertical = 0
-
-[node name="PossessingLabel" type="Label" parent="HUD" index="12"]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 1108.0
-offset_top = -53.0
-offset_right = 1406.0
-offset_bottom = -8.0
-grow_vertical = 0
-theme_override_font_sizes/font_size = 28
-text = "identity: Civilian"
-vertical_alignment = 2
-
-[node name="Crosshair" type="Label" parent="HUD" index="13"]
+[node name="Crosshair" type="Label" parent="HUD" index="9"]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -229,21 +184,84 @@ text = "×"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Messages" type="Panel" parent="HUD" index="14"]
+[node name="Messages" type="Panel" parent="HUD" index="10"]
 offset_right = 1017.0
 offset_bottom = 123.0
 
-[node name="Compromised" type="Control" parent="HUD" index="15"]
+[node name="BottomRight" type="Control" parent="HUD" index="11"]
 layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="SuspiciousPanel" type="Panel" parent="HUD/BottomRight" index="0"]
+layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 1098.0
-offset_top = -40.0
-offset_right = 1138.0
+offset_left = -461.5
+offset_top = -110.0
+offset_right = 40.5
+offset_bottom = -55.0
 grow_vertical = 0
 
-[node name="ColorRect" type="ColorRect" parent="HUD/Compromised" index="0"]
+[node name="SuspiciousLabel" type="Label" parent="HUD/BottomRight" index="1"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -451.0
+offset_top = -108.0
+offset_right = -153.0
+offset_bottom = -63.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 28
+text = "looking suspicious"
+vertical_alignment = 2
+
+[node name="PossessingPanel" type="Panel" parent="HUD/BottomRight" index="2"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -462.5
+offset_top = -54.5
+offset_right = 39.5
+offset_bottom = 0.5
+grow_vertical = 0
+
+[node name="PossessingLabel" type="Label" parent="HUD/BottomRight" index="3"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -452.0
+offset_top = -54.0
+offset_right = -154.0
+offset_bottom = -9.0
+grow_vertical = 0
+theme_override_font_sizes/font_size = 28
+text = "identity: Civilian"
+vertical_alignment = 2
+
+[node name="Compromised" type="Control" parent="HUD/BottomRight" index="4"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -462.0
+offset_top = -41.0
+offset_right = -422.0
+offset_bottom = -1.0
+grow_vertical = 0
+
+[node name="ColorRect" type="ColorRect" parent="HUD/BottomRight/Compromised" index="0"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -256,7 +274,7 @@ grow_vertical = 0
 scale = Vector2(4.55881, 0.0502227)
 color = Color(0.160784, 0.027451, 0.00392157, 1)
 
-[node name="Label" type="Label" parent="HUD/Compromised" index="1"]
+[node name="Label" type="Label" parent="HUD/BottomRight/Compromised" index="1"]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0

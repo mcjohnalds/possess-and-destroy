@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://82efqqhkosbl"]
+[gd_scene load_steps=35 format=3 uid="uid://82efqqhkosbl"]
 
 [ext_resource type="Script" path="res://level.gd" id="1_cvfxw"]
 [ext_resource type="PackedScene" uid="uid://cewa4cg7jix27" path="res://player.tscn" id="2_2ilu4"]
@@ -28,6 +28,7 @@
 [ext_resource type="Texture2D" uid="uid://dbvbmq8sygfw0" path="res://addons/kenney_particle_pack/smoke_01.png" id="17_sfdqw"]
 [ext_resource type="PackedScene" uid="uid://ce8t0vh7txbaq" path="res://shipping_container.tscn" id="17_uh627"]
 [ext_resource type="Texture2D" uid="uid://dpgyk30x65lb0" path="res://addons/kenney_particle_pack/smoke_08.png" id="18_xt4ot"]
+[ext_resource type="Environment" uid="uid://ng6uovx21442" path="res://environment.tres" id="28_75our"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_egj2p"]
 albedo_color = Color(0.92, 0.8165, 0.6716, 1)
@@ -47,26 +48,6 @@ agent_max_climb = 0.05
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yn055"]
 albedo_color = Color(0.73, 0.72197, 0.7154, 1)
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_mvy1p"]
-sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
-ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
-
-[sub_resource type="Sky" id="Sky_hx86x"]
-sky_material = SubResource("ProceduralSkyMaterial_mvy1p")
-
-[sub_resource type="Environment" id="Environment_jklsk"]
-background_mode = 2
-sky = SubResource("Sky_hx86x")
-tonemap_mode = 2
-glow_enabled = true
-fog_enabled = true
-fog_light_color = Color(0.52, 0.76, 1, 1)
-fog_density = 0.005
-volumetric_fog_enabled = true
-volumetric_fog_density = 0.01
-volumetric_fog_albedo = Color(1, 1, 0, 1)
-volumetric_fog_emission = Color(0.521569, 0.760784, 1, 1)
 
 [node name="AirbaseLevel" type="Node3D"]
 script = ExtResource("1_cvfxw")
@@ -914,10 +895,10 @@ use_collision = true
 size = Vector3(50, 0.1, 50)
 
 [node name="Step" type="CSGBox3D" parent="NavigationRegion3D/Geometry/Hanger/Floor"]
-transform = Transform3D(0.998356, -0.0573024, 0, 0.0573024, 0.998356, 0, 0, 0, 1, -31.6036, -0.3068, 2.08165e-12)
+transform = Transform3D(0.968955, -0.247235, 0, 0.247235, 0.968955, 0, 0, 0, 1, -26.8743, -0.497129, 2.08165e-12)
 material_override = ExtResource("6_f4dvr")
 use_collision = true
-size = Vector3(13.2819, 0.05, 10)
+size = Vector3(3.91642, 0.26731, 10)
 
 [node name="Structures" type="Node3D" parent="NavigationRegion3D/Geometry/Hanger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.08165e-12, 0.1, 2.08165e-12)
@@ -991,9 +972,9 @@ material = ExtResource("8_gt3ix")
 [node name="Walls" type="Node3D" parent="NavigationRegion3D/Geometry/Hanger/Structures/Office/Structure"]
 
 [node name="1" type="CSGBox3D" parent="NavigationRegion3D/Geometry/Hanger/Structures/Office/Structure/Walls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 1.51, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.8, 1.51, -0.000841618)
 use_collision = true
-size = Vector3(0.2, 3, 9.8)
+size = Vector3(0.2, 3, 9.50613)
 material = ExtResource("12_wby06")
 
 [node name="4" type="CSGBox3D" parent="NavigationRegion3D/Geometry/Hanger/Structures/Office/Structure/Walls"]
@@ -1009,15 +990,15 @@ size = Vector3(0.2, 3, 9.8)
 material = ExtResource("12_wby06")
 
 [node name="2" type="CSGBox3D" parent="NavigationRegion3D/Geometry/Hanger/Structures/Office/Structure/Walls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 1.51, -3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 1.51, -2.89829)
 use_collision = true
-size = Vector3(0.2, 3, 3.9)
+size = Vector3(0.2, 3, 3.69658)
 material = ExtResource("12_wby06")
 
 [node name="3" type="CSGBox3D" parent="NavigationRegion3D/Geometry/Hanger/Structures/Office/Structure/Walls"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 1.51, 3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.8, 1.51, 2.90073)
 use_collision = true
-size = Vector3(0.2, 3, 3.9)
+size = Vector3(0.2, 3, 3.70146)
 material = ExtResource("12_wby06")
 
 [node name="barry" parent="NavigationRegion3D/Geometry/Hanger/Structures/Office" instance=ExtResource("7_5l7mv")]
@@ -1508,7 +1489,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.77046, 0.130518, 16.9592)
 [node name="Lighting" type="Node" parent="."]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting"]
-environment = SubResource("Environment_jklsk")
+environment = ExtResource("28_75our")
 camera_attributes = ExtResource("4_k2umb")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Lighting"]

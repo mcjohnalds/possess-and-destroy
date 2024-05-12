@@ -18,7 +18,7 @@ func go_to_start() -> void:
 	
 	var start: Start = start_scene.instantiate()
 	add_child(start)
-	start.start_button.pressed.connect(go_to_level)
+	start.start_button.button_down.connect(go_to_level)
 
 
 func go_to_level() -> void:
@@ -39,7 +39,7 @@ func go_to_dead() -> void:
 	
 	var dead: Dead = dead_scene.instantiate()
 	add_child(dead)
-	dead.restart_button.pressed.connect(go_to_start)
+	dead.restart_button.button_down.connect(go_to_start)
 
 
 func go_to_win() -> void:
@@ -49,4 +49,4 @@ func go_to_win() -> void:
 	
 	var win: Win = win_scene.instantiate()
 	add_child(win)
-	win.restart_button.pressed.connect(go_to_start)
+	win.restart_button.button_down.connect(go_to_start)

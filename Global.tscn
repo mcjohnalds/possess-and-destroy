@@ -10,3 +10,16 @@ script = ExtResource("1_vwv35")
 stream = ExtResource("1_a24wi")
 volume_db = -10.0
 autoplay = true
+
+[node name="FPSLabel" type="Label" parent="."]
+visible = false
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -75.0
+offset_top = 4.0
+offset_right = -14.0
+offset_bottom = 34.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 30
+text = "60 FPS"

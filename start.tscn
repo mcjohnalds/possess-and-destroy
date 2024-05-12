@@ -161,7 +161,7 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_constants/line_spacing = 20
 theme_override_font_sizes/font_size = 40
-text = "Quality"
+text = "quality"
 horizontal_alignment = 2
 
 [node name="HighButton" type="Button" parent="UI/Graphics"]
@@ -246,7 +246,7 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_constants/line_spacing = 20
 theme_override_font_sizes/font_size = 40
-text = "Resolution"
+text = "resolution"
 horizontal_alignment = 2
 
 [node name="HighButton" type="Button" parent="UI/Resolution"]
@@ -302,3 +302,70 @@ focus_mode = 0
 theme_type_variation = &"secondary"
 theme_override_font_sizes/font_size = 40
 text = "LOW"
+
+[node name="Vsync" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -216.0
+offset_bottom = -176.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Label" type="Label" parent="UI/Vsync"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -663.0
+offset_top = -116.0
+offset_right = -491.0
+offset_bottom = -50.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/line_spacing = 20
+theme_override_font_sizes/font_size = 40
+text = "vsync"
+horizontal_alignment = 2
+
+[node name="OnButton" type="Button" parent="UI/Vsync"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -340.0
+offset_top = -117.0
+offset_right = -213.0
+offset_bottom = -58.0
+grow_horizontal = 0
+grow_vertical = 0
+focus_mode = 0
+theme_type_variation = &"secondary"
+theme_override_font_sizes/font_size = 40
+text = "ON"
+
+[node name="OffButton" type="Button" parent="UI/Vsync"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -468.0
+offset_top = -117.0
+offset_right = -341.0
+offset_bottom = -58.0
+grow_horizontal = 0
+grow_vertical = 0
+focus_mode = 0
+theme_type_variation = &"secondary"
+theme_override_font_sizes/font_size = 40
+text = "OFF"

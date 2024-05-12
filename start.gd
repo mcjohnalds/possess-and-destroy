@@ -14,6 +14,8 @@ const BUTTON_STYLE_BOXES = ["normal", "hover", "pressed", "disabled", "focus"]
 @onready var resolution_low_button: Button = $UI/Resolution/LowButton
 @onready var resolution_med_button: Button = $UI/Resolution/MedButton
 @onready var resolution_high_button: Button = $UI/Resolution/HighButton
+@onready var vsync_off_button: Button = $UI/Vsync/OffButton
+@onready var vsync_on_button: Button = $UI/Vsync/OnButton
 
 
 func _ready() -> void:
@@ -39,6 +41,14 @@ func _ready() -> void:
 	)
 	resolution_high_button.button_down.connect(func() -> void:
 		global.set_resolution_high()
+		update_ui()
+	)
+	vsync_off_button.button_down.connect(func() -> void:
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+		update_ui()
+	)
+	vsync_on_button.button_down.connect(func() -> void:
+		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 		update_ui()
 	)
 	quit_button.button_down.connect(func() -> void:
@@ -75,6 +85,11 @@ func update_ui() -> void:
 	set_button_selected(
 		resolution_high_button, global.resolution == Global.Resolution.HIGH
 	)
+	var vsync := (
+		DisplayServer.window_get_vsync_mode() == DisplayServer.VSYNC_ENABLED
+	)
+	set_button_selected(vsync_off_button, not vsync)
+	set_button_selected(vsync_on_button, vsync)
 	for decal: Decal in find_children("*", "Decal", true, false):
 		decal.visible = global.decals_enabled()
 

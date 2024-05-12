@@ -8,11 +8,17 @@ var graphics := Graphics.HIGH
 var resolution := Resolution.HIGH
 @onready var environment: Environment = preload("res://environment.tres")
 @onready var music_asp: AudioStreamPlayer = $AudioStreamPlayer
+@onready var fps_label: Label = $FPSLabel
 
 
 func _ready() -> void:
 	set_graphics_high()
 	set_resolution_high()
+	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+
+
+func _process(_delta: float) -> void:
+	fps_label.text = "%s FPS" % Engine.get_frames_per_second()
 
 
 func set_graphics_low() -> void:
@@ -67,3 +73,5 @@ func decals_enabled() -> bool:
 func _input(event: InputEvent) -> void:
 	if  OS.is_debug_build() and event.is_action_pressed("debug_quit"):
 		get_tree().quit()
+	if event.is_action_pressed("toggle_fps"):
+		fps_label.visible = !fps_label.visible

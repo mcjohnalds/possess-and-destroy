@@ -50,6 +50,15 @@ const ENEMY_FOV := 0.42 * TAU
 const POSSESSION_ENERGY_COST := 0.25
 const INVISIBILITY_ENERGY_COST := 0.25
 const KILL_ENERGY_GAIN := 0.2
+const NAMES := [
+	"williams", "brown", "jones", "garcia", "miller", "davis", "rodriguez",
+	"martinez", "hernandez", "lopez", "gonzalez", "wilson", "anderson",
+	"thomas", "taylor", "moore", "jackson", "martin", "lee", "perez",
+	"thompson", "white", "harris", "sanchez", "clark", "ramirez", "lewis",
+	"robinson", "walker", "young", "allen", "king", "wright", "scott",
+	"torres", "nguyen", "hill", "flores", "green", "adams", "nelson", "baker",
+	"hall", "rivera", "campbell", "mitchell", "carter", "roberts",
+]
 var possessed_man_name := "civilian"
 var player_identity_compromised := false
 var ai_team_state_last_frame := AiTeamState.PATROLLING
@@ -72,6 +81,12 @@ var suspicious_sound_has_been_investigated := true
 
 
 func _ready() -> void:
+	for i in range(men.get_child_count()):
+		var prefix := "pvt"
+		if i % 4 == 0:
+			prefix = "sgt"
+		men.get_child(i).name = "%s %s" % [prefix, NAMES[i]]
+
 	var valid_men_names: Array[String] = []
 	for man: Man in men.get_children():
 		if is_instance_valid(man) and man.alive:
@@ -112,13 +127,13 @@ func _ready() -> void:
 	player.invisibility_overlay.visible = false
 
 	# Debug code
-	get_tree().create_timer(2.0).timeout.connect(func() -> void:
-		for man: Man in men.get_children():
-			man.alive = false
-			man.died_at = Level.get_ticks_sec()
-			man.collision_layer = 0
-			man.collision_mask = 0
-	)
+	# get_tree().create_timer(2.0).timeout.connect(func() -> void:
+	# 	for man: Man in men.get_children():
+	# 		man.alive = false
+	# 		man.died_at = Level.get_ticks_sec()
+	# 		man.collision_layer = 0
+	# 		man.collision_mask = 0
+	# )
 
 
 func on_velocity_computed(safe_velocity: Vector3, man: Man) -> void:

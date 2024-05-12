@@ -42,12 +42,15 @@ class BulletHit:
 	var position: Vector3
 
 
+signal player_died
+signal won
+
 const LOOKING_SUSPICIOUS_DURATION := 6.0
 const ENEMY_FOV := 0.42 * TAU
 const POSSESSION_ENERGY_COST := 0.25
 const INVISIBILITY_ENERGY_COST := 0.25
 const KILL_ENERGY_GAIN := 0.2
-var possessed_man_name := "the civilian"
+var possessed_man_name := "civilian"
 var player_identity_compromised := false
 var ai_team_state_last_frame := AiTeamState.PATROLLING
 var can_any_man_see_player_last_frame := false
@@ -69,6 +72,19 @@ var suspicious_sound_has_been_investigated := true
 
 
 func _ready() -> void:
+	var valid_men_names: Array[String] = []
+	for man: Man in men.get_children():
+		if is_instance_valid(man) and man.alive:
+			valid_men_names.append(man.name)
+
+	var random_man_name: String
+	if valid_men_names.size() > 0:
+		random_man_name = valid_men_names.pick_random()
+	log_message(
+		"<%s> the demon is around here somewhere. shoot anyone acting suspicious."
+			% random_man_name
+	)
+
 	world_environment.environment.sdfgi_enabled = true
 	for hesco: Hesco in hescos.get_children():
 		hesco.rotate_y(randi_range(0, 3) * TAU / 4.0 + randf_range(-0.01, 0.01) * TAU)
@@ -95,6 +111,15 @@ func _ready() -> void:
 	player.setup()
 	player.invisibility_overlay.visible = false
 
+	# Debug code
+	get_tree().create_timer(2.0).timeout.connect(func() -> void:
+		for man: Man in men.get_children():
+			man.alive = false
+			man.died_at = Level.get_ticks_sec()
+			man.collision_layer = 0
+			man.collision_mask = 0
+	)
+
 
 func on_velocity_computed(safe_velocity: Vector3, man: Man) -> void:
 	man.safe_velocity = safe_velocity
@@ -110,21 +135,13 @@ func actor_setup() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if OS.is_debug_build() and event.is_action_pressed("ui_cancel"):
-		get_tree().quit() # Quits the game
 	var motion := event as InputEventMouseMotion
-	if motion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+	if motion:
 		player.rotate_head(motion.relative)
-	if event.is_action_pressed("change_mouse_input"):
-		match Input.get_mouse_mode():
-			Input.MOUSE_MODE_CAPTURED:
-				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-			Input.MOUSE_MODE_VISIBLE:
-				Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	var key := event as InputEventKey
 	if (
 		key
-		and key.keycode == KEY_F
+		and key.keycode == KEY_Q
 		and key.pressed
 		and player.energy >= INVISIBILITY_ENERGY_COST
 	):
@@ -158,7 +175,7 @@ func make_player_visible() -> void:
 			):
 				hunt_player()
 				log_message(
-					"<%s> I saw %s doing demon stuff, engaging!"
+					"<%s> i saw %s doing demon stuff, engaging!"
 					% [man.name, possessed_man_name]
 				)
 				break
@@ -176,23 +193,25 @@ func apply_material_to_player_gun(material: Material) -> void:
 			push_error("Invalid state")
 
 
-# Capture mouse if clicked on the game, needed for HTML5
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("primary"):
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-
-
 func _process(delta: float) -> void:
-	player.health_label.text = "Health: %s%%" % ceilf(
+	var has_alive_man := false
+	for man: Man in men.get_children():
+		if man.alive:
+			has_alive_man = true
+	if not has_alive_man:
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		won.emit()
+
+	player.health_label.text = "health: %s%%" % ceilf(
 		player.health / player.initial_health * 100.0
 	)
-	player.energy_label.text = "Energy: %s%%" % ceilf(
+	player.energy_label.text = "energy: %s%%" % ceilf(
 		player.energy * 100.0
 	)
 	player.compromised_control.visible = player_identity_compromised
 	player.hurt_overlay.modulate.a -= delta
 	player.hurt_overlay.modulate.a = clampf(
-		player.hurt_overlay.modulate.a, 0.0, 1.0
+		player.hurt_overlay.modulate.a, 0.0, 10.0
 	)
 	player.suspicious_label.visible = (
 		Level.get_ticks_sec() - suspicious_sound_heard_at
@@ -270,7 +289,7 @@ func process_use() -> void:
 
 	# --- Side effects ---
 
-	player.use_label.visible = behind_target
+	player.use_panel.visible = behind_target
 
 	if possessed:
 		player.possession_audio_stream_player.play(4.9)
@@ -282,7 +301,7 @@ func process_use() -> void:
 				+ player.capsule.height / 2.0 * Vector3.UP
 		)
 		player.velocity = Vector3.ZERO
-		player.possessing_label.text = "Possessing: " + targeted_man.name
+		player.possessing_label.text = "identity: " + targeted_man.name
 		player.last_possessed_at = Level.get_ticks_sec()
 		targeted_man.queue_free()
 		targeted_man.alive = false
@@ -310,7 +329,7 @@ func process_use() -> void:
 		if possession_witness:
 			hunt_player()
 			log_message(
-				"<%s> I saw the demon possess %s, engaging enemy!"
+				"<%s> i saw the demon possess %s, engaging enemy!"
 				% [possession_witness.name, targeted_man.name]
 			)
 
@@ -375,9 +394,6 @@ func process_man_shooting() -> void:
 	for man: Man in men.get_children():
 		if not is_instance_valid(man) or not man.alive:
 			continue
-		if not man.alive and Level.get_ticks_sec() - man.died_at > 5.0:
-			man.queue_free()
-			continue
 		var fired_recently := (
 			Level.get_ticks_sec() - man.gun.last_fired_at <= get_gun_cooldown(man.gun)
 		)
@@ -410,6 +426,9 @@ func process_man_shooting() -> void:
 
 			if damage_to_player > 0.0:
 				player.health -= damage_to_player
+				if player.health <= 0.0:
+					Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+					player_died.emit()
 				player.hurt_overlay.modulate.a = clampf(
 					damage_to_player * 2.0, 0.3, 1.0
 				)
@@ -606,32 +625,32 @@ func physics_process_man(delta: float) -> void:
 	if random_man_name:
 		if began_engaging_player_this_frame_due_to_spotting:
 			message = (
-				"<%s> Demon spotted, engaging!"
+				"<%s> demon spotted, engaging!"
 					% random_man_name
 			)
 		if began_approaching_last_known_position_this_frame:
 			message = (
-				"<%s> Lost eyes on the demon, approaching last known position"
+				"<%s> lost eyes on the demon, approaching last known position"
 				% random_man_name
 			)
 		if began_searching_randomly_for_player_this_frame:
 			message = (
-				"<%s> Searching area for the demon"
+				"<%s> searching area for the demon"
 				% random_man_name
 			)
 		if stopped_hunting_player_this_frame:
 			message = (
-				"<%s> Can't find the demon, returning to patrol"
+				"<%s> can't find the demon, returning to patrol"
 				% random_man_name
 			)
 		if began_investigating_suspicious_sound_this_frame:
 			message = (
-				"<%s> I heard a suspicious sound, investigating"
+				"<%s> i heard a suspicious sound, investigating"
 				% random_man_name
 			)
 		if player_shooting_witnessed_this_frame:
 			message = (
-				"<%s> I think %s is possessed by the demon, engaging!"
+				"<%s> i think %s is possessed by the demon, engaging!"
 				% [name_of_player_shooting_witness, possessed_man_name]
 			)
 

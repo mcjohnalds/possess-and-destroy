@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://ch5akslry0f70"]
+
+[ext_resource type="AudioStream" uid="uid://ea55ye0dpl5i" path="res://dark_ambient_music.mp3" id="1_a24wi"]
+[ext_resource type="Script" path="res://global.gd" id="1_vwv35"]
+
+[node name="Global" type="Node3D"]
+script = ExtResource("1_vwv35")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("1_a24wi")
+autoplay = true

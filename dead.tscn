@@ -1,0 +1,172 @@
+[gd_scene load_steps=16 format=3 uid="uid://5mf55kfoiy8v"]
+
+[ext_resource type="Script" path="res://dead.gd" id="1_pklr1"]
+[ext_resource type="CameraAttributesPractical" uid="uid://nf2n85jai8dd" path="res://camera_attributes_practical.tres" id="2_d78yg"]
+[ext_resource type="Texture2D" uid="uid://3lyybiyokess" path="res://addons/kenney_particle_pack/dirt_01.png" id="4_bdejr"]
+[ext_resource type="Texture2D" uid="uid://gmi2uw24ikd6" path="res://addons/kenney_particle_pack/dirt_02.png" id="4_krt6y"]
+[ext_resource type="Texture2D" uid="uid://df54q6vdokuq1" path="res://addons/kenney_particle_pack/dirt_03.png" id="5_aymsm"]
+[ext_resource type="Material" uid="uid://bsbydtecggyco" path="res://sand.tres" id="6_6qgqh"]
+[ext_resource type="FontFile" uid="uid://61ne5rpld1yx" path="res://PermanentMarker-Regular.ttf" id="7_ci3a4"]
+[ext_resource type="AudioStream" uid="uid://7wikr6uxbi1w" path="res://monster_moan.ogg" id="8_e8hsu"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_tpa6p"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_sk6rk"]
+sky_material = SubResource("ProceduralSkyMaterial_tpa6p")
+
+[sub_resource type="Environment" id="Environment_saw7y"]
+background_mode = 2
+sky = SubResource("Sky_sk6rk")
+tonemap_mode = 2
+glow_enabled = true
+fog_enabled = true
+fog_light_color = Color(0.52, 0.76, 1, 1)
+fog_density = 0.005
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.01
+volumetric_fog_albedo = Color(1, 1, 0, 1)
+volumetric_fog_emission = Color(0.521569, 0.760784, 1, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_af1mw"]
+material = ExtResource("6_6qgqh")
+size = Vector2(1000, 1000)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_kljc2"]
+blend_mode = 2
+
+[sub_resource type="Gradient" id="Gradient_r8hqa"]
+offsets = PackedFloat32Array(0.0692641, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0.384314, 0.454902, 0.54902, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_crk20"]
+gradient = SubResource("Gradient_r8hqa")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[node name="Dead" type="Node3D"]
+script = ExtResource("1_pklr1")
+
+[node name="Lighting" type="Node" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Lighting"]
+environment = SubResource("Environment_saw7y")
+camera_attributes = ExtResource("2_d78yg")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Lighting"]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866026, -0.5, 0.75, -0.433013, 0, 5, 0)
+shadow_enabled = true
+directional_shadow_max_distance = 250.0
+
+[node name="Decal21" type="Decal" parent="."]
+transform = Transform3D(1.50266, 0, 1.50266, 0, 2.12509, 0, -1.50266, 0, 1.50266, -1.75796, 0, -3.66044)
+size = Vector3(3.83826, 2, 2.70801)
+texture_albedo = ExtResource("4_bdejr")
+modulate = Color(0.45, 0.036, 0.036, 1)
+
+[node name="Decal25" type="Decal" parent="."]
+transform = Transform3D(0.297687, 0, -1.86687, 0, 1.89045, 0, 1.86687, 0, 0.297687, 3.54188, 0, -0.384142)
+size = Vector3(3.83826, 2, 2.70801)
+texture_albedo = ExtResource("4_bdejr")
+modulate = Color(0.45, 0.036, 0.036, 1)
+
+[node name="Decal27" type="Decal" parent="."]
+transform = Transform3D(-1.60389, 0.000931683, -1.00067, 0.00152017, 1.89045, -0.000676432, 1.00067, -0.00137856, -1.60389, 3.64046, 0, 2.59992)
+size = Vector3(3.83826, 2, 2.70801)
+texture_albedo = ExtResource("4_bdejr")
+modulate = Color(0.45, 0.036, 0.036, 1)
+
+[node name="Decal26" type="Decal" parent="."]
+transform = Transform3D(0.297687, 0, -1.86687, 0, 1.89045, 0, 1.86687, 0, 0.297687, -3.59413, 0, -0.027028)
+size = Vector3(3.83826, 2, 2.70801)
+texture_albedo = ExtResource("4_bdejr")
+modulate = Color(0.45, 0.036, 0.036, 1)
+
+[node name="Decal22" type="Decal" parent="."]
+transform = Transform3D(1.77667, 0, -1.06024, 0, 2.06897, 0, 1.06024, 0, 1.77667, 3.70457, 0, -4.49308)
+size = Vector3(3.83826, 2, 2.70801)
+texture_albedo = ExtResource("4_krt6y")
+modulate = Color(0.45, 0.036, 0.036, 1)
+
+[node name="Decal24" type="Decal" parent="."]
+transform = Transform3D(1.99919, 0, -1.19303, 0, 2.32811, 0, 1.19303, 0, 1.99919, -1.47023, 0, 4.31921)
+size = Vector3(3.83826, 2, 2.70801)
+texture_albedo = ExtResource("4_krt6y")
+modulate = Color(0.45, 0.036, 0.036, 1)
+
+[node name="Decal23" type="Decal" parent="."]
+transform = Transform3D(-2.03028, 0, -1.61201, 0, 2.59241, 0, 1.61201, 0, -2.03028, 4.89315, 0, 6.39308)
+size = Vector3(3.83826, 2, 2.70801)
+texture_albedo = ExtResource("5_aymsm")
+modulate = Color(0.45, 0.036, 0.036, 1)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, -4.37114e-08, -1.5246e-23, -4.37114e-08, 1, -1, 4.37114e-08, 1.91069e-15, 0.107847, 3.99854, -0.00310266)
+
+[node name="CameraParent" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_af1mw")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Vignette" type="TextureRect" parent="UI"]
+material = SubResource("CanvasItemMaterial_kljc2")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("GradientTexture2D_crk20")
+
+[node name="Title" type="Label" parent="UI"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -472.5
+offset_top = -175.5
+offset_right = 472.5
+offset_bottom = -32.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("7_ci3a4")
+theme_override_font_sizes/font_size = 100
+text = "YOU ARE DEAD"
+horizontal_alignment = 1
+
+[node name="Body" type="Label" parent="UI"]
+visible = false
+offset_left = 71.0
+offset_top = 404.0
+offset_right = 1444.0
+offset_bottom = 1001.0
+theme_override_constants/line_spacing = 20
+theme_override_font_sizes/font_size = 45
+text = "you are a DEMON
+you must HUNT all humans
+press E from behind a human to POSSESS them
+press Q to become INVISIBLE
+these powers require ENERGY
+KILL to gain energy
+suspicious activity, if witnessed, COMPROMISES your identity"
+
+[node name="Button" type="Button" parent="UI"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -138.0
+offset_top = 35.0
+offset_right = 138.0
+offset_bottom = 109.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 50
+text = "RESTART"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_e8hsu")

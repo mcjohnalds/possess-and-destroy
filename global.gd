@@ -6,6 +6,7 @@ enum Resolution { LOW, MEDIUM, HIGH }
 
 var graphics := Graphics.HIGH
 var resolution := Resolution.HIGH
+var window_mode := Window.MODE_MAXIMIZED
 @onready var environment: Environment = preload("res://environment.tres")
 @onready var music_asp: AudioStreamPlayer = $AudioStreamPlayer
 @onready var fps_label: Label = $FPSLabel
@@ -64,6 +65,11 @@ func set_resolution_medium() -> void:
 func set_resolution_high() -> void:
 	resolution = Resolution.HIGH
 	get_viewport().scaling_3d_scale = 1.0
+
+
+func set_window_mode(mode: Window.Mode) -> void:
+	window_mode = mode
+	get_viewport().get_window().mode = mode
 
 
 func decals_enabled() -> bool:

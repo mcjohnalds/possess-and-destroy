@@ -370,3 +370,88 @@ focus_mode = 0
 theme_type_variation = &"secondary"
 theme_override_font_sizes/font_size = 40
 text = "OFF"
+
+[node name="WindowMode" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -304.0
+offset_bottom = -264.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Label" type="Label" parent="UI/WindowMode"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -663.0
+offset_top = -116.0
+offset_right = -491.0
+offset_bottom = -50.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/line_spacing = 20
+theme_override_font_sizes/font_size = 40
+text = "fullscreen"
+horizontal_alignment = 2
+
+[node name="WindowButton" type="Button" parent="UI/WindowMode"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -468.0
+offset_top = -117.0
+offset_right = -341.0
+offset_bottom = -58.0
+grow_horizontal = 0
+grow_vertical = 0
+focus_mode = 0
+theme_type_variation = &"secondary"
+theme_override_font_sizes/font_size = 27
+text = "WINDOW"
+
+[node name="FullscreenButton" type="Button" parent="UI/WindowMode"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -340.0
+offset_top = -117.0
+offset_right = -213.0
+offset_bottom = -58.0
+grow_horizontal = 0
+grow_vertical = 0
+focus_mode = 0
+theme_type_variation = &"secondary"
+theme_override_font_sizes/font_size = 27
+text = "FULLSCRN"
+
+[node name="ExclusiveButton" type="Button" parent="UI/WindowMode"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -212.0
+offset_top = -117.0
+offset_right = -85.0
+offset_bottom = -58.0
+grow_horizontal = 0
+grow_vertical = 0
+focus_mode = 0
+theme_type_variation = &"secondary"
+theme_override_font_sizes/font_size = 27
+text = "EXCLUSIVE"

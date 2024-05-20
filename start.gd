@@ -16,6 +16,9 @@ const BUTTON_STYLE_BOXES = ["normal", "hover", "pressed", "disabled", "focus"]
 @onready var resolution_high_button: Button = $UI/Resolution/HighButton
 @onready var vsync_off_button: Button = $UI/Vsync/OffButton
 @onready var vsync_on_button: Button = $UI/Vsync/OnButton
+@onready var window_mode_window_button: Button = $UI/WindowMode/WindowButton
+@onready var window_mode_fullscreen_button: Button = $UI/WindowMode/FullscreenButton
+@onready var window_mode_exclusive_button: Button = $UI/WindowMode/ExclusiveButton
 
 
 func _ready() -> void:
@@ -41,6 +44,18 @@ func _ready() -> void:
 	)
 	resolution_high_button.button_down.connect(func() -> void:
 		global.set_resolution_high()
+		update_ui()
+	)
+	window_mode_window_button.button_down.connect(func() -> void:
+		global.set_window_mode(Window.MODE_MAXIMIZED)
+		update_ui()
+	)
+	window_mode_fullscreen_button.button_down.connect(func() -> void:
+		global.set_window_mode(Window.MODE_FULLSCREEN)
+		update_ui()
+	)
+	window_mode_exclusive_button.button_down.connect(func() -> void:
+		global.set_window_mode(Window.MODE_EXCLUSIVE_FULLSCREEN)
 		update_ui()
 	)
 	vsync_off_button.button_down.connect(func() -> void:
@@ -84,6 +99,17 @@ func update_ui() -> void:
 	)
 	set_button_selected(
 		resolution_high_button, global.resolution == Global.Resolution.HIGH
+	)
+	set_button_selected(
+		window_mode_window_button, global.window_mode == Window.MODE_MAXIMIZED
+	)
+	set_button_selected(
+		window_mode_fullscreen_button,
+		global.window_mode == Window.MODE_FULLSCREEN
+	)
+	set_button_selected(
+		window_mode_exclusive_button,
+		global.window_mode == Window.MODE_EXCLUSIVE_FULLSCREEN
 	)
 	var vsync := (
 		DisplayServer.window_get_vsync_mode() == DisplayServer.VSYNC_ENABLED
